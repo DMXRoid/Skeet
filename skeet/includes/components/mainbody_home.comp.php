@@ -1,0 +1,1 @@
+<a href="<?= \Skeet\LinkFactory::getLink("config list")->getLink() ?>">Config</a>

@@ -1,0 +1,56 @@
+html {
+	margin: 0px auto;
+}
+
+body,td,h1,h2,h3 {
+	font-family: freesans, helvetica, arial, sans-serif;
+}
+
+body {
+	font-size: 12px;
+}
+
+#login {
+	width: 400px;
+}
+
+#register {
+	width: 400px;
+}
+
+#exception {
+	width: 400px;
+	border: 2px solid #363636;
+	padding: 5px;
+}
+
+.backtrace_even {
+	border-bottom: 1px solid #999;
+	padding: 5px;
+	background-color: #acacac;
+}
+
+.backtrace_odd {
+	border-bottom: 1px solid #999;
+	padding: 5px;
+	background-color: #828282;
+}
+
+.input_field {
+	text-align: right;
+	font-weight: bold;
+	padding-right: 5px;
+}
+
+
+.error {
+	color: #f00;
+}
+
+.right {
+	text-align: right;
+}
+
+.bold {
+	font-weight: bold;
+}

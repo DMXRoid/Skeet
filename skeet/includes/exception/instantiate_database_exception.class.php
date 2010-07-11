@@ -1,0 +1,5 @@
+<?
+	class InstantiateDatabaseException extends Exception {
+		
+	}
+?>
