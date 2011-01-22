@@ -1,0 +1,1411 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class AbstractModel</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class AbstractModel</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">abstract:</span> </li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_model---abstract_model.class.php.html">/model/abstract_model.class.php</a> (line <span class="field">4</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																																																																																																																																<div class="var-title">
+					<span class="var-type">arary</span>
+					<a href="#$collectionDefinitions" title="details" class="var-name">$collectionDefinitions</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$collections" title="details" class="var-name">$collections</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">string</span>
+					<a href="#$databaseName" title="details" class="var-name">$databaseName</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$dataStructure" title="details" class="var-name">$dataStructure</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$displayErrors" title="details" class="var-name">$displayErrors</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$displayNames" title="details" class="var-name">$displayNames</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$primaryKey" title="details" class="var-name">$primaryKey</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">arary</span>
+					<a href="#$requiredFields" title="details" class="var-name">$requiredFields</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">string</span>
+					<a href="#$tableName" title="details" class="var-name">$tableName</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$targetObjectDefinitions" title="details" class="var-name">$targetObjectDefinitions</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$targetObjects" title="details" class="var-name">$targetObjects</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$updatedFields" title="details" class="var-name">$updatedFields</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$validationErrors" title="details" class="var-name">$validationErrors</a>
+				</div>
+																<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$validationTypes" title="details" class="var-name">$validationTypes</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																																																																																																																																																																																																				
+												<div class="method-definition">
+											<span class="method-result">AbstractModel</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											([<span class="var-type"></span>&nbsp;<span class="var-name">$primaryKeyID</span> = <span class="var-default">NULL</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$customSQL</span> = <span class="var-default">NULL</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$dataRow</span> = <span class="var-default">NULL</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#addObjectToCollection" title="details" class="method-name">addObjectToCollection</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$modelObject</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#addRequiredField" title="details" class="method-name">addRequiredField</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$requiredField</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#checkCollection" title="details" class="method-name">checkCollection</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#checkCollectionOptionArray" title="details" class="method-name">checkCollectionOptionArray</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#checkImages" title="details" class="method-name">checkImages</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#get" title="details" class="method-name">get</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$key</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">AbstractCollection</span>
+										<a href="#getCollection" title="details" class="method-name">getCollection</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getCollectionOptionArray" title="details" class="method-name">getCollectionOptionArray</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getDatabaseName" title="details" class="method-name">getDatabaseName</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getDisplayLabel" title="details" class="method-name">getDisplayLabel</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getDisplayName" title="details" class="method-name">getDisplayName</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$field</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getExtraCollectionField" title="details" class="method-name">getExtraCollectionField</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fieldName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$modelObject</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">integer</span>
+										<a href="#getID" title="details" class="method-name">getID</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getImages" title="details" class="method-name">getImages</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getPrimaryKeyField" title="details" class="method-name">getPrimaryKeyField</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getRequiredFields" title="details" class="method-name">getRequiredFields</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getTableName" title="details" class="method-name">getTableName</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getTargetObject" title="details" class="method-name">getTargetObject</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getValidationErrors" title="details" class="method-name">getValidationErrors</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#postConstruct" title="details" class="method-name">postConstruct</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#preConstruct" title="details" class="method-name">preConstruct</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#removeObjectFromCollection" title="details" class="method-name">removeObjectFromCollection</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$modelObject</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#save" title="details" class="method-name">save</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#set" title="details" class="method-name">set</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$key</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setExtraCollectionField" title="details" class="method-name">setExtraCollectionField</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fieldName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$modelObject</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setPrimaryKeyID" title="details" class="method-name">setPrimaryKeyID</a>
+											(<span class="var-type">integer</span>&nbsp;<span class="var-name">$primaryKeyID</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#validateInput" title="details" class="method-name">validateInput</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$inputArray</span>)
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$collectionDefinitions" id="$collectionDefinitions"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">arary</span>
+			<span class="var-name">$collectionDefinitions</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">62</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Collection definitions</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../Skeet/AbstractModel.html#methodgetCollection">AbstractModel::getCollection()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$collections" id="$collections"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$collections</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">71</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Collection holder</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../Skeet/AbstractModel.html#methodgetCollection">AbstractModel::getCollection()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$databaseName" id="$databaseName"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$databaseName</span>
+			 = <span class="var-default"> MODEL_DATABASE_NAME</span>			(line <span class="line-number">11</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Database name for the table</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$dataStructure" id="$dataStructure"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$dataStructure</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">43</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">A list of fields and datatypes in (@see $tableName)  the get() and set() methods will compare against this</p>
+<p class="description"><p>In the format:</p><p>$dataStructure[&quot;field_name&quot;] = array(&quot;data_type&quot; =&gt; &quot;field_data_type&quot;, &quot;length&quot; =&gt; &quot;field_length&quot;,&quot;value&quot; =&gt; &quot;field_value&quot;);</p></p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../Skeet/AbstractModel.html#methodget">AbstractModel::get()</a>, <a href="../Skeet/AbstractModel.html#methodset">AbstractModel::set()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$displayErrors" id="$displayErrors"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$displayErrors</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">143</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Display errors.  If you want to standardize error output for  a field across the application, you can do so in the subclasses</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../Skeet/AbstractModel.html#methodvalidateInput">AbstractModel::validateInput()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$displayNames" id="$displayNames"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$displayNames</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">132</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Display name for fields in CRUD functionality.</p>
+<p class="description"><p>Optional.  If they don't exist, just the field name  will be used</p></p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../Skeet/AbstractModel.html#methodgetDisplayName">AbstractModel::getDisplayName()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$primaryKey" id="$primaryKey"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$primaryKey</span>
+			 = <span class="var-default">array(&quot;primary_field_key_name&quot; =&gt; &quot;&quot;,&quot;primary_key_value&quot; =&gt; 0)</span>			(line <span class="line-number">29</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Primary key value for the current object  in the format:  array(&quot;primary_key_field_name&quot; =&gt; &quot;field_name&quot;, &quot;primary_key_value&quot; =&gt; &quot;field_value&quot;)</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$requiredFields" id="$requiredFields"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">arary</span>
+			<span class="var-name">$requiredFields</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">100</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Required fields for submit, can be set at will</p>
+<p class="description"><p>or in the subclass</p></p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../Skeet/AbstractModel.html#methodaddRequiredField">AbstractModel::addRequiredField()</a>, <a href="../Skeet/AbstractModel.html#methodgetRequiredFields">AbstractModel::getRequiredFields()</a>, <a href="../Skeet/AbstractModel.html#methodvalidateInput">AbstractModel::validateInput()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$tableName" id="$tableName"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">string</span>
+			<span class="var-name">$tableName</span>
+						(line <span class="line-number">19</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Name of the table the data is pulled from</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$targetObjectDefinitions" id="$targetObjectDefinitions"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$targetObjectDefinitions</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">80</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">One to one object definitions</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../Skeet/AbstractModel.html#methodgetTargetObject">AbstractModel::getTargetObject()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$targetObjects" id="$targetObjects"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$targetObjects</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">89</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">One to one object holder</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../Skeet/AbstractModel.html#methodgetTargetObject">AbstractModel::getTargetObject()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$updatedFields" id="$updatedFields"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$updatedFields</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">52</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">A list of fields that have been updated</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../Skeet/AbstractModel.html#methodsave">AbstractModel::save()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$validationErrors" id="$validationErrors"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$validationErrors</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">119</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Validation errors</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../Skeet/AbstractModel.html#methodvalidateInput">AbstractModel::validateInput()</a>, <a href="../Skeet/AbstractModel.html#methodgetValidationErrors">AbstractModel::getValidationErrors()</a></li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+<a name="var$validationTypes" id="$validationTypes"><!-- --></A>
+<div class="evenrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$validationTypes</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">110</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Specific validation types.  If a field does</p>
+<p class="description"><p>not exist, falls back to the datatype in (@see $dataStructure)</p></p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../Skeet/AbstractModel.html#methodvalidateInput">AbstractModel::validateInput()</a>, setValidationType()</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">154</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Generic Constructor</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">AbstractModel</span>
+		<span class="method-name">
+			__construct
+		</span>
+					([<span class="var-type"></span>&nbsp;<span class="var-name">$primaryKeyID</span> = <span class="var-default">NULL</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$customSQL</span> = <span class="var-default">NULL</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$dataRow</span> = <span class="var-default">NULL</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$primaryKeyID</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$customSQL</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$dataRow</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodaddObjectToCollection" id="addObjectToCollection"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">addObjectToCollection</span> (line <span class="line-number">448</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			addObjectToCollection
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$modelObject</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$modelObject</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodaddRequiredField" id="addRequiredField"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">addRequiredField</span> (line <span class="line-number">602</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			addRequiredField
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$requiredField</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$requiredField</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodcheckCollection" id="checkCollection"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">checkCollection</span> (line <span class="line-number">380</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Checks a collection via ModelCollectionFactory</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../Skeet/AbstractModel.html#methodgetCollection">AbstractModel::getCollection()</a></li>
+				<li><span class="field">see:</span> $collections $collectionDefinitions</li>
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			checkCollection
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodcheckCollectionOptionArray" id="checkCollectionOptionArray"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">checkCollectionOptionArray</span> (line <span class="line-number">393</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			checkCollectionOptionArray
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodcheckImages" id="checkImages"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">checkImages</span> (line <span class="line-number">653</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			checkImages
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodget" id="get"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">get</span> (line <span class="line-number">263</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Gettor for data values.  Checks (@see $dataStructure) for the valid existence of a field,</p>
+<p class="description"><p>throws an (@see InvalidGetCallException) if it doesn't exist</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			get
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$key</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$key</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetCollection" id="getCollection"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getCollection</span> (line <span class="line-number">354</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Gets a collection model object.  Calls the checkCollection function if  one isn't stored yet</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../Skeet/AbstractModel.html#methodcheckCollection">AbstractModel::checkCollection()</a></li>
+				<li><span class="field">see:</span> $collections $collectionDefinitions</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">AbstractCollection</span>
+		<span class="method-name">
+			getCollection
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetCollectionOptionArray" id="getCollectionOptionArray"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getCollectionOptionArray</span> (line <span class="line-number">386</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getCollectionOptionArray
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetDatabaseName" id="getDatabaseName"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getDatabaseName</span> (line <span class="line-number">242</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Gets (@see $databaseName)</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getDatabaseName
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetDisplayLabel" id="getDisplayLabel"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getDisplayLabel</span> (line <span class="line-number">642</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a label to be used for displaying in the</p>
+<p class="description"><p>collection getDropdown() functions (or wherever  else you want), for example the name or a concatenation  of various tables</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getDisplayLabel
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetDisplayName" id="getDisplayName"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getDisplayName</span> (line <span class="line-number">621</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getDisplayName
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$field</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$field</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetExtraCollectionField" id="getExtraCollectionField"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getExtraCollectionField</span> (line <span class="line-number">542</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getExtraCollectionField
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fieldName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$modelObject</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fieldName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$modelObject</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetID" id="getID"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getID</span> (line <span class="line-number">252</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Gets the (@see $primaryKeyID)</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">integer</span>
+		<span class="method-name">
+			getID
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetImages" id="getImages"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getImages</span> (line <span class="line-number">646</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getImages
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetPrimaryKeyField" id="getPrimaryKeyField"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getPrimaryKeyField</span> (line <span class="line-number">212</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Get the field name of the primary key.  Usually, it'll  be (@see $tableName)_id, but whatever.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getPrimaryKeyField
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetRequiredFields" id="getRequiredFields"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getRequiredFields</span> (line <span class="line-number">608</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getRequiredFields
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetTableName" id="getTableName"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getTableName</span> (line <span class="line-number">232</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Gets (@see $tableName)</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getTableName
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetTargetObject" id="getTargetObject"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getTargetObject</span> (line <span class="line-number">431</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Gets a one to one object.  Calls checkTargetObject if one isn't  stored yet</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> checkTargetObject()</li>
+				<li><span class="field">see:</span> $targetObjects $targetObjectDefinitions</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getTargetObject
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetValidationErrors" id="getValidationErrors"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getValidationErrors</span> (line <span class="line-number">617</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns (@see $validationErrors)</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getValidationErrors
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodpostConstruct" id="postConstruct"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">postConstruct</span> (line <span class="line-number">203</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">To run something at the very end of the AbstractModel constructor, implement  postConstruct in your sub class.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			postConstruct
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodpreConstruct" id="preConstruct"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">preConstruct</span> (line <span class="line-number">195</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">To run something at the very beginning of the AbstractModel constructor,  implement preConstruct in your sub-class.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			preConstruct
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodremoveObjectFromCollection" id="removeObjectFromCollection"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">removeObjectFromCollection</span> (line <span class="line-number">482</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			removeObjectFromCollection
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$modelObject</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$modelObject</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsave" id="save"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">save</span> (line <span class="line-number">309</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Save function.  Writes values in (@see $updatedFields) to the database.</p>
+<p class="description"><p>If there's already a PKID set, calls (@see AbstractDatabase::doInsertOrUpdate()),  otherwise, calls (@see AbstractDatabase::doInsert()) and sets the primary key  (@see setPrimaryKeyID())</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			save
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodset" id="set"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">set</span> (line <span class="line-number">285</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Settor for data values.  Checks (@see $dataStructure) for the valid existence of a field,</p>
+<p class="description"><p>throws an (@see InvalidSetCallException) if it doesn't exist</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			set
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$key</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$key</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$value</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetExtraCollectionField" id="setExtraCollectionField"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setExtraCollectionField</span> (line <span class="line-number">510</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setExtraCollectionField
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fieldName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$modelObject</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fieldName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$modelObject</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$value</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetPrimaryKeyID" id="setPrimaryKeyID"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setPrimaryKeyID</span> (line <span class="line-number">222</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Set the primary key on the object.  This should generally</p>
+<p class="description"><p>only be used internally by (@see save())</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setPrimaryKeyID
+		</span>
+					(<span class="var-type">integer</span>&nbsp;<span class="var-name">$primaryKeyID</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">integer</span>
+				<span class="var-name">$primaryKeyID</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodvalidateInput" id="validateInput"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">validateInput</span> (line <span class="line-number">571</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			validateInput
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$inputArray</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$inputArray</span>			</li>
+				</ul>
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Sat, 22 Jan 2011 03:35:21 -0600 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>
