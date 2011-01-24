@@ -42,7 +42,7 @@
 		 * @see setFilePath()
 		 */
 		
-		protected $filePath = COMPONENT_INCLUDE_PATH;
+		protected $filePath;
 
 		/**
 		 * The {@link AbstractPage} that the component is being rendered
@@ -214,6 +214,7 @@
 				}
 				$this->output = $data;
 				ob_end_clean();
+				echo $this->output;
 			}
 			else {
 				throw new ComponentFileNotFoundException($this->getFilePath() . $this->getFileName());
