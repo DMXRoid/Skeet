@@ -3,10 +3,12 @@
 ;
 
 [default]
-application_path = "/path/to/application"
-database_type = "mysql";
-database_username = "dbuser"
-database_password = "dbpass"
-database_host = "localhost"
-database_name = "dbname"
+application_path = "/home/schiros/html/gitskeet/skeet/"
+application_name = "Application"
 hostname = "example.com"
+database.default.database_type = "mysql"
+database.default.database_username = "dbuser";
+database.default.database_password = "dbpass"
+database.default.database_host = "localhost";
+database.default.database_name = "dbname"
+
