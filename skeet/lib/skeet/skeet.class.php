@@ -1,7 +1,6 @@
 <?
 /**
  * @package Skeet
- * @subpackage Component
  * @version 1.0
  * @author Matthew Schiros <schiros@invisihosting.com>
  * @copyright Copyright (c) 2011, Matthew Schiros
@@ -12,9 +11,7 @@
 	/*
 	 * Global class for the Skeet Framework.  Contains configuration data.
 	 * Can be extended if you want to run your own set of init things.
-	 *
 	 */
-
 
 	class Skeet {
 		public static $config = array();
@@ -25,6 +22,7 @@
 			self::$config = $config[$configName];
 			self::setConfig("lib_path",self::getConfig("application_path") . 'lib/');
 			self::setConfig("application_lib_path",self::getConfig("lib_path") . strtolower(self::getConfig("application_name")) . "/");
+			self::setConfig("application_model_path",self::getConfig("application_lib_path") . "model/");
 			self::setConfig("skeet_lib_path",self::getConfig("lib_path") . "skeet/");
 			spl_autoload_register("\Skeet\Skeet::autoload");
 		}
@@ -54,7 +52,9 @@
 				$includePath .= strtolower($namespace) . '/';
 			}
 			$fileName = substr_replace(preg_replace("/([A-Z])/e",'strtolower("_\\1")',$className),'',0,1) . '.class.php';
-			require_once($includePath . $fileName);
+			if(file_exists($includePath . $fileName)) {
+				require_once($includePath . $fileName);
+			}
 		}
 	}
 

@@ -9,6 +9,9 @@
 
 	namespace Skeet\Factory;
 
+	/**
+	 * ThemeFactory
+	 */
 	class ThemeFactory {
 		private static $currentTheme;
 		private static $currentThemeName;
