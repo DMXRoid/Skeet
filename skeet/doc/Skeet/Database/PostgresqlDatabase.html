@@ -1,0 +1,1516 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class PostgresqlDatabase</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class PostgresqlDatabase</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-vars">Vars</a>
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+											<a href="#sec-consts">Constants</a>
+						
+			</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">class AbstractDatabase</p>
+<p class="description"><p>All databases within the framework will extend this and implement most/all of its  methods</p></p>
+		<p class="notes">
+			Located in <a class="field" href="_lib---skeet---database---postgresql---postgresql_database.class.php.html">/lib/skeet/database/postgresql/postgresql_database.class.php</a> (line <span class="field">2</span>)
+		</p>
+		
+				
+		<pre><a href="../../Skeet/Database/AbstractDatabase.html">AbstractDatabase</a>
+   |
+   --PostgresqlDatabase</pre>
+	
+			</div>
+</div>
+
+
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-consts">Constants</a>
+							
+															<a href="#sec-vars">Vars</a>
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																																																																																																																																																																																																																																																				
+												<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#changeHost" title="details" class="method-name">changeHost</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$dbHost</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$dbName</span> = <span class="var-default">NULL</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$dbUser</span> = <span class="var-default">NULL</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$dbPassword</span> = <span class="var-default">NULL</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#dbSelect" title="details" class="method-name">dbSelect</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$dbName</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#doDelete" title="details" class="method-name">doDelete</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$where</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#doInsert" title="details" class="method-name">doInsert</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$dbName</span> = <span class="var-default">''</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$escape</span> = <span class="var-default">true</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#doInsertMultiple" title="details" class="method-name">doInsertMultiple</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$data</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$dbName</span> = <span class="var-default">''</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$escape</span> = <span class="var-default">true</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#doInsertOnDupUpdate" title="details" class="method-name">doInsertOnDupUpdate</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#doInsertOrCancel" title="details" class="method-name">doInsertOrCancel</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>], <span class="var-type"></span>&nbsp;<span class="var-name">$where</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#doInsertOrUpdate" title="details" class="method-name">doInsertOrUpdate</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>], <span class="var-type"></span>&nbsp;<span class="var-name">$where</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../../Skeet/Database/PostgresqlDatabaseResult.html">PostgresqlDatabaseResult</a></span>
+										<a href="#doQuery" title="details" class="method-name">doQuery</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$sql</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#doReplace" title="details" class="method-name">doReplace</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#doReplaceMultiple" title="details" class="method-name">doReplaceMultiple</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$data</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$dbName</span> = <span class="var-default">''</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$escape</span> = <span class="var-default">true</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#doSelect" title="details" class="method-name">doSelect</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$fields</span> = <span class="var-default">array()</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$where</span> = <span class="var-default">array()</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#doUpdate" title="details" class="method-name">doUpdate</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>], <span class="var-type"></span>&nbsp;<span class="var-name">$where</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$whereQuotes</span> = <span class="var-default">NULL</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$dbName</span> = <span class="var-default">''</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$escape</span> = <span class="var-default">true</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#escape" title="details" class="method-name">escape</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#generateSet" title="details" class="method-name">generateSet</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#generateWhere" title="details" class="method-name">generateWhere</a>
+											([<span class="var-type"></span>&nbsp;<span class="var-name">$where</span> = <span class="var-default">array()</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getAffectedRows" title="details" class="method-name">getAffectedRows</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getConnection" title="details" class="method-name">getConnection</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getDBHost" title="details" class="method-name">getDBHost</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getDBName" title="details" class="method-name">getDBName</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getInsertID" title="details" class="method-name">getInsertID</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getMySQLError" title="details" class="method-name">getMySQLError</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getNumRows" title="details" class="method-name">getNumRows</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getQuery" title="details" class="method-name">getQuery</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getRow" title="details" class="method-name">getRow</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getTestForMatch" title="details" class="method-name">getTestForMatch</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getTestForNonMatch" title="details" class="method-name">getTestForNonMatch</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#initConnection" title="details" class="method-name">initConnection</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#numRows" title="details" class="method-name">numRows</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#numRowsAffected" title="details" class="method-name">numRowsAffected</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#quote" title="details" class="method-name">quote</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#quoteOld" title="details" class="method-name">quoteOld</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#selectDB" title="details" class="method-name">selectDB</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$dbName</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#testError" title="details" class="method-name">testError</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$errorType</span>)
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-consts">Constants</a>
+							
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+										<h4>Inherited Variables</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../../Skeet/Database/AbstractDatabase.html">AbstractDatabase</a></span></p>
+					<blockquote>
+													<span class="var-title">
+								<span class="var-name"><a href="../../Skeet/Database/AbstractDatabase.html#var$connection">AbstractDatabase::$connection</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../../Skeet/Database/AbstractDatabase.html#var$dbHost">AbstractDatabase::$dbHost</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../../Skeet/Database/AbstractDatabase.html#var$dbName">AbstractDatabase::$dbName</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../../Skeet/Database/AbstractDatabase.html#var$dbPassword">AbstractDatabase::$dbPassword</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../../Skeet/Database/AbstractDatabase.html#var$dbUser">AbstractDatabase::$dbUser</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../../Skeet/Database/AbstractDatabase.html#var$insertID">AbstractDatabase::$insertID</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../../Skeet/Database/AbstractDatabase.html#var$query">AbstractDatabase::$query</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../../Skeet/Database/AbstractDatabase.html#var$queryLog">AbstractDatabase::$queryLog</a></span><br>
+							</span>
+													<span class="var-title">
+								<span class="var-name"><a href="../../Skeet/Database/AbstractDatabase.html#var$totalQueryTime">AbstractDatabase::$totalQueryTime</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-vars">Vars</a>
+																			<a href="#sec-consts">Constants</a>
+							
+										<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="methodchangeHost" id="changeHost"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">changeHost</span> (line <span class="line-number">174</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			changeHost
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$dbHost</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$dbName</span> = <span class="var-default">NULL</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$dbUser</span> = <span class="var-default">NULL</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$dbPassword</span> = <span class="var-default">NULL</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$dbHost</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$dbName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$dbUser</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$dbPassword</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methoddbSelect" id="dbSelect"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">dbSelect</span> (line <span class="line-number">47</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">alias to selectDB</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			dbSelect
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$dbName</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$dbName</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methoddbSelect">AbstractDatabase::dbSelect()</a></dt>
+					</dl>
+			
+	</div>
+<a name="methoddoDelete" id="doDelete"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">doDelete</span> (line <span class="line-number">429</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			doDelete
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$where</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$where</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methoddoDelete">AbstractDatabase::doDelete()</a></dt>
+						<dd>delete a row</dd>
+					</dl>
+			
+	</div>
+<a name="methoddoInsert" id="doInsert"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">doInsert</span> (line <span class="line-number">190</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			doInsert
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$dbName</span> = <span class="var-default">''</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$escape</span> = <span class="var-default">true</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fields</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$quotes</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$dbName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$escape</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methoddoInsert">AbstractDatabase::doInsert()</a></dt>
+						<dd>Insert a row into the database</dd>
+					</dl>
+			
+	</div>
+<a name="methoddoInsertMultiple" id="doInsertMultiple"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">doInsertMultiple</span> (line <span class="line-number">217</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			doInsertMultiple
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$data</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$dbName</span> = <span class="var-default">''</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$escape</span> = <span class="var-default">true</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fields</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$data</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$quotes</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$dbName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$escape</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methoddoInsertOnDupUpdate" id="doInsertOnDupUpdate"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">doInsertOnDupUpdate</span> (line <span class="line-number">360</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			doInsertOnDupUpdate
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fields</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$quotes</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methoddoInsertOrCancel" id="doInsertOrCancel"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">doInsertOrCancel</span> (line <span class="line-number">334</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			doInsertOrCancel
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>], <span class="var-type"></span>&nbsp;<span class="var-name">$where</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fields</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$quotes</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$where</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methoddoInsertOrUpdate" id="doInsertOrUpdate"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">doInsertOrUpdate</span> (line <span class="line-number">345</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			doInsertOrUpdate
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>], <span class="var-type"></span>&nbsp;<span class="var-name">$where</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fields</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$quotes</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$where</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methoddoInsertOrUpdate">AbstractDatabase::doInsertOrUpdate()</a></dt>
+						<dd>do an insert or update depending on whether the conditions in $wheres is met</dd>
+					</dl>
+			
+	</div>
+<a name="methoddoQuery" id="doQuery"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">doQuery</span> (line <span class="line-number">141</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Execute some SQL</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../../Skeet/Database/PostgresqlDatabaseResult.html">PostgresqlDatabaseResult</a></span>
+		<span class="method-name">
+			doQuery
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$sql</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$sql</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methoddoQuery">AbstractDatabase::doQuery()</a></dt>
+					</dl>
+			
+	</div>
+<a name="methoddoReplace" id="doReplace"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">doReplace</span> (line <span class="line-number">298</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			doReplace
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fields</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$quotes</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methoddoReplace">AbstractDatabase::doReplace()</a></dt>
+						<dd>Execute a REPLACE statement</dd>
+					</dl>
+			
+	</div>
+<a name="methoddoReplaceMultiple" id="doReplaceMultiple"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">doReplaceMultiple</span> (line <span class="line-number">257</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			doReplaceMultiple
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$data</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$dbName</span> = <span class="var-default">''</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$escape</span> = <span class="var-default">true</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fields</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$data</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$quotes</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$dbName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$escape</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methoddoSelect" id="doSelect"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">doSelect</span> (line <span class="line-number">414</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			doSelect
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$fields</span> = <span class="var-default">array()</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$where</span> = <span class="var-default">array()</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fields</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$where</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methoddoUpdate" id="doUpdate"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">doUpdate</span> (line <span class="line-number">319</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			doUpdate
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tableName</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>], <span class="var-type"></span>&nbsp;<span class="var-name">$where</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$whereQuotes</span> = <span class="var-default">NULL</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$dbName</span> = <span class="var-default">''</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$escape</span> = <span class="var-default">true</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tableName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fields</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$quotes</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$where</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$whereQuotes</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$dbName</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$escape</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methoddoUpdate">AbstractDatabase::doUpdate()</a></dt>
+						<dd>Run an update on a row</dd>
+					</dl>
+			
+	</div>
+<a name="methodescape" id="escape"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">escape</span> (line <span class="line-number">86</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Just escape a value, don't quote it</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			escape
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgenerateSet" id="generateSet"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">generateSet</span> (line <span class="line-number">366</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			generateSet
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$fields</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fields</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$quotes</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methodgenerateSet">AbstractDatabase::generateSet()</a></dt>
+						<dd>generate a set of criteria from $fields and $quotes</dd>
+					</dl>
+			
+	</div>
+<a name="methodgenerateWhere" id="generateWhere"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">generateWhere</span> (line <span class="line-number">379</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			generateWhere
+		</span>
+					([<span class="var-type"></span>&nbsp;<span class="var-name">$where</span> = <span class="var-default">array()</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$quotes</span> = <span class="var-default">NULL</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$where</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$quotes</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methodgenerateWhere">AbstractDatabase::generateWhere()</a></dt>
+						<dd>Generate a where statement from the criteria and quote it appropriately</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetAffectedRows" id="getAffectedRows"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getAffectedRows</span> (line <span class="line-number">170</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getAffectedRows
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methodgetAffectedRows">AbstractDatabase::getAffectedRows()</a></dt>
+						<dd>return the number of rows affected by the last query</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetConnection" id="getConnection"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getConnection</span> (line <span class="line-number">475</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getConnection
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methodgetConnection">AbstractDatabase::getConnection()</a></dt>
+					</dl>
+			
+	</div>
+<a name="methodgetDBHost" id="getDBHost"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getDBHost</span> (line <span class="line-number">467</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getDBHost
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methodgetDBHost">AbstractDatabase::getDBHost()</a></dt>
+					</dl>
+			
+	</div>
+<a name="methodgetDBName" id="getDBName"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getDBName</span> (line <span class="line-number">471</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getDBName
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methodgetDBName">AbstractDatabase::getDBName()</a></dt>
+					</dl>
+			
+	</div>
+<a name="methodgetInsertID" id="getInsertID"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getInsertID</span> (line <span class="line-number">434</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getInsertID
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methodgetInsertID">AbstractDatabase::getInsertID()</a></dt>
+						<dd>get the primary key ID of the most recent insert</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetMySQLError" id="getMySQLError"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getMySQLError</span> (line <span class="line-number">445</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getMySQLError
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetNumRows" id="getNumRows"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getNumRows</span> (line <span class="line-number">449</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getNumRows
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetQuery" id="getQuery"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getQuery</span> (line <span class="line-number">463</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getQuery
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methodgetQuery">AbstractDatabase::getQuery()</a></dt>
+					</dl>
+			
+	</div>
+<a name="methodgetRow" id="getRow"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getRow</span> (line <span class="line-number">441</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getRow
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetTestForMatch" id="getTestForMatch"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getTestForMatch</span> (line <span class="line-number">398</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getTestForMatch
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$value</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methodgetTestForMatch">AbstractDatabase::getTestForMatch()</a></dt>
+						<dd>gracefully handle null checks</dd>
+					</dl>
+			
+	</div>
+<a name="methodgetTestForNonMatch" id="getTestForNonMatch"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getTestForNonMatch</span> (line <span class="line-number">406</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getTestForNonMatch
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$value</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodinitConnection" id="initConnection"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">initConnection</span> (line <span class="line-number">18</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">generate the connection string and connect to the db</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			initConnection
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methodinitConnection">AbstractDatabase::initConnection()</a></dt>
+						<dd>init the connection</dd>
+					</dl>
+			
+	</div>
+<a name="methodnumRows" id="numRows"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">numRows</span> (line <span class="line-number">453</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			numRows
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodnumRowsAffected" id="numRowsAffected"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">numRowsAffected</span> (line <span class="line-number">478</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			numRowsAffected
+		</span>
+				()
+			</div>
+	
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methodnumRowsAffected">AbstractDatabase::numRowsAffected()</a></dt>
+					</dl>
+			
+	</div>
+<a name="methodquote" id="quote"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">quote</span> (line <span class="line-number">58</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">quote a string for sql injection prevention</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			quote
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methodquote">AbstractDatabase::quote()</a></dt>
+						<dd>Quote the string appropriately to prevent SQL injection and issues caused  by ''s, &quot;'s, etc..</dd>
+					</dl>
+			
+	</div>
+<a name="methodquoteOld" id="quoteOld"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">quoteOld</span> (line <span class="line-number">114</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">a slightly different quote function used by internal calls</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			quoteOld
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$value</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$value</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodselectDB" id="selectDB"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">selectDB</span> (line <span class="line-number">9</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">change the current database</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			selectDB
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$dbName</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$dbName</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methodselectDB">AbstractDatabase::selectDB()</a></dt>
+						<dd>Change your database</dd>
+					</dl>
+			
+	</div>
+<a name="methodtestError" id="testError"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">testError</span> (line <span class="line-number">460</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			testError
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$errorType</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$errorType</span>			</li>
+				</ul>
+		
+			<hr class="separator" />
+		<div class="notes">Redefinition of:</div>
+		<dl>
+			<dt><a href="../../Skeet/Database/AbstractDatabase.html#methodtestError">AbstractDatabase::testError()</a></dt>
+					</dl>
+			
+	</div>
+							<h4>Inherited Methods</h4>
+				<a name='inherited_methods'><!-- --></a>	
+									<!-- =========== Summary =========== -->
+					<p>Inherited From <span class="classname"><a href="../../Skeet/Database/AbstractDatabase.html">AbstractDatabase</a></span></p>
+					<blockquote>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#method__construct">AbstractDatabase::__construct()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methoddbSelect">AbstractDatabase::dbSelect()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methoddoDelete">AbstractDatabase::doDelete()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methoddoInsert">AbstractDatabase::doInsert()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methoddoInsertOrUpdate">AbstractDatabase::doInsertOrUpdate()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methoddoQuery">AbstractDatabase::doQuery()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methoddoReplace">AbstractDatabase::doReplace()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methoddoUpdate">AbstractDatabase::doUpdate()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methodgenerateSet">AbstractDatabase::generateSet()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methodgenerateWhere">AbstractDatabase::generateWhere()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methodgetAffectedRows">AbstractDatabase::getAffectedRows()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methodgetConnection">AbstractDatabase::getConnection()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methodgetDBHost">AbstractDatabase::getDBHost()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methodgetDBName">AbstractDatabase::getDBName()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methodgetInsertID">AbstractDatabase::getInsertID()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methodgetQuery">AbstractDatabase::getQuery()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methodgetTestForMatch">AbstractDatabase::getTestForMatch()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methodinitConnection">AbstractDatabase::initConnection()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methodnumRowsAffected">AbstractDatabase::numRowsAffected()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methodquote">AbstractDatabase::quote()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methodselectDB">AbstractDatabase::selectDB()</a></span><br>
+													<span class="method-name"><a href="../../Skeet/Database/AbstractDatabase.html#methodtestError">AbstractDatabase::testError()</a></span><br>
+											</blockquote>
+										
+		</div>
+	</div>
+
+	<a name="sec-consts"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constants</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Constants</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-vars">Vars</a>
+														| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+										<h4>Inherited Constants</h4>
+				<A NAME='inherited_vars'><!-- --></A>
+									<p>Inherited from <span class="classname"><a href="../../Skeet/Database/AbstractDatabase.html">AbstractDatabase</a></span></p>
+					<blockquote>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../Skeet/Database/AbstractDatabase.html#constERROR_CONNECT">AbstractDatabase::ERROR_CONNECT</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../Skeet/Database/AbstractDatabase.html#constERROR_DB_SELECT">AbstractDatabase::ERROR_DB_SELECT</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../Skeet/Database/AbstractDatabase.html#constERROR_INSERT">AbstractDatabase::ERROR_INSERT</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../Skeet/Database/AbstractDatabase.html#constERROR_QUERY">AbstractDatabase::ERROR_QUERY</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../Skeet/Database/AbstractDatabase.html#constERROR_UPDATE">AbstractDatabase::ERROR_UPDATE</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../Skeet/Database/AbstractDatabase.html#constINSERT">AbstractDatabase::INSERT</a></span><br>
+							</span>
+													<img src="../../media/images/Variable.png" />
+							<span class="const-title">
+								<span class="const-name"><a href="../../Skeet/Database/AbstractDatabase.html#constUPDATE">AbstractDatabase::UPDATE</a></span><br>
+							</span>
+											</blockquote> 
+										
+		</div>
+	</div>
+
+	<p class="notes" id="credit">
+		Documentation generated on Sun, 30 Jan 2011 02:56:54 -0600 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>
