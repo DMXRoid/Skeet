@@ -1,0 +1,72 @@
+#########################
+#	Table of Contents		#
+#########################
+1.) Overview
+2.) Requirements
+3.) Installation
+4.) Usage
+
+###################
+#	1.) Overview	#
+###################
+
+Skeet is a fast, light weight, incredibly flexible PHP rapid development framework 
+that utilizes features new in PHP 5.3 to allow for maximum usability with minimal
+hassle.  Skeet provides an MVC, an ORM, a database abstraction layer, automatic
+model/relationship code generation, a themed template engine.  Everything else 
+about it is just a convenient way of arranging your code, whatever that code may
+be.
+
+In contrast to many other frameworks, like Zend, Symfony, Cake, or CodeIgniter, 
+Skeet does not try to be all things to all people, nor does it force you into 
+unneessarily restrictive code patterns that may not fit your needs.  Skeet will
+never be a comprehensive set of libraries for PHP application development.  Instead,
+after providing you with a foundation, Skeet lets you build your apps however 
+you'd like, using whatever libraries you find useful.  If you like Form objects,
+use one you like, or not.  Same with authetication, caching, AJAX calls, form
+validation, and all the other mandatory libraries that clutter up and slow down other 
+frameworks.
+
+This philosophy is born out of experience.  Although full library frameworks like
+the ones mentioned above do have their place, that place is not in the hands of 
+big boy developers.  For complex, custom application development, those kinds of 
+frameworks innevitably end up giving back their gains in time by drastically
+increasing the cost of either going outside of the framework, or modifying the
+core components.  The difference between those frameworks and Skeet is like 
+the difference between osCommerce and a custom e-commerce application.  Sure,
+you can probably eventually accomplish something like your goal with the former,
+but it'll be painful.
+
+Skeet objects are designed to be easily extendable, so you can make changes to 
+core functionality without too much hassle.  A single Skeet instance can power 
+multiple applications, and this design allows you to implement custom core 
+functionality without having to impact other applications.  For organizations
+that run multiple internal applications, this shared codebase can drastically
+improve programmer productivity and application performance.  Additionally,
+it's a piece of cake to share Skeet objects beteen applications with no additonal
+overhead.  Referencing a model object in one application from another one is no more 
+difficult than calling one native to your app.
+
+Skeet is a programming framework for experienced developers creating complex 
+business applications according to custom requirements.  It's not a catch-all,
+and doesn't try to be.  Working within Skeet is made as easy as possible, so 
+you can get down to the business of writing code.
+
+
+######################
+#	2.) Requirements	#
+######################
+
+*	PHP 5.3 with the following modules:
+	prce
+	mysql (optional)
+	sqlite3 (optional)
+	SQLite (optional)
+	pgsql (optional)
+	
+* PHP ini directive "short_open_tag" must be set to "On". 
+* Windows is not currently supported.
+
+######################
+#	3.) Installation	#
+######################
