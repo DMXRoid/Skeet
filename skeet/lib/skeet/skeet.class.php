@@ -14,6 +14,9 @@
 	 */
 
 	class Skeet {
+
+		const VERSION = "1.0";
+
 		public static $config = array();
 		
 		public static function init($configName="default",$configFile = "skeet.ini") {
@@ -38,6 +41,7 @@
 			}
 			return false;
 		}
+		
 		/**
 		 * \Skeet\Generated
 		 * \Skeet
@@ -55,6 +59,10 @@
 			if(file_exists($includePath . $fileName)) {
 				require_once($includePath . $fileName);
 			}
+		}
+
+		public static function Skeet() {
+			die("YEAHHHHHH");
 		}
 	}
 

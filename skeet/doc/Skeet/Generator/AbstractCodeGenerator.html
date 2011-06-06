@@ -20,7 +20,9 @@
 			|											<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
 						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
 						
-					</div>
+											<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+						
+			</div>
 	<div class="info-box-body">
         		<!-- ========== Info from phpDoc block ========= -->
 <p class="short-description">AbstractCodeGenerator</p>
@@ -46,7 +48,9 @@
 			|												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
 								|															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
 							
-								</div>
+															<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+					</div>
 		<div class="info-box-body">
 			<table cellpadding="2" cellspacing="0" class="class-table">
 				<tr>
@@ -63,6 +67,35 @@
 		</div>
 	</div>
 
+	<a name="sec-const-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constant Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendants</a> |
+						<span class="disabled">Constants</span> (<a href="#sec-consts">details</a>)
+												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<div class="const-summary">
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#GENERATED_CODE_TEMPLATE_TYPE_ALL" title="details" class="const-name">GENERATED_CODE_TEMPLATE_TYPE_ALL</a> = 					<span class="var-type"> 2</span>
+
+				</div>
+								<div class="const-title">
+					<img src="../../media/images/Constant.png" alt=" " />
+					<a href="#GENERATED_CODE_TEMPLATE_TYPE_INDIVIDUAL" title="details" class="const-name">GENERATED_CODE_TEMPLATE_TYPE_INDIVIDUAL</a> = 					<span class="var-type"> 1</span>
+
+				</div>
+							</div>
+		</div>
+	</div>
 
 	<a name="sec-var-summary"></a>
 	<div class="info-box">
@@ -74,7 +107,9 @@
 							| 
 									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
 							
-								</div>
+															<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+					</div>
 		<div class="info-box-body">
 			<div class="var-summary">
 																																																<div class="var-title">
@@ -103,7 +138,9 @@
 		<div class="nav-bar">
 			<a href="#sec-description">Description</a> |
 							<a href="#sec-descendents">Descendents</a> |
-																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+															<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
 				 
 				|
 						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
@@ -114,7 +151,7 @@
 												<div class="method-definition">
 											<span class="method-result">void</span>
 										<a href="#addGeneratedCodeTemplate" title="details" class="method-name">addGeneratedCodeTemplate</a>
-											(<span class="var-type">string</span>&nbsp;<span class="var-name">$label</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$componentName</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$outputPath</span> = <span class="var-default">'classes/'</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$fileSuffix</span> = <span class="var-default">'.class.php'</span>], [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$overwriteExistingFile</span> = <span class="var-default">false</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$additionalSettings</span> = <span class="var-default">array()</span>])
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$generatedCodeTemplateType</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$label</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$componentName</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$outputPath</span> = <span class="var-default">'classes/'</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$fileSuffix</span> = <span class="var-default">'.class.php'</span>], [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$overwriteExistingFile</span> = <span class="var-default">false</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$additionalSettings</span> = <span class="var-default">array()</span>])
 									</div>
 																<div class="method-definition">
 											<span class="method-result">void</span>
@@ -184,6 +221,8 @@
 										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
 						
 			
+												<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
 										| 
 									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
 							
@@ -196,13 +235,13 @@
 		<span class="var-title">
 			<span class="var-type">array</span>
 			<span class="var-name">$generatedCodeTemplateArray</span>
-			 = <span class="var-default">array(<br />			&quot;model&quot; =&gt; array(<br />									&quot;component_name&quot; =&gt; &quot;model template&quot;,<br />									&quot;path&quot; =&gt; &quot;generated/model/&quot;,<br />									&quot;file_suffix&quot; =&gt; &quot;.class.php&quot;,<br />									&quot;overwrite_existing_file&quot; =&gt; true<br />			),&quot;model_collection&quot;=&gt;array(&quot;component_name&quot;=&gt;&quot;model collection template&quot;,&quot;path&quot;=&gt;&quot;generated/model/&quot;,&quot;file_suffix&quot;=&gt;&quot;.class.php&quot;,&quot;overwrite_existing_file&quot;=&gt;true),&quot;starter_model&quot;=&gt;array(&quot;component_name&quot;=&gt;&quot;starter model template&quot;,&quot;path&quot;=&gt;&quot;model/&quot;,&quot;file_suffix&quot;=&gt;&quot;.class.php&quot;,&quot;overwrite_existing_file&quot;=&gt;false),&quot;starter_model_collection&quot;=&gt;array(&quot;component_name&quot;=&gt;&quot;starter model collection template&quot;,&quot;path&quot;=&gt;&quot;model/&quot;,&quot;file_suffix&quot;=&gt;&quot;.class.php&quot;,&quot;overwrite_existing_file&quot;=&gt;false))</span>			(line <span class="line-number">68</span>)
+			 = <span class="var-default">array(<br />			&quot;model&quot; =&gt; array(<br />									&quot;template_type&quot; =&gt; AbstractCodeGenerator::GENERATED_CODE_TEMPLATE_TYPE_INDIVIDUAL,<br />									&quot;component_name&quot; =&gt; &quot;model template&quot;,<br />									&quot;path&quot; =&gt; &quot;generated/model/&quot;,<br />									&quot;file_suffix&quot; =&gt; &quot;.class.php&quot;,<br />									&quot;overwrite_existing_file&quot; =&gt; true<br />			),&quot;model_collection&quot;=&gt;array(&quot;template_type&quot;=&gt;AbstractCodeGenerator::GENERATED_CODE_TEMPLATE_TYPE_INDIVIDUAL,&quot;component_name&quot;=&gt;&quot;model collection template&quot;,&quot;path&quot;=&gt;&quot;generated/model/&quot;,&quot;file_suffix&quot;=&gt;&quot;.class.php&quot;,&quot;overwrite_existing_file&quot;=&gt;true),&quot;starter_model&quot;=&gt;array(&quot;template_type&quot;=&gt;AbstractCodeGenerator::GENERATED_CODE_TEMPLATE_TYPE_INDIVIDUAL,&quot;component_name&quot;=&gt;&quot;starter model template&quot;,&quot;path&quot;=&gt;&quot;model/&quot;,&quot;file_suffix&quot;=&gt;&quot;.class.php&quot;,&quot;overwrite_existing_file&quot;=&gt;false),&quot;starter_model_collection&quot;=&gt;array(&quot;template_type&quot;=&gt;AbstractCodeGenerator::GENERATED_CODE_TEMPLATE_TYPE_INDIVIDUAL,&quot;component_name&quot;=&gt;&quot;starter model collection template&quot;,&quot;path&quot;=&gt;&quot;model/&quot;,&quot;file_suffix&quot;=&gt;&quot;.class.php&quot;,&quot;overwrite_existing_file&quot;=&gt;false),&quot;model_factory&quot;=&gt;array(&quot;template_type&quot;=&gt;AbstractCodeGenerator::GENERATED_CODE_TEMPLATE_TYPE_ALL,&quot;component_name&quot;=&gt;&quot;model factory template&quot;,&quot;path&quot;=&gt;&quot;generated/factory/&quot;,&quot;file_suffix&quot;=&gt;&quot;.class.php&quot;,&quot;overwrite_existing_file&quot;=&gt;true),&quot;model_collection_factory&quot;=&gt;array(&quot;template_type&quot;=&gt;AbstractCodeGenerator::GENERATED_CODE_TEMPLATE_TYPE_ALL,&quot;component_name&quot;=&gt;&quot;model collection factory template&quot;,&quot;path&quot;=&gt;&quot;generated/factory/&quot;,&quot;file_suffix&quot;=&gt;&quot;.class.php&quot;,&quot;overwrite_existing_file&quot;=&gt;true))</span>			(line <span class="line-number">72</span>)
 		</span>
 	</div>
 
 	<!-- ========== Info from phpDoc block ========= -->
 <p class="short-description">A list of generated code templates, and their corresponding  settings.  In the format:</p>
-<p class="description"><p>array( 		&quot;component_name&quot; =&gt; &quot;&quot;, // the name the component, passed to <a href="../../Skeet/Factory/ComponentFactory.html#methodgetComponent">ComponentFactory::getComponent()</a>         &quot;path&quot; =&gt; &quot;&quot;, // the path below Skeet::getConfig(&quot;application_lib_path&quot;) to store the generated code in         &quot;file_suffix&quot; =&gt; &quot;&quot;, // the suffix for files written.         &quot;overwrite_existing_file =&gt; true|false, // whether to overwrite an existing file on generation of code         &quot;settings&quot; =&gt; array() // an array of arbitrary settings to pass to the template component  )</p></p>
+<p class="description"><p>array( 		&quot;template_type&quot; =&gt; AbstractCodeGenerator::GENERATED_CODE_TEMPLATE_TYPE_(INDIVIDUAL|ALL) 		&quot;component_name&quot; =&gt; &quot;&quot;, // the name the component, passed to <a href="../../Skeet/Factory/ComponentFactory.html#methodgetComponent">ComponentFactory::getComponent()</a>         &quot;path&quot; =&gt; &quot;&quot;, // the path below Skeet::getConfig(&quot;application_lib_path&quot;) to store the generated code in         &quot;file_suffix&quot; =&gt; &quot;&quot;, // the suffix for files written.         &quot;overwrite_existing_file =&gt; true|false, // whether to overwrite an existing file on generation of code         &quot;settings&quot; =&gt; array() // an array of arbitrary settings to pass to the template component  )</p></p>
 	<ul class="tags">
 				<li><span class="field">see:</span> <a href="../../Skeet/Generator/AbstractCodeGenerator.html#methodgetGeneratedCodeTemplateArray">AbstractCodeGenerator::getGeneratedCodeTemplateArray()</a></li>
 				<li><span class="field">see:</span> <a href="../../Skeet/Generator/AbstractCodeGenerator.html#methodaddGeneratedCodeTemplate">AbstractCodeGenerator::addGeneratedCodeTemplate()</a></li>
@@ -221,7 +260,7 @@
 		<span class="var-title">
 			<span class="var-type">string</span>
 			<span class="var-name">$manyToManyPattern</span>
-			 = <span class="var-default"> &quot;/([^2]*)2(.*)/&quot;</span>			(line <span class="line-number">47</span>)
+			 = <span class="var-default"> &quot;/([^2]*)2(.*)/&quot;</span>			(line <span class="line-number">50</span>)
 		</span>
 	</div>
 
@@ -243,7 +282,7 @@
 		<span class="var-title">
 			<span class="var-type">array</span>
 			<span class="var-name">$tableArray</span>
-			 = <span class="var-default">array()</span>			(line <span class="line-number">27</span>)
+			 = <span class="var-default">array()</span>			(line <span class="line-number">30</span>)
 		</span>
 	</div>
 
@@ -267,7 +306,7 @@
 		<span class="var-title">
 			<span class="var-type">array</span>
 			<span class="var-name">$tableDescriptionArray</span>
-			 = <span class="var-default">array()</span>			(line <span class="line-number">37</span>)
+			 = <span class="var-default">array()</span>			(line <span class="line-number">40</span>)
 		</span>
 	</div>
 
@@ -295,7 +334,9 @@
 			<a href="#sec-description">Description</a> |
 							<a href="#sec-descendents">Descendents</a> |
 															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
-																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+																			<a href="#sec-const-summary">Constants</a> (<a href="#sec-consts">details</a>)
+							
+										<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
 						
 		</div>
 		<div class="info-box-body">
@@ -305,7 +346,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">addGeneratedCodeTemplate</span> (line <span class="line-number">262</span>)
+		<span class="method-title">addGeneratedCodeTemplate</span> (line <span class="line-number">326</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -321,7 +362,7 @@
 		<span class="method-name">
 			addGeneratedCodeTemplate
 		</span>
-					(<span class="var-type">string</span>&nbsp;<span class="var-name">$label</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$componentName</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$outputPath</span> = <span class="var-default">'classes/'</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$fileSuffix</span> = <span class="var-default">'.class.php'</span>], [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$overwriteExistingFile</span> = <span class="var-default">false</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$additionalSettings</span> = <span class="var-default">array()</span>])
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$generatedCodeTemplateType</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$label</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$componentName</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$outputPath</span> = <span class="var-default">'classes/'</span>], [<span class="var-type">string</span>&nbsp;<span class="var-name">$fileSuffix</span> = <span class="var-default">'.class.php'</span>], [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$overwriteExistingFile</span> = <span class="var-default">false</span>], [<span class="var-type">array</span>&nbsp;<span class="var-name">$additionalSettings</span> = <span class="var-default">array()</span>])
 			</div>
 	
 			<ul class="parameters">
@@ -343,6 +384,9 @@
 					<li>
 				<span class="var-type">array</span>
 				<span class="var-name">$additionalSettings</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$generatedCodeTemplateType</span>			</li>
 				</ul>
 		
 			
@@ -351,7 +395,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">doGenerate</span> (line <span class="line-number">99</span>)
+		<span class="method-title">doGenerate</span> (line <span class="line-number">121</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -374,7 +418,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">generateCode</span> (line <span class="line-number">122</span>)
+		<span class="method-title">generateCode</span> (line <span class="line-number">144</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -401,7 +445,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">getGeneratedCodeTemplateArray</span> (line <span class="line-number">214</span>)
+		<span class="method-title">getGeneratedCodeTemplateArray</span> (line <span class="line-number">278</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -426,7 +470,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">getManyToManyPattern</span> (line <span class="line-number">242</span>)
+		<span class="method-title">getManyToManyPattern</span> (line <span class="line-number">306</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -451,7 +495,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">getTableArray</span> (line <span class="line-number">189</span>)
+		<span class="method-title">getTableArray</span> (line <span class="line-number">253</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -476,7 +520,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">getTableDescription</span> (line <span class="line-number">278</span>)
+		<span class="method-title">getTableDescription</span> (line <span class="line-number">343</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -505,7 +549,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">getTableDescriptionArray</span> (line <span class="line-number">201</span>)
+		<span class="method-title">getTableDescriptionArray</span> (line <span class="line-number">265</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -530,7 +574,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">hasTable</span> (line <span class="line-number">227</span>)
+		<span class="method-title">hasTable</span> (line <span class="line-number">291</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -560,7 +604,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">loadTables</span> (line <span class="line-number">96</span>)
+		<span class="method-title">loadTables</span> (line <span class="line-number">118</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -591,7 +635,7 @@
 <div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">processTable</span> (line <span class="line-number">97</span>)
+		<span class="method-title">processTable</span> (line <span class="line-number">119</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -627,7 +671,7 @@
 <div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">processTables</span> (line <span class="line-number">106</span>)
+		<span class="method-title">processTables</span> (line <span class="line-number">128</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -650,9 +694,59 @@
 		</div>
 	</div>
 
+	<a name="sec-consts"></a>
+	<div class="info-box">
+		<div class="info-box-title">Class Constants</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+							<a href="#sec-descendents">Descendants</a> |
+										<a href="#sec-var-summary">Constants</a> (<span class="disabled">details</span>)
+						
+			
+												<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+														| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="constGENERATED_CODE_TEMPLATE_TYPE_ALL" id="GENERATED_CODE_TEMPLATE_TYPE_ALL"><!-- --></A>
+<div class="oddrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">GENERATED_CODE_TEMPLATE_TYPE_ALL</span>
+			 = <span class="const-default"> 2</span>
+			(line <span class="line-number">19</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+<a name="constGENERATED_CODE_TEMPLATE_TYPE_INDIVIDUAL" id="GENERATED_CODE_TEMPLATE_TYPE_INDIVIDUAL"><!-- --></A>
+<div class="evenrow">
+
+	<div class="const-header">
+		<img src="../../media/images/Variable.png" />
+		<span class="const-title">
+			<span class="const-name">GENERATED_CODE_TEMPLATE_TYPE_INDIVIDUAL</span>
+			 = <span class="const-default"> 1</span>
+			(line <span class="line-number">18</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+	
+	
+</div>
+						
+		</div>
+	</div>
 
 	<p class="notes" id="credit">
-		Documentation generated on Sun, 30 Jan 2011 02:56:53 -0600 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+		Documentation generated on Thu, 10 Feb 2011 00:03:32 -0600 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
 	</p>
 	</div></body>
 </html>

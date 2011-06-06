@@ -8,17 +8,18 @@
 	*/
 
 	namespace Skeet\Factory;
-	
+	use Skeet, Skeet\Database, Skeet\Database\Mysql;
+
 	class DatabaseFactory {
 		public static $dbList = array();		
 		
 		public static function getDatabase($dbConfigName="default") {
 			if(!isset(self::$dbList[$dbConfigName]) || !is_object(self::$dbList[$dbConfigName])) {
-					$db = new \Skeet\Database\Mysql\MysqlDatabase(
-								\Skeet\Skeet::getConfig("database." . $dbConfigName . ".database_name"),
-								\Skeet\Skeet::getConfig("database." . $dbConfigName . ".database_host"),
-								\Skeet\Skeet::getConfig("database." . $dbConfigName . ".database_username"),
-								\Skeet\Skeet::getConfig("database." . $dbConfigName . ".database_password")
+					$db = new MysqlDatabase(
+								Skeet::getConfig("database." . $dbConfigName . ".database_name"),
+								Skeet::getConfig("database." . $dbConfigName . ".database_host"),
+								Skeet::getConfig("database." . $dbConfigName . ".database_username"),
+								Skeet::getConfig("database." . $dbConfigName . ".database_password")
 					);
 					self::$dbList[$dbConfigName] = $db;
 			}

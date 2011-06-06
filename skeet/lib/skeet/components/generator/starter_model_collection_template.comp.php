@@ -4,7 +4,7 @@
 	
 	namespace <?= \Skeet\Skeet::getConfig("application_name") ?>\Model;
 
-	class <?= $tableDescription->getClassName() ?>Collection extends \<?= \Skeet\Skeet::getConfig("application_name") ?>\Generated\Model\<?= $tableCollection->getClassName() ?>Collection {
+	class <?= $tableDescription->getClassName() ?>Collection extends \<?= \Skeet\Skeet::getConfig("application_name") ?>\Generated\Model\<?= $tableDescription->getClassName() ?>Collection {
 	
 	}
 ?>
