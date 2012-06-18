@@ -204,9 +204,10 @@
 		 */
 
 		public function render() {
-			if(file_exists($this->getFilePath() . $this->getFileName())) {
+			$fileName = (file_exists($this->getFilePath() . $this->getFileName())) ? $this->getFilePath() . $this->getFileName() : $this->getFilePath() . "blank.comp.php";
+			if($fileName) {
 				ob_start();
-				require($this->filePath . $this->fileName);
+				require($fileName);
 				$data = ob_get_contents();
 				if (isset($this->stripSpaces)) {
 					$data = preg_replace('/\s\s+/', ' ', $data);

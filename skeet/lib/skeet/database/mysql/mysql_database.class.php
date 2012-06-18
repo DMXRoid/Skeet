@@ -47,7 +47,6 @@
 				$this->dbHost = $dbHost;
 				$this->dbUser = $dbUser;
 				$this->dbPassword = $dbPassword;
-	
 				$this->initConnection();
 			}
 	
@@ -59,7 +58,7 @@
 	
 			public function initConnection() {
 				$dbName = $this->dbName;
-				$this->connection = mysql_pconnect($this->dbHost, $this->dbUser, $this->dbPassword,TRUE) or die($this->generateError(ERROR_CONNECT));
+				$this->connection = mysql_connect($this->dbHost, $this->dbUser, $this->dbPassword,TRUE) or die($this->generateError(ERROR_CONNECT));
 				mysql_select_db($dbName,$this->connection) or die($this->generateError(self::ERROR_DB_SELECT));
 			}
 	
@@ -446,7 +445,7 @@
 				return $this->getNumRows();
 			}
 			private function generateError($errorType) {
-				throw new \Skeet\DatabaseException($this,$errorType);
+				throw new \Skeet\Exception\DatabaseException($this,$errorType);
 			}
 	
 			public function testError($errorType) {

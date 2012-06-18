@@ -44,6 +44,32 @@
 			}
 			return false;
 		}
+		
+		public static function getRequestValue($key) {
+			if(!is_array($key)) {
+				if(self::requestExists($key)) {
+					if(is_array($_REQUEST[$key])) {
+						return $_REQUEST[$key];	
+					}
+					else {
+						return trim($_REQUEST[$key]);
+					}
+				}
+			}
+			else {
+				if(self::requestExists($key)) {
+					$tempRequest = $_REQUEST;
+					foreach($key as $arrayKey) {
+						if(isset($tempRequest[$arrayKey]) && $tempRequest[$arrayKey]) {
+							$tempRequest = $tempRequest[$arrayKey];
+						}
+					}
+					return trim($tempRequest);
+				}
+			}
+
+			return '';
+		}
 
 		public static function getDatatypeFromSQL($sqlDatatype) {
 			$sqlDatatype = preg_replace("/[^a-zA-Z]/",'',$sqlDatatype);

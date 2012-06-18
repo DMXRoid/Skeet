@@ -6,6 +6,7 @@
 	namespace <?= \Skeet\Skeet::getConfig("application_name") ?>\Generated\Model;
 
 	class <?= $tableDescription->getClassName() ?> extends \Skeet\Model\AbstractModel {
+		protected $databaseName = '<?= $tableDescription->getDatabaseName() ?>';
 		protected $tableName = '<?= $tableDescription->getTableName() ?>';
 		protected $primaryKey = array(
 						"primary_key_field_name" => "<?= $tableDescription->getPrimaryKeyFieldName() ?>",

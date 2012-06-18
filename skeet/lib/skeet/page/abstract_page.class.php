@@ -17,14 +17,14 @@
 	 */
 	class AbstractPage {
 		protected $fileName = "home.page.php";
-		protected $filePath = PAGE_INCLUDE_PATH;
+		protected $filePath;
 		protected $pageName;
 		protected $pageTitle = "Apptive.com - Build an App, Connect With Your Customers";
 		protected $subTitle = "";
 		protected $keywords = array("meta","keywords","go","here");
 		protected $metaDescription = "meta description goes here";
-		protected $css = array("styles.css","style.css"); // an array of CSS files, assumed to be in CSS_DIRECTORY
-		protected $javaScriptToLoad = array("scriptaculous/prototype.js","scriptaculous/scriptaculous.js","tablekit.js","fancyzoom.js","site_scripts.js"); // an array of javascript files, assumed to be in JS_DIRECTORY
+		protected $css = array(); // an array of CSS files, assumed to be in CSS_DIRECTORY
+		protected $javaScriptToLoad = array(); // an array of javascript files, assumed to be in JS_DIRECTORY
 		protected $requiresAdmin = FALSE;
 		protected $robotsRules = array("INDEX","FOLLOW");  // spidering rules 
 		protected $requireLogin = false; // should I require logins?
@@ -40,21 +40,27 @@
 		protected $checkTrigger = "do_submit";
 
 		public function __construct() {
+			$this->filePath = \Skeet\Skeet::getConfig("application_page_path");
 			if($this->requireLogin) {
-				$user = \Skeet\UserFactory::getCurrentUser();
-				if(!$user->getID()) {
-					\Skeet\LinkFactory::getLink("Login")->doRedirect();
-				}
+				$this->checkLogin();
 			}
 			
-			if($this->checkTrigger && getRequestValue($this->checkTrigger)) {
+			if($this->checkTrigger && \Skeet\Util::getRequestValue($this->checkTrigger)) {
 				$this->checkInput();
 			}
 
-			if(getRequestValue("do_logout")) {
+			if(\Skeet\Util::getRequestValue("do_logout")) {
 				\Skeet\UserFactory::doLogout();
 			}
 		}
+		
+		protected function checkLogin() {
+			$user = \Skeet\UserFactory::getCurrentUser();
+			if(!$user->getID()) {
+				\Skeet\LinkFactory::getLink("Login")->doRedirect();
+			}
+		}
+			
 		/*
 			These functions provide for pretty easy dynamic error-message reporting.
 			After checkInput() is called, $this->errorMessages will be an array of 
@@ -174,16 +180,16 @@
 
 		public function getJavaScript() {
 			$output = "";
-			foreach($this->javaScriptToLoad as $jsFile) {
-				$output .= '<script language="javascript" src="' . JS_DIRECTORY .  $jsFile . '" type="text/javascript"></script>' . "\n";
+			foreach(\Skeet\ThemeFactory::getCurrentTheme()->getJavascriptToLoad() as $jsFile) {
+				$output .= '<script language="javascript" src="' .  \Skeet\ThemeFactory::getCurrentTheme()->getJavascriptURL() .  $jsFile . '" type="text/javascript"></script>' . "\n";
 			}
 			return $output;
 		}
 
 		public function getCSS() {
 			$output = "";
-			foreach($this->css as $css) {
-				$output .= '<link rel="stylesheet" type="text/css" href="' . CSS_DIRECTORY . $css . '">' . "\n";
+			foreach(\Skeet\ThemeFactory::getCurrentTheme()->getCSSToLoad() as $css) {
+				$output .= '<link rel="stylesheet" type="text/css" href="' . \Skeet\ThemeFactory::getCurrentTheme()->getCSSURL()  . $css . '">' . "\n";
 			}
 			return $output;
 		}

@@ -16,8 +16,8 @@
 	class GenericComponent extends AbstractComponent {
 		public function __construct($componentLabel=NULL) {
 			if(!is_null($componentLabel)) {
-				$theme = \Skeet\Factory\ThemeFactory::getCurrentTheme();
-				$this->filePath = \Skeet\Skeet::getConfig("application_path") . "lib/skeet/components/" . $theme->getThemeDirectory();
+				$theme = \Skeet\ThemeFactory::getCurrentTheme();
+				$this->filePath = $theme->getThemeDirectory();
 				$fileName = substr_replace(preg_replace("/([A-Z])/e",'strtolower("_\\1")',$componentLabel),'',0,1);
 				$fileName .= '.comp.php';
 				$this->fileName = $fileName;

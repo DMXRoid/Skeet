@@ -7,7 +7,7 @@
 	* @copyright Copyright (c) 2011, Matthew Schiros
 	*/
 
-	namespace Skeet\Factory;
+	namespace Skeet;
 
 	/**
 	 * ThemeFactory
@@ -30,6 +30,10 @@
 			switch($themeName) {
 				case "generator":
 					$theme = new \Skeet\Theme\GeneratorTheme();
+					break;
+				
+				default:
+					$theme = new \Skeet\Theme\GenericTheme();
 					break;
 			}
 			return $theme;

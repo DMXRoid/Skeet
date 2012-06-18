@@ -81,7 +81,7 @@
 									"template_type" => AbstractCodeGenerator::GENERATED_CODE_TEMPLATE_TYPE_INDIVIDUAL,
 									"component_name" => "model collection template",
 									"path" => "generated/model/",
-									"file_suffix" => ".class.php",
+									"file_suffix" => "_collection.class.php",
 									"overwrite_existing_file" => true
 			),
 			"starter_model" => array(
@@ -95,7 +95,7 @@
 									"template_type" => AbstractCodeGenerator::GENERATED_CODE_TEMPLATE_TYPE_INDIVIDUAL,
 									"component_name" => "starter model collection template",
 									"path" => "model/",
-									"file_suffix" => ".class.php",
+									"file_suffix" => "_collection.class.php",
 									"overwrite_existing_file" => false
 			),
 			"model_factory" => array(
@@ -111,6 +111,13 @@
 									"path" => "generated/factory/",
 									"file_suffix" => ".class.php",
 									"overwrite_existing_file" => true
+			),
+			"page_factory" => array(
+									"template_type" => AbstractCodeGenerator::GENERATED_CODE_TEMPLATE_TYPE_ALL,
+									"component_name" => "page factory template",
+									"path" => "generated/factory/",
+									"file_suffix" => ".class.php",
+									"overwrite_existing_file" => true
 			)
 		);
 
@@ -119,7 +126,7 @@
 		abstract protected function processTable($tableName);
 
 		public function doGenerate() {
-			\Skeet\Factory\ThemeFactory::setCurrentThemeName("generator");
+			\Skeet\ThemeFactory::setCurrentThemeName("generator");
 			$this->loadTables();
 			$this->processTables();
 			$this->generateCode();
@@ -146,7 +153,7 @@
 			 * Start an output buffer, because we don't want rendered components
 			 * outputting to the screen, that would be useless.
 			 */
-
+			
 			ob_start();
 
 			/**
@@ -160,6 +167,7 @@
 				 */
 
 				foreach($this->getGeneratedCodeTemplateArray() as $generatedCodeTemplateName => $generatedCodeTemplateSettings) {
+					
 					if($generatedCodeTemplateSettings["template_type"] == AbstractCodeGenerator::GENERATED_CODE_TEMPLATE_TYPE_INDIVIDUAL) {
 						/**
 						 * Load up the component that has the actual template code.
@@ -169,7 +177,7 @@
 						 * or switch themes.  Something to test.
 						 */
 
-						$generatedCode = \Skeet\Factory\ComponentFactory::getComponent($generatedCodeTemplateSettings["component_name"])->addSetting("table_description",$tableDescription);
+						$generatedCode = \Skeet\ComponentFactory::getComponent($generatedCodeTemplateSettings["component_name"])->addSetting("table_description",$tableDescription);
 
 						/**
 						 * You can pass arbitrary settings to the component, if you want to.
@@ -205,7 +213,7 @@
 
 			foreach($this->getGeneratedCodeTemplateArray() as $generatedCodeTemplateName => $generatedCodeTemplateSettings) {
 				if($generatedCodeTemplateSettings["template_type"] == AbstractCodeGenerator::GENERATED_CODE_TEMPLATE_TYPE_ALL) {
-					$generatedCode = \Skeet\Factory\ComponentFactory::getComponent($generatedCodeTemplateSettings["component_name"])->addSetting("table_descriptions",$this->getTableDescriptionArray());
+					$generatedCode = \Skeet\ComponentFactory::getComponent($generatedCodeTemplateSettings["component_name"])->addSetting("table_descriptions",$this->getTableDescriptionArray());
 
 					/**
 					 * You can pass arbitrary settings to the component, if you want to.

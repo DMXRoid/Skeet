@@ -18,7 +18,7 @@
 		protected function loadTables() {
 			$tableArray = array();
 			$sql = "SHOW TABLES";
-			$result = \Skeet\Factory\DatabaseFactory::getDatabase()->doQuery($sql);
+			$result = \Skeet\DatabaseFactory::getDatabase()->doQuery($sql);
 			while($row = $result->getRow()) {
 				$rowKey = array_shift(array_keys($row));
 				$tableArray[$row[$rowKey]] = $row[$rowKey];
@@ -28,7 +28,7 @@
 
 		protected function processTable($tableName) {
 			$sql = "DESCRIBE " . $tableName;
-			$result = \Skeet\Factory\DatabaseFactory::getDatabase()->doQuery($sql);
+			$result = \Skeet\DatabaseFactory::getDatabase()->doQuery($sql);
 			$manyToManyMatches = array();
 
 			/**
@@ -104,6 +104,7 @@
 						"creation_datetime",
 						"last_modified_date",
 						"is_retired",
+						$tableName . "_id",
 						$sourceTableJoinKeyName,
 						$destinationTableJoinKeyName
 					);

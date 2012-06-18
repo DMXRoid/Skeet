@@ -30,7 +30,7 @@
 		
 		public function processException() {
 			if($this->doEmail) {
-				$subject = "Exception thrown on " . DOMAIN;
+				$subject = "Exception thrown on " . \Skeet\Skeet::getConfig("hostname");
 				$to = implode(",",$this->emailList);
 				
 				$text = "An exception was thrown.  
@@ -39,14 +39,16 @@ Trace below:\n" . $this->getTraceAsString();
 				mail($to,$subject,$text);
 			}
 			
-			if(DEBUG) {
+			if(\Skeet\Skeet::getConfig("debug")) {
 				$this->renderException();
 			}
 		}
 		
 		public function renderException() {
-			$exceptionComponent = ComponentFactory::getComponent("exception",PageFactory::getCurrentPage());
-			$exceptionComponent->setException($this);
+			\Skeet\Util::jamvar($this);
+			die();
+			$exceptionComponent = \Skeet\ComponentFactory::getComponent("exception",\Skeet\PageFactory::getCurrentPage());
+			$exceptionComponent->addSetting("exception",$this);
 			$exceptionComponent->render();
 		}
 	}

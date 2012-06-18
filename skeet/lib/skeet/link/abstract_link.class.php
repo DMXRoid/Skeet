@@ -221,6 +221,10 @@
 			return $this->formID;
 		}
 
+		public function getLinkArgs() {
+			return $this->linkArgs;
+		}
+		
 		public function addLinkArg($key,$value) {
 			$this->linkArgs[$key] = $value;
 			return $this;

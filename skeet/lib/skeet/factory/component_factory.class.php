@@ -7,8 +7,7 @@
 	* @copyright Copyright (c) 2011, Matthew Schiros
 	*/
 
-	namespace Skeet\Factory;
-	use Skeet\Component;
+	namespace Skeet;
 	/**
 	 * Component factory 
 	 */
@@ -19,7 +18,7 @@
 			switch($componentName) {
 				default:
 					$componentLabel = str_replace(" ",'_',ucfirst($componentName));
-					$componentObject = new GenericComponent($componentLabel);
+					$componentObject = new \Skeet\Component\GenericComponent($componentLabel);
 			}
 			return $componentObject;
 		}

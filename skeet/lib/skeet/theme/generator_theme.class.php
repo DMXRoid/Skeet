@@ -11,6 +11,9 @@
 
 	class GeneratorTheme extends AbstractTheme {
 		protected $themeName = "Code Generator";
-		protected $themeDirectory = "generator/";
+		
+		public function __construct() {
+			$this->themeDirectory = \Skeet\Skeet::getConfig("application_path") . "lib/skeet/components/generator/";
+		}
 	}
 ?>

@@ -52,6 +52,12 @@
 		protected $tableName;
 
 
+		/**
+		 *	The name field of a table, used to order a collection if it
+		 * exists
+		 * @var string
+		 */
+
 		protected $nameField;
 
 		public function __construct($options = array(
@@ -60,14 +66,19 @@
 									"order_by"=>array(),
 									"create_emtpy"=>NULL,
 									"group_by"=>array(),
-									"custom_sql" => NULL
+									"custom_sql" => NULL,
+									"show_retired" => false
 									)) {
 			$this->preConstruct();
 			if(!isset($options["create_empty"]) || is_null($options["create_empty"])) {
-				$db = \Skeet\DatabaseFactory::getDatabase($this->getDatabaseName());
+				$db = \Skeet\DatabaseFactory::getDatabase();
 				$collection = array();
-				
+				if(!isset($options["show_retired"]) || !$options["show_retired"]) {
 					$where = " WHERE " . $this->getTableName() . ".is_retired = 0 ";
+				}
+				else {
+					$where = " WHERE 1=1 ";
+				}
 				
 				if(isset($options["where"]) && count($options["where"]) > 0) {
 					foreach($options["where"] as $field => $value) {
@@ -91,10 +102,8 @@
 				$order = "";
 				if(isset($options["order_by"]) && count($options["order_by"]) > 0) {
 					$order = " ORDER BY ";
-					foreach($options["order_by"] as $ordering) {
-						$order .= $ordering . ",";
-					}
-					$order = substr_replace($order,"",-1) . " DESC";
+					$order .= implode(",",$options["order_by"]) . " DESC";
+					
 				}
 				elseif($this->nameField) {
 					$order = " ORDER BY " . $this->nameField . " ASC ";
@@ -244,7 +253,12 @@
 			return false;
 		}
 		
-		
+		public function hasID($id) {
+			if(isset($this->cachedPrimaryKeyIDList[$id])) {
+				return true;
+			}
+			return false;
+		}
 		
 		/**
 		 * Add an object to the collection
@@ -257,18 +271,31 @@
 
 
 		public function remove($object) {
-			return true;
+			$didRemove = false;
+			foreach($this->collection as $key => $tempObject) {
+				if(!$didRemove) {
+					if($tempObject->getID() == $object->getID()) {
+						unset($this->collection[$key]);
+						$didRemove = true;
+					}
+				}
+				else {
+					$newKey = $key - 1;
+					$this->collection[$newKey] = $tempObject;
+				}
+			}
 			$this->reInit();
-			
 		}
 
 
-		public function getDropdown($name,$selected=NULL,$extras=NULL) {
+		public function getDropdown($name,$selected=NULL,$extras=NULL,$skipLabel=false) {
 			$this->reInit();
 			$output = '<select name="' . $name . '" ' . $extras . '>' . "\n";
-			$output .= '<option value="">--- Select One ---</option>' . "\n";
+			if(!$skipLabel) {
+				$output .= '<option value="">--- Select One ---</option>' . "\n";
+			}
 			while($specificObject = $this->getNext()) {
-				if($specificObject->getID() == $selected) {
+				if($specificObject->getID() == $selected || (is_array($selected) && in_array($specificObject->getID(),$selected))) {
 					$isSelected = " selected ";
 				}
 				else {
@@ -279,6 +306,15 @@
 			}
 			$output .= '</select>' . "\n";
 			return $output;
+		}
+
+		public function toArray() {
+			$returnArray = array();
+			$this->reInit();
+			while($tempObject = $this->getNext()) {
+				$returnArray[$tempObject->getID()] = $tempObject->getDisplayLabel();
+			}
+			return $returnArray;
 		}
 		
 	}

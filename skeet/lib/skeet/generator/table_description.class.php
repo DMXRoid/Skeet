@@ -15,6 +15,7 @@
 	*/
 
 	class TableDescription {
+		private $databaseName;
 		private $tableName;
 		private $fields = array();
 		private $oneToManyCollections = array();
@@ -23,12 +24,20 @@
 		private $displayNameField;
 		private $primaryKeyFieldName;
 
-		public function __construct($tableName) {
+		public function __construct($tableName,$databaseName=null) {
 			$this->setTableName($tableName);
+			if(!$databaseName) {
+				$databaseName = \Skeet\Skeet::getConfig("database.default.database_name");
+			}
+			$this->setDatabaseName($databaseName);
 		}
 
 		public function getTableName() {
 			return $this->tableName;
+		}
+		
+		public function getDatabaseName() {
+			return $this->databaseName;
 		}
 
 		public function getPrimaryKeyFieldName() {
@@ -64,7 +73,7 @@
 
 		protected function checkPrimaryKeyFieldName() {
 			$sql = "DESCRIBE " . $this->getTableName();
-			$result = \Skeet\Factory\DatabaseFactory::getDatabase();
+			$result = \Skeet\DatabaseFactory::getDatabase()->doQuery($sql);
 			while($row = $result->getRow()) {
 				if($row["Key"] == "PRI") {
 					$this->setPrimaryKeyFieldName($row["Field"]);
@@ -78,6 +87,10 @@
 
 		public function setTableName($tableName) {
 			$this->tableName = $tableName;
+		}
+		
+		public function setDatabaseName($databaseName) {
+			$this->databaseName = $databaseName;
 		}
 
 		public function addField($fieldName,$dataType,$value,$defaultValue=NULL) {
@@ -107,6 +120,7 @@
 		public function addOneToManyCollection($tableName,$foreignDescription,$foreignKeyName) {
 			$this->oneToManyCollections[$foreignDescription] = array(
 				"table_name" => $tableName,
+				"collection_type" => \Skeet\Skeet::COLLECTION_TYPE_ONE_TO_MANY,
 				"foreign_key_name" => $foreignKeyName
 			);
 		}
@@ -118,6 +132,7 @@
 				"foreign_key_name" => $foreignKeyName,
 				"foreign_join_key" => $foreignJoinKey,
 				"local_join_key" => $localJoinKey,
+				"collection_type" => \Skeet\Skeet::COLLECTION_TYPE_MANY_TO_MANY,
 				"extra_columns" => $extraColumns
 			);
 		}
@@ -135,7 +150,18 @@
 					$tempValue = 'array(';
 					$tempValueArray = array();
 					foreach($value as $key2 => $value2) {
-						$tempValueArray[] = '"' . $key2 . '" => "' . $value2 . '"';
+						if(is_array($value2)) {
+							$innerTempValue = 'array(';
+							$innerTempValueArray = array();
+							foreach($value2 as $key3 => $value3) {
+								$innerTempValueArray[] = '"' . $key3 . '" => "' . $value3 . '"';
+							}
+							$tempValueArray[] = '"' . $key2 . '" => ' . $innerTempValue . implode(",",$innerTempValueArray) . ")";
+						}
+						else {
+							$tempValueArray[] = '"' . $key2 . '" => "' . $value2 . '"';
+						}
+						
 					}
 					$value = $tempValue . implode(",",$tempValueArray) . ")";
 				}
