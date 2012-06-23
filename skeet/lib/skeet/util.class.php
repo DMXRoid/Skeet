@@ -85,6 +85,7 @@
 				break;
 
 				case "int":
+				case "int identity":
 				case "bigint":
 				$dataType = self::DATA_TYPE_INTEGER;
 				break;

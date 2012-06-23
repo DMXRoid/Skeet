@@ -103,7 +103,40 @@
 		 * @var float
 		 */
 		protected $totalQueryTime = 0;
+		
 
+		/**
+		 * The "describe table" keyword, or its
+		 * equivalent, for a given database instance.
+		 * 
+		 * @var string
+		 */
+		protected $describeKeyword = "DESCRIBE";
+		
+
+		/**
+		 * The label for a column's name 
+		 * in a describe result
+		 * @var string
+		 */
+		
+		protected $columnNameLabel = "Field";
+		
+		/**
+		 *	The label for a column's datatype
+		 * @var string
+		 */
+		
+		protected $dataTypeLabel = "Type";
+		
+		/**
+		 *	The label for a column's default value
+		 * @var string
+		 */
+		
+		protected $defaultValueLabel = "Default";
+		
+		
 		/**
 		 * It's constructor time!
 		 *
@@ -124,7 +157,50 @@
 			$this->dbPassword = $dbPassword;
 			$this->initConnection();
 		}
+		
+		/**
+		 * 
+		 * @param array $columnRow
+		 */
+		
+		abstract public function isColumnPK($columnRow);
 
+		/**
+		 * Returns (@see $describeKeyword)
+		 * @return string
+		 */
+		
+		public function getDescribeKeyword() {
+			return $this->describeKeyword;
+		}
+		
+		/**
+		 * Returns (@see $columnNameLabel)
+		 * @return string 
+		 */
+		
+		public function getColumnNameLabel() {
+			return $this->columnNameLabel;
+		}
+		
+		/**
+		 *	Returns (@see $dataTypeLabel)
+		 * @return string
+		 */
+		
+		public function getDataTypeLabel() {
+			return $this->dataTypeLabel;
+		}
+		
+		/**
+		 *	Returns {@see $defaultValueLabel}
+		 * @return string
+		 */
+		
+		public function getDefaultValueLabel() {
+			return $this->defaultValueLabel;
+		}
+		
 		/**
 		 * Change your database
 		 *
@@ -156,10 +232,12 @@
 		 * by ''s, "'s, etc..
 		 *
 		 * @param string $string
-		 * 
+		 * @return string
 		 */
 
-		public function quote($string) {}
+		public function quote($string) {
+			return addslashes($string);
+		}
 
 		/**
 		 *
@@ -179,14 +257,34 @@
 		public function getAffectedRows() {}
 
 		/**
-		 * Insert a row into the database
+		 * Insert a row into the database.  The default here,
+		 * as far as I know, should work with all SQL compliant 
+		 * databases (postgres,mysql,sqlserver,etc...), but you 
+		 * can override it as needed.
 		 *
 		 * @param string $tableName
 		 * @param array $fields
 		 * @param array $quotes
 		 * 
 		 */
-		public function doInsert($tableName,$fields,$quotes) {}
+		public function doInsert($tableName,$fields,$quotes=array()) {
+			$sql = "";
+			$sql .= "INSERT INTO " . $this->dbName . "." . $tableName . " ";
+			$fieldArray = $fields;
+			$valueArray = array();
+			
+			foreach($fields as $key => $value) {
+				$valueArray[] = ((isset($quotes[$key]) && $quotes[$key])) ? $this->quote($value) : $value;
+			}
+			$valueList = "(" . explode(",",$valueList) . ")";
+			$fieldList = "(" . explode(",",$fieldList) . ")";
+			$sql .= $fieldList . " VALUES " . $valueList;
+			
+			$this->doQuery($sql);
+			$this->insertID = $this->getInsertID();
+			return $this->getInsertID();	
+		}
+		
 		/**
 		 * Execute a REPLACE statement
 		 *
@@ -199,7 +297,8 @@
 		public function doReplace($tableName,$fields,$quotes) {}
 
 		/**
-		 * Run an update on a row
+		 * Run an update on a row.  Should work with all SQL
+		 * compliant databases (@see doInsert())
 		 *
 		 * @param string $tableName
 		 * @param array $fields
@@ -208,7 +307,14 @@
 		 * 
 		 */
 
-		public function doUpdate($tableName,$fields,$quotes,$wheres) {}
+		public function doUpdate($tableName, $fields, $quotes=NULL, $where, $whereQuotes = NULL, $dbName = '', $escape = true) {
+			$sql = "";
+			$sql .= "UPDATE " . $this->dbName . "." . $tableName . " SET ";
+			$sql .= $this->generateSet($fields, $quotes);
+			$sql .= $this->generateWhere($where, $whereQuotes);
+			$this->doQuery($sql);
+			return true;
+		}
 
 		/**
 		 * do an insert or update depending on whether the conditions in $wheres is met
@@ -220,8 +326,30 @@
 		 * 
 		 */
 
-		public function doInsertOrUpdate($tableName,$fields,$quotes,$wheres) {}
+		public function doInsertOrUpdate($tableName, $fields, $quotes=NULL, $where) {
+			$sql = 'SELECT * FROM ' . $this->dbName . '.' . $tableName . ' ' . $this->generateWhere($where);
+			$result = $this->doQuery($sql);
+			if($result->getNumRows() > 0) {
+				$this->doUpdate($tableName, $fields, $quotes, $where);
+				$type = self::UPDATE;
+			}
+			else {
+				$this->doInsert($tableName,$fields,$quotes);
+				$type = self::INSERT;
+			}
 
+			return $type;
+		}
+
+
+		
+		
+		public function doInsertOnDupUpdate($tableName, $fields, $quotes=NULL) {
+				$sets = $this->generateSet($fields, $quotes);
+				$sql = 'INSERT INTO ' . $this->dbName . '.' . $tableName . ' SET ' . $sets . ' ON DUPLICATE KEY UPDATE ' . $sets;
+				return $this->doQuery($sql);
+			}
+		
 		/**
 		 * generate a set of criteria from $fields and $quotes
 		 *
@@ -270,14 +398,53 @@
 		/**
 		 * get the primary key ID of the most recent insert
 		 *
-		 * @return integer
+		 * @return integer|null
 		 */
 
 		public function getInsertID() {}
+		
+		/**
+		 *	Generate a SET statement from values
+		 * for use in an UPDATE
+		 * @param array $fields
+		 * @param array $quotes
+		 * @return string 
+		 */
+		
+		public function generateSet($fields, $quotes=NULL) {
+			$setArray = array();
+			foreach($fields as $key => $value) {
+				$value = ((isset($quotes[$key]) && $quotes[$key])) ? $this->quote($value) : $value;
+				$setArray[] = $key . ' = ' . $value;
+			}
+			return implode(", ",$setArray) . " ";
+		}
+			
+		/**
+		 * Generate a WHERE statement 
+		 * from values for use in an UPDATE
+		 * @param array $where
+		 * @param array $quotes
+		 * @return string 
+		 */
+		
+		public function generateWhere($where=array(), $quotes=NULL) {
+			$whereArray = array();
+			foreach($where as $key => $value) {
+				$value = ((isset($quotes[$key]) && $quotes[$key])) ? $this->quote($value) : $value;
+				$whereArray[] = $key . $this->getTestForMatch($value) . $value;
+			}
+			return "WHERE " . implode(" AND ",$whereArray);
+		}
+		
+		
+		/**
+		 *
+		 * @param type $errorType 
+		 */
 
-
-		private function generateError($errorType) {
-			throw new DatabaseException($this,$errorType);
+		protected function generateError($errorType) {
+			throw new \Skeet\Exception\DatabaseException($this,$errorType);
 		}
 
 		public function testError($errorType) {

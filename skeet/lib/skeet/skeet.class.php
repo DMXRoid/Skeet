@@ -65,6 +65,13 @@
 			return false;
 		}
 		
+		public static function getDatabaseConfig($database) {
+			if(isset(self::$config["database"][$database])) {
+				return self::$config["database"][$database];
+			}
+		}
+		
+		
 		/**
 		 * \Skeet\Generated
 		 * \Skeet

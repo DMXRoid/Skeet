@@ -14,24 +14,8 @@
 	 */
 
 	class MysqlDatabase extends \Skeet\Database\AbstractDatabase {
-			// Error Types
-			const ERROR_CONNECT = 1;
-			const ERROR_DB_SELECT = 2;
-			const ERROR_INSERT = 3;
-			const ERROR_UPDATE = 4;
-			const ERROR_QUERY = 5;
-	
-			// Query Types
-			const UPDATE = 1;
-			const INSERT = 2;
-	
-			protected $dbHost;
-			protected $dbName;
-			protected $dbUser;
-			protected $dbPassword;
 			protected $result;
 			protected $mysqlResult;
-			protected $query;
 			protected $currentDB;
 			protected $insertID;
 			protected $connection;
@@ -42,13 +26,7 @@
 			protected $queryLog = array();
 			protected $totalQueryTime = 0;
 	
-			public function __construct($dbName,$dbHost,$dbUser,$dbPassword) {
-				$this->dbName = $dbName;
-				$this->dbHost = $dbHost;
-				$this->dbUser = $dbUser;
-				$this->dbPassword = $dbPassword;
-				$this->initConnection();
-			}
+		
 	
 			public function selectDB($dbName) {
 				mysql_select_db($dbName,$this->connection) or die($this->generateError(self::ERROR_DB_SELECT));
@@ -178,33 +156,6 @@
 				$this->initConnection();
 			}
 	
-			public function doInsert($tableName, $fields, $quotes=NULL, $dbName = '', $escape = true) {
-				if ($dbName) {
-					$this->selectDB($dbName);
-				}
-	
-				$sql = "";
-				$sql .= "INSERT INTO " . $this->dbName . "." . $tableName . " ";
-				$fieldList = "(";
-				$valueList = "(";
-				foreach($fields as $key => $value) {
-					$fieldList .= $key . ",";
-					if (is_null($quotes)) {
-						$value = $this->quote($value);	
-					} else if (is_array($quotes) && isset($quotes[$key]) && $quotes[$key]) {
-						$value = $this->quoteOld($value);	
-					}
-					$valueList .= $value . ',';
-				}
-				$valueList = substr_replace($valueList,'',-1) . ") ";
-				$fieldList = substr_replace($fieldList,'',-1) . ") ";
-				$sql .= $fieldList . " VALUES " . $valueList;
-				
-				$this->doQuery($sql);
-				$this->insertID = mysql_insert_id($this->connection);
-				return $this->getInsertID();
-			}
-	
 			public function doInsertMultiple($tableName,$fields,$data,$quotes=NULL,$dbName='',$escape = true) {
 				$fieldMapArray = array();
 				$quoteMapArray = array();
@@ -307,20 +258,7 @@
 	
 		
 		
-			public function doUpdate($tableName, $fields, $quotes=NULL, $where, $whereQuotes = NULL, $dbName = '', $escape = true) {
-				// TODO: Finish making this backward compatible to Persistent. I'm only adding the $dbName fix. (see bug 4693)
-				if ($dbName != '') {
-					$this->selectDb($dbName);
-				}
-	
-				$sql = "";
-				$sql .= "UPDATE " . $this->dbName . "." . $tableName . " SET ";
-				$sql .= $this->generateSet($fields, $quotes);
-				$sql .= $this->generateWhere($where, $whereQuotes);
-	
-				$this->doQuery($sql);
-				return true;
-			}
+			
 	
 			public function doInsertOrCancel($tableName, $fields, $quotes=NULL, $where) {
 				$sql = 'SELECT * FROM ' . $tableName . ' ' . $this->generateWhere($where);
@@ -331,59 +269,6 @@
 				else {
 					return $this->doInsert($tableName,$fields,$quotes);
 				}
-			}
-	
-			public function doInsertOrUpdate($tableName, $fields, $quotes=NULL, $where) {
-				$sql = 'SELECT * FROM ' . $this->dbName . '.' . $tableName . ' ' . $this->generateWhere($where);
-				$result = $this->doQuery($sql);
-				if($result->getNumRows() > 0) {
-					$this->doUpdate($tableName, $fields, $quotes, $where);
-					$type = self::UPDATE;
-				}
-				else {
-					$this->doInsert($tableName,$fields,$quotes);
-					$type = self::INSERT;
-				}
-	
-				return $type;
-			}
-	
-			public function doInsertOnDupUpdate($tableName, $fields, $quotes=NULL) {
-				$sets = $this->generateSet($fields, $quotes);
-				$sql = 'INSERT INTO ' . $this->dbName . '.' . $tableName . ' SET ' . $sets . ' ON DUPLICATE KEY UPDATE ' . $sets;
-				return $this->doQuery($sql);
-			}
-	
-			public function generateSet($fields, $quotes=NULL) {
-				$setList = '';
-				foreach($fields as $key => $value) {
-					if (is_null($quotes)) {
-						$value = $this->quote($value);	
-					} else if (is_array($quotes) && isset($quotes[$key]) && $quotes[$key]) {
-						$value = $this->quoteOld($value);	
-					}
-					$setList .= $key . ' = ' . $value . ',';
-				}
-				return substr_replace($setList,'',-1) . ' ';
-			}
-			
-			public function generateWhere($where=array(), $quotes=NULL) {
-				if(empty($where)) {
-					return '';
-				}
-				else {
-					$whereClause = 'WHERE ';
-					foreach($where as $key => $value) {
-						if (is_null($quotes)) {
-							$value = $this->quote($value);
-						} else if (is_array($quotes) && isset($quotes[$key]) && $quotes[$key]) {
-							$value = $this->quoteOld($value);
-						}
-						$whereClause .= $key . $this->getTestForMatch($value) . $value . ' AND ';
-					}
-					$whereClause = substr_replace($whereClause, '', -5);
-				}
-				return $whereClause;
 			}
 			
 			public function getTestForMatch($value) {
@@ -469,5 +354,10 @@
 			public function numRowsAffected() {
 				return $this->getAffectedRows();
 			}
+			
+			public function isColumnPK($columnRow) {
+				return ($columnRow["Key"] == "PRI") ? true : false;
+			}
+			
 		}
 ?>
