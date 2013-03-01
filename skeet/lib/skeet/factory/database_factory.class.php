@@ -20,6 +20,10 @@
 						$db = new \Skeet\Database\Mysql\MysqlDatabase($configArray["database_name"],$configArray["database_host"],$configArray["database_username"],$configArray["database_password"]);
 						break;
 					
+					case "mysqli":
+						$db = new \Skeet\Database\Mysql\Mysqli\MysqliDatabase($configArray["database_name"],$configArray["database_host"],$configArray["database_username"],$configArray["database_password"]);
+						break;
+					
 					case "sqlsrv":
 						$db = new \Skeet\Database\Sqlsrv\SqlsrvDatabase($configArray["database_name"],$configArray["database_host"],$configArray["database_username"],$configArray["database_password"]);
 

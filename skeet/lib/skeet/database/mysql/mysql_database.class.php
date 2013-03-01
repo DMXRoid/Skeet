@@ -10,18 +10,15 @@
 	namespace Skeet\Database\Mysql;
 
 	/**
-	 * MySQL Database Object
+	 * MySQL Database Object, using the mysql driver
 	 */
 
 	class MysqlDatabase extends \Skeet\Database\AbstractDatabase {
 			protected $result;
-			protected $mysqlResult;
 			protected $currentDB;
 			protected $insertID;
 			protected $connection;
 			protected $dbLink;
-			
-			public $currentSqlResult;
 			
 			protected $queryLog = array();
 			protected $totalQueryTime = 0;
@@ -130,9 +127,6 @@
 				$resultObject = new MysqlDatabaseResult();
 				$resultObject->setResult($result);
 				
-	
-				$this->mysqlResult = $result;
-				$this->currentSqlResult = $result;
 				return $resultObject;
 			}
 	
@@ -271,21 +265,7 @@
 				}
 			}
 			
-			public function getTestForMatch($value) {
-				if ($value == 'NULL') {
-					return ' IS ';
-				} else {
-					return ' = ';
-				}
-			}
-	
-			public function getTestForNonMatch($value) {
-				if ($value == 'NULL') {
-					return ' IS NOT ';
-				} else {
-					return ' != ';
-				}
-			}
+			
 	
 			public function doSelect($tableName,$fields=array(),$where=array()) {
 				if (empty($fields)) {
@@ -314,28 +294,21 @@
 				return $this->insertID;
 			}
 	
-			public function getRow() {
-				return mysql_fetch_assoc($this->mysqlResult);
-			}
+			
 			
 			public function getMySQLError() {
 				return mysql_error($this->connection);
 			}
 	
-			public function getNumRows() {
-				return mysql_num_rows($this->mysqlResult);
-			}
-	
-			public function numRows() {
-				return $this->getNumRows();
-			}
-			private function generateError($errorType) {
+			
+			protected function generateError($errorType) {
 				throw new \Skeet\Exception\DatabaseException($this,$errorType);
 			}
 	
 			public function testError($errorType) {
 				$this->generateError($errorType);
 			}
+			
 			public function getQuery() {
 				return $this->query;
 			}

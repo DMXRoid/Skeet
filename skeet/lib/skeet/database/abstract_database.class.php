@@ -350,26 +350,8 @@
 				return $this->doQuery($sql);
 			}
 		
-		/**
-		 * generate a set of criteria from $fields and $quotes
-		 *
-		 * @param array $fields
-		 * @param array $quotes
-		 * 
-		 */
 
-		public function generateSet($fields,$quotes) {}
-
-		/**
-		 * Generate a where statement from the criteria and quote it appropriately
-		 *
-		 * @param array $where
-		 * @param array $quotes
-		 * 
-		 */
-
-		public function generateWhere($where=array(),$quotes=array()) {}
-
+		
 		/**
 		 * gracefully handle null checks
 		 *
@@ -460,6 +442,14 @@
 
 		public function getDBName() {
 			return $this->dbName;
+		}
+		
+		public function getDBUser() {
+			return $this->dbUser;
+		}
+		
+		public function getDBPassword() {
+			return $this->dbPassword;
 		}
 
 		public function getConnection() {

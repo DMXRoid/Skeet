@@ -9,7 +9,7 @@
 
 	namespace Skeet\Database\Mysql;
 	/**
-	 * MySQL Database Result Object
+	 * MySQL Database Result Object, using the mysql driver
 	 */
 
 	class MysqlDatabaseResult extends \Skeet\Database\AbstractDatabaseResult {

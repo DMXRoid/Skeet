@@ -38,6 +38,10 @@
 			$this->result = $result;
 		}
 
+		public function getResult() {
+			return $this->result;
+		}
+		
 		/**
 		 * Dump all the rows in the result into an array
 		 *
@@ -52,6 +56,8 @@
 			}
 			return $returnArray;
 		}
+		
+		
 		/**
 		 * Return a row. Must be defined in child classes
 		 *
