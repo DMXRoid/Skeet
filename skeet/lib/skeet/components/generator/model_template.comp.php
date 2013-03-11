@@ -3,7 +3,7 @@
 	
 ?><?= '<?php' ?>
 
-	namespace <?= \Skeet\Skeet::getConfig("application_name") ?>\Generated\Model;
+	namespace <?= \Skeet\Skeet::getConfig("application_namespace") ?>\Generated\Model;
 
 	class <?= $tableDescription->getClassName() ?> extends \Skeet\Model\AbstractModel {
 		protected $databaseName = '<?= $tableDescription->getDatabaseName() ?>';

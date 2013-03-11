@@ -5,6 +5,7 @@
 [default]
 application_path = "/home/schiros/html/gitskeet/skeet/"
 application_name = "Application"
+;namespace = "App"
 hostname = "example.com"
 database.default.database_type = "mysql"
 database.default.database_username = "dbuser";

@@ -24,12 +24,17 @@
 
 		public static function setCurrentThemeName($currentThemeName) {
 			self::$currentThemeName = $currentThemeName;
+			self::$currentTheme = null;
 		}
 
 		public static function getTheme($themeName) {
 			switch($themeName) {
 				case "generator":
 					$theme = new \Skeet\Theme\GeneratorTheme();
+					break;
+				
+				case "skel":
+					$theme = new \Skeet\Theme\SkelTheme();
 					break;
 				
 				default:

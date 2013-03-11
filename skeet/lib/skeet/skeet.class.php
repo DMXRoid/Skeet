@@ -49,6 +49,7 @@
 			self::setConfig("application_lib_path",self::getConfig("lib_path") . strtolower(self::getConfig("application_name")) . "/");
 			self::setConfig("application_model_path",self::getConfig("application_lib_path") . "model/");
 			self::setConfig("application_page_path",self::getConfig("application_lib_path") . "pages/");
+			self::setConfig("application_namespace",(self::getConfig("namespace")) ?: str_replace(" ","",ucwords(self::getConfig("application_name"))));
 			self::setConfig("skeet_lib_path",self::getConfig("lib_path") . "skeet/");
 			spl_autoload_register("\Skeet\Skeet::autoload");
 		}

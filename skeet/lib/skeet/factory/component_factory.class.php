@@ -16,6 +16,24 @@
 		
 		public static function getComponent($componentName) {
 			switch($componentName) {
+				
+					case "mainbody":
+					switch($page->getPageName()) {
+						
+						default:
+							if($page instanceof \Skeet\Page\AbstractCrudManagePage) {
+								$componentLabel = "MainbodyCrudManage";
+							}
+							elseif($page instanceof \Skeet\Page\AbstractCrudCollectionPage) {
+								$componentLabel = "MainbodyCrudList";
+							}
+							else {
+								$componentLabel = "Mainbody" . ucwords($page->getPageName());	
+							}
+							$componentObject = new \Skeet\Component\GenericComponent($componentLabel);
+					}
+					break;
+				
 				default:
 					$componentLabel = str_replace(" ",'_',ucfirst($componentName));
 					$componentObject = new \Skeet\Component\GenericComponent($componentLabel);
