@@ -9,48 +9,14 @@
 		use that method.
 		
 	*/	
+	$location = (isset($_SERVER["SERVER_NAME"])) ? $_SERVER["SERVER_NAME"] : gethostname();
 
 	switch(@$_SERVER["SERVER_NAME"]) {
 		/*
 			First, we check for the server name
 		*/
 		default:
-			/*
-				Now, if you want to, you can do further matching inside this block.  For example:
-				
-				if(stristr($_SERVER["DOCUMENT_ROOT"],'developer_name')) {
-					// do some stuff
-				}
-				
-				would be useful if you have multiple developers working off the same domain, but 
-				on different servers (local dev servers that both resolve to "testing.foo.com" within
-				their respective networks
-			*/
-			
-			
-			/* 	
-				MySQL database constants
-				
-				If you're going to be using the MySQL Database object provided, these NEED to be set
-				accordingly.
-				
-			*/
-			
-			define("DB_HOST","127.0.0.1");
-			define("DB_NAME","test");
-			define("DB_USERNAME","");
-			define("DB_PASSWORD","");
-			define("APPLICATION_ROOT","");  // with trailing slash!				
-			
-			/*
-				Is this a development environment?  It's often useful to be able to perform different behaviors 
-				for things like error logging.  Optional, though.
-			*/
-			
-			define("IS_DEV",true);
-			define("DEBUG",true);
-			define("DOMAIN",@$_SERVER["SERVER_NAME"]);
-			
+			define("CONFIG_NAME","default");
 			break;
 	}
 	
