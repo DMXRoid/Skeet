@@ -18,7 +18,7 @@
 		const GENERATE_TYPE_MODEL = 2;
 		
 		public static function doGenerate($generateType) {
-			switch($doGenerate) {
+			switch($generateType) {
 				case self::GENERATE_TYPE_NEW_APPLICATION:
 					self::setupNewApplication();
 					break;
@@ -47,6 +47,7 @@
 				"component factory" => array("file_name" => "component_factory.class.php"),
 				"theme factory" => array("file_name" => "theme_factory.class.php"),
 				"link factory" => array("file_name" => "link_factory.class.php"),
+				"database factory" => array("file_name" => "database_factory.class.php"),
 				"model factory" => array("file_name" => "model_factory.class.php"),
 				"model collection factory" => array("file_name" => "model_collection_factory.class.php")
 			);
@@ -69,6 +70,8 @@
 					}
 				}
 			}
+			
+			touch(\Skeet\Skeet::getConfig("application_lib_path") . "load.php");
 		}
 	}
 ?>
