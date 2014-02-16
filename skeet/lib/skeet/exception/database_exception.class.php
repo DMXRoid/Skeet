@@ -19,33 +19,33 @@
 		
 		public function __construct($databaseObject,$errorType) {
 			switch($errorType) {
-				case \Skeet\Database\Mysql\MySqlDatabase::ERROR_CONNECT:
+				case \Skeet\Database\AbstractDatabase::ERROR_CONNECT:
 					$message = "There was an error connecting to the host " . $databaseObject->getDBHost();
 					break;
 				
-				case \Skeet\Database\Mysql\MySqlDatabase::ERROR_DB_SELECT:
+				case \Skeet\Database\AbstractDatabase::ERROR_DB_SELECT:
 					$message = "There was an error connecting to the database " . $databaseObject->getDBName();
 					break;
 				
-				case \Skeet\Database\Mysql\MysqlDatabase::ERROR_INSERT:
+				case \Skeet\Database\AbstractDatabase::ERROR_INSERT:
 					$message = "There was an error on insert.  
 The query was: " . $databaseObject->getQuery();
 					break;
 					
-				case \Skeet\Database\Mysql\MysqlDatabase::ERROR_UPDATE:
+				case \Skeet\Database\AbstractDatabase::ERROR_UPDATE:
 					$message = "There was an error on update.  
 The query was: " . $databaseObject->getQuery();
 					break;
 					
-				case \Skeet\Database\Mysql\MysqlDatabase::ERROR_QUERY:
+				case \Skeet\Database\AbstractDatabase::ERROR_QUERY:
 					$message = "There was a query error.  
 The query was: " . $databaseObject->getQuery();
 					break;
 			}
 			
 			$message .= "
-			
-The error is: " . $databaseObject->getMySQLError();
+			Query is: " . $databaseObject->getQuery() . " 
+The error is: " . $databaseObject->getError();
 			parent::__construct($message,$errorType);
 		}
 	}

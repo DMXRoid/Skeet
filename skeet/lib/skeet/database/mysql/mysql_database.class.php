@@ -299,6 +299,10 @@
 			public function getMySQLError() {
 				return mysql_error($this->connection);
 			}
+			
+			public function getError() {
+				return $this->getMySQLError();
+			}
 	
 			
 			protected function generateError($errorType) {

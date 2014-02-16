@@ -13,8 +13,8 @@
 	 * ThemeFactory
 	 */
 	class ThemeFactory {
-		private static $currentTheme;
-		private static $currentThemeName;
+		protected static $currentTheme;
+		protected static $currentThemeName;
 		public static function getCurrentTheme() {
 			if(!is_object(self::$currentTheme)) {
 				self::$currentTheme = self::getTheme(self::$currentThemeName);

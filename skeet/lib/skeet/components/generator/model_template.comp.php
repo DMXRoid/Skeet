@@ -5,7 +5,7 @@
 
 	namespace <?= \Skeet\Skeet::getConfig("application_namespace") ?>\Generated\Model;
 
-	class <?= $tableDescription->getClassName() ?> extends \Skeet\Model\AbstractModel {
+	class <?= $tableDescription->getClassName() ?> extends \<?= \Skeet\Skeet::getConfig("application_namespace") ?>\Model\AbstractModel {
 		protected $databaseName = '<?= $tableDescription->getDatabaseName() ?>';
 		protected $tableName = '<?= $tableDescription->getTableName() ?>';
 		protected $primaryKey = array(
@@ -21,9 +21,8 @@
 <?
 	if($tableDescription->getDisplayNameField()) {
 ?>
-		public function getDisplayLabel() {
-			return $this->get('<?= $tableDescription->getDisplayNameField() ?>');
-		}
+		protected $displayNameField = '<?= $tableDescription->getDisplayNameField() ?>';
+		
 <?
 	}
 ?>

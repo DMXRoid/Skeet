@@ -14,7 +14,6 @@
 	*/
 	
 	class SqlsrvCodeGenerator extends AbstractCodeGenerator {
-		
 		/**
 		 * Grab the list of tables in the current database.
 		 */
@@ -24,25 +23,12 @@
 			$sql = "exec sp_tables @table_type = \"'TABLE'\"";
 			$result = \Skeet\DatabaseFactory::getDatabase()->doQuery($sql);
 			while($row = $result->getRow()) {
-				$tableArray[$row["TABLE_NAME"]] = $row["TABLE_NAME"];
+				if(!preg_match("/[^a-z_2]/",$row["TABLE_NAME"]) || in_array($row["TABLE_NAME"],$this->additionalTablesToLoad)) { 
+					$tableArray[$row["TABLE_NAME"]] = $row["TABLE_NAME"];
+				}
 			}
 			$this->tableArray = $tableArray;
 		}
 		
-		/**
-		 *	Process a table into a TableDescription
-		 * object, draw the correlations between it 
-		 * and other tables, etc.  
-		 * 
-		 * @param string $tableName 
-		 */
-		protected function processTable($tableName) {
-			/**
-			 * Get the table description
-			 */
-			$sql = "exec sp_columns " . $tableName;
-			$result = \Skeet\DatabaseFactory::getDatabase()->doQuery($sql);
-			
-			$manyToManyMatches = array();
-		}
+		
 	}

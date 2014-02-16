@@ -49,9 +49,7 @@
 				$this->checkInput();
 			}
 
-			if(\Skeet\Util::getRequestValue("do_logout")) {
-				\Skeet\UserFactory::doLogout();
-			}
+			
 		}
 		
 		protected function checkLogin() {
@@ -180,16 +178,16 @@
 
 		public function getJavaScript() {
 			$output = "";
-			foreach(\Skeet\ThemeFactory::getCurrentTheme()->getJavascriptToLoad() as $jsFile) {
-				$output .= '<script language="javascript" src="' .  \Skeet\ThemeFactory::getCurrentTheme()->getJavascriptURL() .  $jsFile . '" type="text/javascript"></script>' . "\n";
+			foreach(\Canvasser\ThemeFactory::getCurrentTheme()->getJavascriptToLoad() as $jsFile) {
+				$output .= '<script language="javascript" src="' .  \Canvasser\ThemeFactory::getCurrentTheme()->getJavascriptURL() .  $jsFile . '" type="text/javascript"></script>' . "\n";
 			}
 			return $output;
 		}
 
 		public function getCSS() {
 			$output = "";
-			foreach(\Skeet\ThemeFactory::getCurrentTheme()->getCSSToLoad() as $css) {
-				$output .= '<link rel="stylesheet" type="text/css" href="' . \Skeet\ThemeFactory::getCurrentTheme()->getCSSURL()  . $css . '">' . "\n";
+			foreach(\Canvasser\ThemeFactory::getCurrentTheme()->getCSSToLoad() as $css) {
+				$output .= '<link rel="stylesheet" type="text/css" href="' . \Canvasser\ThemeFactory::getCurrentTheme()->getCSSURL()  . $css . '">' . "\n";
 			}
 			return $output;
 		}

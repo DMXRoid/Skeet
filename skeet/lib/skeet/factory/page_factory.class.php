@@ -15,6 +15,7 @@
 			}
 			
 			
+			
 			self::$currentPage = $pageObject;
 			return $pageObject;
 

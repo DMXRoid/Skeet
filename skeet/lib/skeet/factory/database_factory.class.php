@@ -26,7 +26,11 @@
 					
 					case "sqlsrv":
 						$db = new \Skeet\Database\Sqlsrv\SqlsrvDatabase($configArray["database_name"],$configArray["database_host"],$configArray["database_username"],$configArray["database_password"]);
-
+						break;
+					
+					case "mssql":
+						$db = new \Skeet\Database\Mssql\MssqlDatabase($configArray["database_name"],$configArray["database_host"],$configArray["database_username"],$configArray["database_password"]);
+						break;
 				}
 				self::$dbList[$dbConfigName] = $db;
 			}

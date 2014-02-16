@@ -40,10 +40,22 @@
 			$configPath = __DIR__ . "/../../etc/" . $configFile;
 			$configArray = parse_ini_file($configPath,true,INI_SCANNER_RAW);
 			$config = $configArray["default"];
+			
 			if($configName != "default" && isset($configArray[$configName])) {
 				$config = array_merge($config,$configArray[$configName]);
 			}
 			
+			$config["database"] = array();
+			
+			foreach($config["database_configs"] as $dbConfigName) {
+				$config["database"][$dbConfigName] = array();
+				foreach($config as $key => $value) {
+					if(substr($key,0,strlen("database." . $dbConfigName)) == "database." . $dbConfigName) {
+						$config["database"][$dbConfigName][str_replace("database." . $dbConfigName . ".","",$key)] = $value;
+						unset($config[$key]);
+					}
+				}
+			}
 			self::$config = $config;
 			self::setConfig("lib_path",self::getConfig("application_path") . 'lib/');
 			self::setConfig("application_lib_path",self::getConfig("lib_path") . strtolower(self::getConfig("application_name")) . "/");
@@ -52,6 +64,10 @@
 			self::setConfig("application_namespace",(self::getConfig("namespace")) ?: str_replace(" ","",ucwords(self::getConfig("application_name"))));
 			self::setConfig("skeet_lib_path",self::getConfig("lib_path") . "skeet/");
 			spl_autoload_register("\Skeet\Skeet::autoload");
+			
+			if(file_exists(self::getConfig("application_lib_path") . "load.php")) {
+				require_once(self::getConfig("application_lib_path"). "load.php");
+			}
 		}
 
 		public static function setConfig($key,$value) {
@@ -83,10 +99,17 @@
 			$nameSpaceArray = explode('\\',$classAndNameSpace);
 			$className = array_pop($nameSpaceArray);
 			$includePath = self::getConfig("application_path") . "lib/";
+			if(count($nameSpaceArray) == 1 && !strstr($className,"Factory") && $nameSpaceArray[0] != "Skeet") {
+				array_push($nameSpaceArray,"classes");
+			}
 			foreach($nameSpaceArray as $namespace) {
 				$includePath .= strtolower($namespace) . '/';
 			}
-			$fileName = substr_replace(preg_replace("/([A-Z])/e",'strtolower("_\\1")',$className),'',0,1);
+			$fileName = substr_replace(preg_replace_callback("/([A-Z])/",
+							function ($matches) {
+								return strtolower("_" . $matches[0]);
+							},
+					  $className),'',0,1);
 			$fileNameArray = explode("_",$fileName);
 			if(!stristr($includePath,"generated")) {
 				switch($fileNameArray[count($fileNameArray)-1]) {
@@ -96,6 +119,7 @@
 				}
 			}
 			$fileName .= ".class.php";
+			
 			if(file_exists($includePath . $fileName)) {
 				require_once($includePath . $fileName);
 			}

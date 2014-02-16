@@ -14,17 +14,20 @@
 
 	class ComponentFactory {
 		
-		public static function getComponent($componentName) {
+		public static function getComponent($componentName,$page=null) {
+			if(is_null($page)) {
+				$page = \Skeet\PageFactory::getCurrentPage();
+			}
 			switch($componentName) {
 				
 					case "mainbody":
 					switch($page->getPageName()) {
 						
 						default:
-							if($page instanceof \Skeet\Page\AbstractCrudManagePage) {
+							if($page instanceof \Canvasser\Page\AbstractCrudManagePage) {
 								$componentLabel = "MainbodyCrudManage";
 							}
-							elseif($page instanceof \Skeet\Page\AbstractCrudCollectionPage) {
+							elseif($page instanceof \Canvasser\Page\AbstractCrudCollectionPage) {
 								$componentLabel = "MainbodyCrudList";
 							}
 							else {

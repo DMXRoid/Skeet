@@ -15,19 +15,20 @@
 	*/
 
 	class TableDescription {
-		private $databaseName;
-		private $tableName;
-		private $fields = array();
-		private $oneToManyCollections = array();
-		private $manyToManyCollections = array();
-		private $targetObjects = array();
-		private $displayNameField;
-		private $primaryKeyFieldName;
+		protected $databaseName;
+		protected $tableName;
+		protected $fields = array();
+		protected $oneToManyCollections = array();
+		protected $manyToManyCollections = array();
+		protected $targetObjects = array();
+		protected $targetObjectFields = array();
+		protected $displayNameField;
+		protected $primaryKeyFieldName;
 
 		public function __construct($tableName,$databaseName=null) {
 			$this->setTableName($tableName);
 			if(!$databaseName) {
-				$databaseName = \Skeet\Skeet::getConfig("database.default.database_name");
+				$databaseName = \Skeet\DatabaseFactory::getDatabase()->getDBName();
 			}
 			$this->setDatabaseName($databaseName);
 		}
@@ -35,7 +36,7 @@
 		public function getTableName() {
 			return $this->tableName;
 		}
-		
+
 		public function getDatabaseName() {
 			return $this->databaseName;
 		}
@@ -72,14 +73,17 @@
 		}
 
 		protected function checkPrimaryKeyFieldName() {
-			$sql = "DESCRIBE " . $this->getTableName();
-			$result = \Skeet\DatabaseFactory::getDatabase()->doQuery($sql);
+			$db = \Skeet\DatabaseFactory::getDatabase();
+			$sql = $db->getDescribeKeyword() . " " . $db->getEscapeOpenCharacter() . $this->getTableName() . $db->getEscapeCloseCharacter() .  "";
+			$result = $db->doQuery($sql);
 			while($row = $result->getRow()) {
-				if($row["Key"] == "PRI") {
-					$this->setPrimaryKeyFieldName($row["Field"]);
+				if(\Skeet\DatabaseFactory::getDatabase()->isColumnPK($row)) {
+					$this->setPrimaryKeyFieldName($row[\Skeet\DatabaseFactory::getDatabase()->getColumnNameLabel()]);
 				}
 			}
 		}
+		
+		
 
 		public function getClassName() {
 			return str_replace(" ","",ucwords(str_replace("_"," ",$this->getTableName())));
@@ -88,7 +92,7 @@
 		public function setTableName($tableName) {
 			$this->tableName = $tableName;
 		}
-		
+
 		public function setDatabaseName($databaseName) {
 			$this->databaseName = $databaseName;
 		}
@@ -115,13 +119,15 @@
 				"table_name" => $tableName,
 				"foreign_key_name" => $foreignKeyName
 			);
+			$this->targetObjectFields[$foreignKeyName] = $targetDescription;
 		}
 
 		public function addOneToManyCollection($tableName,$foreignDescription,$foreignKeyName) {
 			$this->oneToManyCollections[$foreignDescription] = array(
 				"table_name" => $tableName,
 				"collection_type" => \Skeet\Skeet::COLLECTION_TYPE_ONE_TO_MANY,
-				"foreign_key_name" => $foreignKeyName
+				"foreign_key_name" => $foreignKeyName,
+				"where" => array()
 			);
 		}
 
@@ -132,14 +138,24 @@
 				"foreign_key_name" => $foreignKeyName,
 				"foreign_join_key" => $foreignJoinKey,
 				"local_join_key" => $localJoinKey,
+				"class_name" => str_replace(" ","",ucwords(str_replace("_"," ",$tableName))),
 				"collection_type" => \Skeet\Skeet::COLLECTION_TYPE_MANY_TO_MANY,
-				"extra_columns" => $extraColumns
+				"extra_fields" => $extraColumns,
+				"where" => array()
 			);
+		}
+
+		public function getTargetObjectByField($fieldName) {
+			return (isset($this->targetObjectFields[$fieldName])) ? $this->targetObjectFields[$fieldName] : null;
+		}
+
+		public function hasTargetObjectField($fieldName) {
+			return isset($this->targetObjectFields[$fieldName]);
 		}
 
 		public function arrayToGeneratorText($arrayToConvert) {
 			$tempKeyArray = array();
-			
+
 			$string = ' array(
 						';
 			foreach($arrayToConvert as $key => $value) {
@@ -161,7 +177,7 @@
 						else {
 							$tempValueArray[] = '"' . $key2 . '" => "' . $value2 . '"';
 						}
-						
+
 					}
 					$value = $tempValue . implode(",",$tempValueArray) . ")";
 				}
@@ -170,9 +186,9 @@
 				}
 				$keyString = ' "' . $key . '" => ' . $value;
 				$tempKeyArray[] = $keyString;
-			
+
 			}
-			
+
 			$string .= implode(",\n\t\t\t\t\t\t",$tempKeyArray) . "\n\t\t\t\t\t)";
 			return $string;
 		}

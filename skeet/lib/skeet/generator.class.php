@@ -39,6 +39,10 @@
 			$subDirectoryArray = array();
 			$subDirectoryArray["classes"] = array();
 			$subDirectoryArray["components"] = array();
+			$subDirectoryArray["model"] = array(
+				"abstract model"  => array("file_name" => "abstract_model.class.php"),
+				"abstract model collection"  => array("file_name" => "abstract_model_collection.class.php")
+			);
 			$subDirectoryArray["page"] = array(
 				"abstract page"  => array("file_name" => "abstract_page.class.php")
 			);
@@ -52,7 +56,7 @@
 				"model collection factory" => array("file_name" => "model_collection_factory.class.php")
 			);
 			
-			$subDirectoryArray["factory"] = array(
+			$subDirectoryArray["theme"] = array(
 				"default theme"  => array("file_name" => "default_theme.class.php")
 			);
 			

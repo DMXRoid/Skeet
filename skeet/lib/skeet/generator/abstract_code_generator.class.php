@@ -126,15 +126,54 @@
 									"path" => "generated/factory/",
 									"file_suffix" => ".class.php",
 									"overwrite_existing_file" => true
+			),
+			"crud_collection" => array(
+									"template_type" => AbstractCodeGenerator::GENERATED_CODE_TEMPLATE_TYPE_INDIVIDUAL,
+									"component_name" => "crud collection template",
+									"path" => "generated/crud/",
+									"file_suffix" => "_list.comp.php",
+									"overwrite_existing_file" => true
+			),
+			"crud_collection_page" => array(
+									"template_type" => AbstractCodeGenerator::GENERATED_CODE_TEMPLATE_TYPE_INDIVIDUAL,
+									"component_name" => "crud list page template",
+									"path" => "generated/page/",
+									"file_suffix" => "_list_page.class.php",
+									"overwrite_existing_file" => true
+			),
+			"crud_manage" => array(
+									"template_type" => AbstractCodeGenerator::GENERATED_CODE_TEMPLATE_TYPE_INDIVIDUAL,
+									"component_name" => "crud manage template",
+									"path" => "generated/crud/",
+									"file_suffix" => "_manage.comp.php",
+									"overwrite_existing_file" => true
+			),
+			"crud_manage_page" => array(
+									"template_type" => AbstractCodeGenerator::GENERATED_CODE_TEMPLATE_TYPE_INDIVIDUAL,
+									"component_name" => "crud manage page template",
+									"path" => "generated/page/",
+									"file_suffix" => "_manage_page.class.php",
+									"overwrite_existing_file" => true
+
 			)
 		);
 
-
+		/**
+		 *	ALlow the specification of tables to load instead of loading them all
+		 * @var array
+		 */
+		
+		protected $tablesToLoad = array();
+		
+		protected $additionalTablesToLoad = array();
+		
 		abstract protected function loadTables();
 		
 		
-		public function __construct() {
+		public function __construct($tablesToLoad=array(),$additionalTablesToLoad=array()) {
 			$this->db = \Skeet\DatabaseFactory::getDatabase();
+			$this->tablesToLoad = $tablesToLoad;
+			$this->additionalTablesToLoad = $additionalTablesToLoad;
 		}
 		
 		/**
@@ -161,6 +200,9 @@
 		}
 
 		protected function processTables() {
+			if(count($this->tablesToLoad)) {
+				$this->tableArray = array_intersect($this->getTableArray(),$this->tablesToLoad);
+			}
 			foreach($this->getTableArray() as $tableName) {
 				$this->processTable($tableName);
 			}
@@ -227,7 +269,7 @@
 						 * contents
 						 *
 						 */
-						$targetFilePath = \Skeet\Skeet::getConfig("application_lib_path") . $generatedCodeTemplateSettings["path"] . $tableDescription->getTableName() . $generatedCodeTemplateSettings["file_suffix"];
+						$targetFilePath = \Skeet\Skeet::getConfig("application_lib_path") . $generatedCodeTemplateSettings["path"] . strtolower($tableDescription->getTableName()) . $generatedCodeTemplateSettings["file_suffix"];
 						if($generatedCodeTemplateSettings["overwrite_existing_file"] || !file_exists($targetFilePath)) {
 							if(!file_exists(\Skeet\Skeet::getConfig("application_lib_path") . $generatedCodeTemplateSettings["path"])) {
 								mkdir(\Skeet\Skeet::getConfig("application_lib_path") . $generatedCodeTemplateSettings["path"]);
@@ -238,7 +280,7 @@
 					}
 				}
 			}
-
+			
 			foreach($this->getGeneratedCodeTemplateArray() as $generatedCodeTemplateName => $generatedCodeTemplateSettings) {
 				if($generatedCodeTemplateSettings["template_type"] == AbstractCodeGenerator::GENERATED_CODE_TEMPLATE_TYPE_ALL) {
 					$generatedCode = \Skeet\ComponentFactory::getComponent($generatedCodeTemplateSettings["component_name"])->addSetting("table_descriptions",$this->getTableDescriptionArray());
@@ -268,7 +310,8 @@
 					$targetFilePath = \Skeet\Skeet::getConfig("application_lib_path") . $generatedCodeTemplateSettings["path"] . str_replace(" ","_",strtolower($generatedCodeTemplateName)) . $generatedCodeTemplateSettings["file_suffix"];
 					if($generatedCodeTemplateSettings["overwrite_existing_file"] || !file_exists($targetFilePath)) {
 						if(!file_exists(\Skeet\Skeet::getConfig("application_lib_path") . $generatedCodeTemplateSettings["path"])) {
-							mkdir(\Skeet\Skeet::getConfig("application_lib_path") . $generatedCodeTemplateSettings["path"]);
+							$dir = \Skeet\Skeet::getConfig("application_lib_path") . $generatedCodeTemplateSettings["path"];
+							mkdir($dir);
 						}
 						file_put_contents($targetFilePath,ob_get_contents());
 					}
@@ -390,7 +433,7 @@
 		
 		protected function processTable($tableName) {
 			$columnNameLabel = $this->getDB()->getColumnNameLabel();
-			$sql =  $this->getDB()->getDescribeKeyword() . " " . $tableName;
+			$sql =  $this->getDB()->getDescribeKeyword() . " '" . $tableName . "'";
 			$result = \Skeet\DatabaseFactory::getDatabase()->doQuery($sql);
 			$manyToManyMatches = array();
 

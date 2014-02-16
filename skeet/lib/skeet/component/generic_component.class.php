@@ -18,7 +18,11 @@
 			if(!is_null($componentLabel)) {
 				$theme = \Skeet\ThemeFactory::getCurrentTheme();
 				$this->filePath = $theme->getThemeDirectory();
-				$fileName = substr_replace(preg_replace("/([A-Z])/e",'strtolower("_\\1")',$componentLabel),'',0,1);
+				$fileName = substr_replace(preg_replace_callback("/([A-Z])/",
+							function ($matches) {
+								return strtolower("_" . $matches[0]);
+							},
+					  $componentLabel),'',0,1);
 				$fileName .= '.comp.php';
 				$this->fileName = $fileName;
 			}

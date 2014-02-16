@@ -2,6 +2,14 @@
 	namespace Skeet\Model;
 	
 	abstract class AbstractModelCollection {
+		
+		/**
+		 * Current namespace
+		 * @var string
+		 */
+		
+		protected $currentNamespace;
+		
 		/**
 		 * Counter to step through populated list
 		 *
@@ -60,21 +68,28 @@
 
 		protected $nameField;
 
+		protected $noLimitCount = 0;
+		
 		public function __construct($options = array(
 									"where"=>array(),
 									"join_table"=>array(),
 									"order_by"=>array(),
 									"create_emtpy"=>NULL,
 									"group_by"=>array(),
+									"limit" => "",
 									"custom_sql" => NULL,
+									"append_where" => NULL,
 									"show_retired" => false
 									)) {
+			$namespaceArray = explode('\\',get_class($this));
+			$namespace = array_shift($namespaceArray);
+			$this->setCurrentNamespace('\\' . $namespace );
 			$this->preConstruct();
 			if(!isset($options["create_empty"]) || is_null($options["create_empty"])) {
 				$db = \Skeet\DatabaseFactory::getDatabase();
 				$collection = array();
 				if(!isset($options["show_retired"]) || !$options["show_retired"]) {
-					$where = " WHERE " . $this->getTableName() . ".is_retired = 0 ";
+					$where = " WHERE " . $db->getEscapeOpenCharacter() . $this->getTableName() . $db->getEscapeCloseCharacter() . ".is_retired = 0 ";
 				}
 				else {
 					$where = " WHERE 1=1 ";
@@ -98,6 +113,9 @@
 							$where = substr_replace($where,'',-1) . ")";
 						}
 					}
+				}
+				if(isset($options["append_where"]) && $options["append_where"]) {
+					$where .= " AND " . $options["append_where"] . " ";
 				}
 				$order = "";
 				if(isset($options["order_by"]) && count($options["order_by"]) > 0) {
@@ -126,16 +144,24 @@
 					}
 				}
 				
-				$sql = "SELECT DISTINCT `" . $this->getTableName() . "`.* FROM " . $this->getTableName() . "
+				$sql = "SELECT DISTINCT " . $db->getEscapeOpenCharacter() . $this->getTableName() . $db->getEscapeCloseCharacter() . ".* FROM " . $db->getEscapeOpenCharacter() . $this->getTableName() . $db->getEscapeCloseCharacter() ."
 							
 							" . $joinTableSQL . "
 							" . $where . $group . $order;
 				if(isset($options["custom_sql"]) && !is_null($options["custom_sql"])) {
 					$sql = $options["custom_sql"];
 				}
+				if(isset($options["limit"]) && $options["limit"]) {
+					$countSQL = "SELECT COUNT(*) AS row_count FROM (" . $sql . ") AS foo";
+					$countRow = $db->doQuery($countSQL)->getRow();
+					$this->noLimitCount = $countRow["row_count"];
+					$sql .= " LIMIT " . $options["limit"];
+				}
+				
 				$result = $db->doQuery($sql);
+				$namespacedClass = $this->getCurrentNamespace() . "\\ModelFactory";
 				while($row = $result->getRow()) {
-					$model =  \Skeet\ModelFactory::getModel($this->getTableName(),NULL,NULL,$row);
+					$model =  $namespacedClass::getModel($this->getTableName(),NULL,NULL,$row);
 					$this->cachedPrimaryKeyIDList[$model->getID()] = $model->getID();
 					$this->collection[] = $model;
 				}
@@ -146,6 +172,14 @@
 
 		protected function preConstruct() {	}
 		protected function postConstruct() { }
+		
+		public function getCurrentNamespace() {
+			return $this->currentNamespace;
+		}
+		
+		public function setCurrentNamespace($currentNamespace) {
+			$this->currentNamespace = $currentNamespace;
+		}
 		
 		/**
 		 * Gets (@link $tableName)
@@ -240,6 +274,12 @@
 			}
 		}
 		
+		public function getFirst() {
+			if(isset($this->collection[0])) {
+				return $this->collection[0];
+			}
+		}
+		
 		/**
 		 * See if there's an object in the collection
 		 * @var integer
@@ -315,6 +355,10 @@
 				$returnArray[$tempObject->getID()] = $tempObject->getDisplayLabel();
 			}
 			return $returnArray;
+		}
+		
+			public function getNoLimitCount() {
+			return $this->noLimitCount;
 		}
 		
 	}

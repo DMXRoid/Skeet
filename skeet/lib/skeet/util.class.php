@@ -11,11 +11,13 @@
 	class Util {
 
 		const DATA_TYPE_STRING = 1;
-		const DATA_TYPE_TEXT = 2;
-		const DATA_TYPE_INTEGER = 3;
+		const DATA_TYPE_INTEGER = 2;
+		const DATA_TYPE_ARRAY = 3;
 		const DATA_TYPE_DATETIME = 4;
 		const DATA_TYPE_FLOAT = 5;
 		const DATA_TYPE_TINYINT = 6;
+		const DATA_TYPE_TEXT = 7;
+		const DATA_TYPE_TIME = 8;
 
 
 		public static function jamvar($toJam) {
@@ -90,6 +92,7 @@
 				$dataType = self::DATA_TYPE_INTEGER;
 				break;
 
+				case "date":
 				case "datetime":
 				case "timestamp":
 				$dataType = self::DATA_TYPE_DATETIME;
@@ -103,6 +106,10 @@
 				case "tinyint":
 				$dataType = self::DATA_TYPE_TINYINT;
 				break;
+			
+				case "time":
+					$dataType = self::DATA_TYPE_TIME;
+					break;
 			}
 			return $dataType;
 		}

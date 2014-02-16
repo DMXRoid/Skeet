@@ -16,6 +16,13 @@
 	abstract class AbstractModel {
 		
 		/**
+		 * Current namespace
+		 * @var string
+		 */
+		
+		protected $currentNamespace;
+		
+		/**
 		 * Database name for the table
 		 * @access protected
 		 * @var string
@@ -163,6 +170,7 @@
 		 * @var array
 		 */
 		
+		
 		protected $displayErrors = array();
 
 		protected $displayNameField;
@@ -173,6 +181,8 @@
 
 		protected $documents;
 		
+		
+		
 		/**
 		 * Generic Constructor
 		 * @access public
@@ -181,12 +191,15 @@
 		 * @var array|NULL
 		 */
 		public function __construct($primaryKeyID=NULL,$customSQL=NULL,$dataRow=NULL) {
+			$namespaceArray = explode('\\',get_class($this));
+			$namespace = array_shift($namespaceArray);
+			$this->setCurrentNamespace('\\' . $namespace );
 			$this->preConstruct();
-			$this->databaseName = \Skeet\Skeet::getConfig("database.default.database_name");
-			$db = \Skeet\DatabaseFactory::getDatabase();
+			$namespacedClass = $this->getCurrentNamespace() . "\\DatabaseFactory";
+			$db = $namespacedClass::getDatabase();
 			if($primaryKeyID) {
-				$sql = "SELECT * FROM `" . $this->getDatabaseName() . "`.`" . $this->getTableName() . "`
-							WHERE `" . $this->getPrimaryKeyField() . "` = " . $db->quote($primaryKeyID);
+				$sql = "SELECT * FROM [" . $this->getTableName() . "]
+							WHERE [" . $this->getPrimaryKeyField() . "] = " . $db->quote($primaryKeyID);
 				$dataRow = $db->doQuery($sql)->getRow();
 			}
 			elseif($customSQL) {
@@ -213,7 +226,15 @@
 		public function setPrimaryKeyID($primaryKeyID) {
 			$this->primaryKey["primary_key_value"] = $primaryKeyID;
 		}
-			
+		
+		public function getCurrentNamespace() {
+			return $this->currentNamespace;
+		}
+		
+		public function setCurrentNamespace($currentNamespace) {
+			$this->currentNamespace = $currentNamespace;
+		}
+		
 		/**
 		 * Gets (@link $tableName)
 		 * @access public
@@ -298,36 +319,49 @@
 			$tableName = $this->getTableName();
 			$fields = array();
 			$quotes = array();
+			$isInsert = false;
 			
 			foreach($this->updatedFields as $key => $value) {
-				if(!$value) {
-					if(0 && is_null($this->dataStructure[$key]["default_value"])) {
-						$fields[$key] = "NULL";
-						$quotes[$key] = false;
+				if($key != $this->primaryKey["primary_key_field_name"] && $key != "last_modified_date") {
+					if(!$value) {
+						if(0 && is_null($this->dataStructure[$key]["default_value"])) {
+							$fields[$key] = "NULL";
+							$quotes[$key] = false;
+						}
+						else {
+							$fields[$key] = $value;	
+							$quotes[$key] = true;	
+						}
 					}
 					else {
 						$fields[$key] = $value;	
 						$quotes[$key] = true;	
 					}
 				}
-				else {
-					$fields[$key] = $value;	
-					$quotes[$key] = true;	
-				}
-				
 			}
-			$fields["last_modified_date"] = date("Y-m-d H:i:s");
-			$quotes["last_modified_date"] = true;
+			/*$fields["last_modified_date"] = "DEFAULT";
+			$quotes["last_modified_date"] = false;*/
+			
+			
 			if($this->getID()) {
 				$wheres = array($this->getPrimaryKeyField() => $this->getID());
 				$db->doInsertOrUpdate($tableName,$fields,$quotes,$wheres);
 			}
 			else {
-				$fields["creation_datetime"] = "NOW()";
+				if(isset($this->dataStructure["creation_datetime"])) {
+					$fields["creation_datetime"] = "GETDATE()";
+					if(isset($quotes["creation_datetime"])) {
+						unset($quotes["creation_datetime"]);
+					}
+				}
+				$isInsert = true;
 				$db->doInsert($tableName,$fields,$quotes);
-				$this->setPrimaryKeyID($db->getInsertID());
+				$this->setPrimaryKeyID($db->getInsertID($tableName));
 			}
+			$this->postSave($isInsert);
 		}
+		
+		protected function postSave() { }
 
 		/**
 		 *
@@ -352,6 +386,15 @@
 		}
 		
 		/**
+		 * Get the collection definitions for a given model
+		 * @return array
+		 */
+		
+		public function getCollectionDefinitions() {
+			return $this->collectionDefinitions;
+		}
+		
+		/**
 		 * Gets a collection model object.  Calls the checkCollection function if 
 		 * one isn't stored yet
 		 * 
@@ -370,6 +413,7 @@
 					return $this->collections[$tableName];
 				}
 				else {
+					die($tableName);
 					throw new InvalidGetCollectionException();
 				}
 			}
@@ -389,8 +433,8 @@
 		
 		protected function checkCollection($tableName) {
 			
-			//$this->collections[$tableName] = \Skeet\ModelCollectionFactory::getModelCollection($this->collectionDefinitions[$tableName]["table_name"],$this->collectionDefinitions[$tableName]["collection_options"]);
-			$this->collections[$tableName] = \Skeet\ModelCollectionFactory::getModelCollection($this->collectionDefinitions[$tableName]["table_name"],$this->getCollectionOptionArray($tableName));
+			$namespacedClass = $this->getCurrentNamespace() . '\\ModelCollectionFactory';
+			$this->collections[$tableName] = $namespacedClass::getModelCollection($this->collectionDefinitions[$tableName]["table_name"],$this->getCollectionOptionArray($tableName));
 		}
 		
 		protected function getCollectionOptionArray($tableName) {
@@ -402,16 +446,18 @@
 		
 		protected function checkCollectionOptionArray($tableName) {
 			$collectionOptionArray = array();
+			$namespacedClass = $this->getCurrentNamespace() . "\\DatabaseFactory";
+			$db = $namespacedClass::getDatabase();
 			switch($this->collectionDefinitions[$tableName]["collection_type"]) {
 				case \Skeet\Skeet::COLLECTION_TYPE_MANY_TO_MANY:
-					$joinSQL = " INNER JOIN `" . $this->collectionDefinitions[$tableName]["join_table"] . "` 
-									 ON `" .  $this->collectionDefinitions[$tableName]["table_name"] . "`." . $this->collectionDefinitions[$tableName]["foreign_key_name"] . " = `" . $this->collectionDefinitions[$tableName]["join_table"] . "`." . $this->collectionDefinitions[$tableName]["foreign_join_key"] . "
-									 AND `" . $this->collectionDefinitions[$tableName]["join_table"] . "`.is_retired = 0 
-									 AND `" . $this->collectionDefinitions[$tableName]["join_table"] . "`." . $this->collectionDefinitions[$tableName]["local_join_key"] . " = '" . $this->getID() . "'";
+					$joinSQL = " INNER JOIN ". $db->getEscapeOpenCharacter() . $this->collectionDefinitions[$tableName]["join_table"] . $db->getEscapeCloseCharacter() . "
+									 ON " . $db->getEscapeOpenCharacter() .  $this->collectionDefinitions[$tableName]["table_name"] . $db->getEscapeCloseCharacter() . "." . $this->collectionDefinitions[$tableName]["foreign_key_name"] . " = " . $db->getEscapeOpenCharacter() . $this->collectionDefinitions[$tableName]["join_table"] . $db->getEscapeCloseCharacter() . "." . $this->collectionDefinitions[$tableName]["foreign_join_key"] . "
+									 AND " . $db->getEscapeOpenCharacter() . $this->collectionDefinitions[$tableName]["join_table"] . $db->getEscapeCloseCharacter() . ".is_retired = 0 
+									 AND " . $db->getEscapeOpenCharacter() . $this->collectionDefinitions[$tableName]["join_table"] . $db->getEscapeCloseCharacter() ."." . $this->collectionDefinitions[$tableName]["local_join_key"] . " = '" . $this->getID() . "'";
 					$collectionOptionArray["join_table"] = array($joinSQL);
 					$where = array();
 					if(!isset($this->collectionDefinitions[$tableName]["show_retired"]) || !$this->collectionDefinitions[$tableName]["show_retired"]) {
-						$where["`" . $this->collectionDefinitions[$tableName]["table_name"] . "`.is_retired"] = "0";
+						$where[$db->getEscapeOpenCharacter() . $this->collectionDefinitions[$tableName]["table_name"] . $db->getEscapeCloseCharacter() . ".is_retired"] = "0";
 					}
 					else {
 						$collectionOptionArray["show_retired"] = true;
@@ -425,9 +471,9 @@
 				case \Skeet\Skeet::COLLECTION_TYPE_ONE_TO_MANY:
 				default:
 					$where = array();
-					$where["`" . $this->collectionDefinitions[$tableName]["table_name"] . "`." . $this->collectionDefinitions[$tableName]["foreign_key_name"]] = $this->getID();
-					$where["`" . $this->collectionDefinitions[$tableName]["table_name"] . "`.is_retired"] = "0";
-					$collectionOptionArray["where"] = $where;
+					$where[$db->getEscapeOpenCharacter() . $this->collectionDefinitions[$tableName]["table_name"] . $db->getEscapeCloseCharacter() . "." . $this->collectionDefinitions[$tableName]["foreign_key_name"]] = $this->getID();
+					$where[$db->getEscapeOpenCharacter() . $this->collectionDefinitions[$tableName]["table_name"] . $db->getEscapeCloseCharacter() . ".is_retired"] = "0";
+					$collectionOptionArray["where"] = array_merge($where,$this->collectionDefinitions[$tableName]["where"]);
 					if(isset($this->collectionDefinitions[$tableName]["order_by"])) {
 						$collectionOptionArray["order_by"] = $this->collectionDefinitions[$tableName]["order_by"];
 					}
@@ -450,7 +496,8 @@
 			try {
 				if(isset($this->targetObjectDefinitions[$tableName])) {
 					if(!isset($this->targetObjects[$tableName]) || !is_object($this->targetObjects[$tableName])) {
-						$this->targetObjects[$tableName] = \Skeet\ModelFactory::getModel($this->targetObjectDefinitions[$tableName]["table_name"],$this->get($this->targetObjectDefinitions[$tableName]["foreign_key_name"]));
+						$namespacedClass = $this->getCurrentNamespace() . '\\ModelFactory';
+						$this->targetObjects[$tableName] = $namespacedClass::getModel($this->targetObjectDefinitions[$tableName]["table_name"],$this->get($this->targetObjectDefinitions[$tableName]["foreign_key_name"]));
 					}
 					return $this->targetObjects[$tableName];
 				}
@@ -464,11 +511,18 @@
 			}
 		}
 		
+		public function getTargetObjectDefinitions() {
+			return $this->targetObjectDefinitions;
+		}
+		
 		public function addObjectToCollection($tableName,$modelObject) {
 			try {
 				if(isset($this->collectionDefinitions[$tableName]) && is_array($this->collectionDefinitions[$tableName])) {
-					
-					$db = \Skeet\DatabaseFactory::getDatabase();
+					/**
+					 * TODO: change this so that the database call changes accordingly
+					 */
+					$namespacedClass = $this->getCurrentNamespace() . '\\DatabaseFactory';
+					$db = $namespacedClass::getDatabase();
 					
 					$targetTable = $this->collectionDefinitions[$tableName]["join_table"];
 					$fields = array();
@@ -501,7 +555,8 @@
 		public function removeObjectFromCollection($tableName,$modelObject) {
 			try {
 				if(isset($this->collectionDefinitions[$tableName]) && is_array($this->collectionDefinitions[$tableName])) {
-					$db = \Skeet\DatabaseFactory::getDatabase();
+					$namespacedClass = $this->getCurrentNamespace() . '\\DatabaseFactory';
+					$db = $namespacedClass::getDatabase();
 					
 					$targetTable = $this->collectionDefinitions[$tableName]["join_table"];
 					$fields = array();
@@ -511,7 +566,7 @@
 					$fields["is_retired"] = "1";
 					
 					$wheres[$this->collectionDefinitions[$tableName]["local_join_key"]] = $this->getID();
-					$wheres[$this->collectionDefinitions[$tableName]["collection_join_key"]] = $modelObject->getID();
+					$wheres[$this->collectionDefinitions[$tableName]["foreign_join_key"]] = $modelObject->getID();
 					
 					
 					$this->getCollection($tableName)->remove($modelObject);
@@ -530,7 +585,8 @@
 			try {
 				if(isset($this->collectionDefinitions[$tableName]) && is_array($this->collectionDefinitions[$tableName])) {
 					if(isset($this->collectionDefinitions[$tableName]["extra_fields"][$fieldName])) {
-						$db = \Skeet\DatabaseFactory::getDatabase();
+						$namespacedClass = $this->getCurrentNamespace() . '\\DatabaseFactory';
+						$db = $namespacedClass::getDatabase();
 						
 						$targetTable = $this->collectionDefinitions[$tableName]["join_table"];
 						$fields = array();
@@ -541,7 +597,7 @@
 						$quotes[$fieldName] = true;
 						
 						$wheres[$this->collectionDefinitions[$tableName]["local_join_key"]] = $this->getID();
-						$wheres[$this->collectionDefinitions[$tableName]["collection_join_key"]] = $modelObject->getID();
+						$wheres[$this->collectionDefinitions[$tableName]["foreign_join_key"]] = $modelObject->getID();
 						
 						$db->doUpdate($targetTable,$fields,$quotes,$wheres);
 					}
@@ -561,7 +617,8 @@
 		public function setNonExtraCollectionField($tableName,$fieldName,$modelObject,$value) {
 			try {
 				if(isset($this->collectionDefinitions[$tableName]) && is_array($this->collectionDefinitions[$tableName])) {
-						$db = \Skeet\DatabaseFactory::getDatabase();
+						$namespacedClass = $this->getCurrentNamespace() . '\\DatabaseFactory';
+						$db = $namespacedClass::getDatabase();
 						
 						$targetTable = $this->collectionDefinitions[$tableName]["join_table"];
 						$fields = array();
@@ -572,7 +629,7 @@
 						$quotes[$fieldName] = true;
 						
 						$wheres[$this->collectionDefinitions[$tableName]["local_join_key"]] = $this->getID();
-						$wheres[$this->collectionDefinitions[$tableName]["collection_join_key"]] = $modelObject->getID();
+						$wheres[$this->collectionDefinitions[$tableName]["foreign_join_key"]] = $modelObject->getID();
 						
 						$db->doUpdate($targetTable,$fields,$quotes,$wheres);
 				}
@@ -589,19 +646,21 @@
 			try {
 				if(isset($this->collectionDefinitions[$tableName]) && is_array($this->collectionDefinitions[$tableName])) {
 					if(isset($this->collectionDefinitions[$tableName]["extra_fields"][$fieldName])) {
-						$db = \Skeet\DatabaseFactory::getDatabase();
+						$namespacedClass = $this->getCurrentNamespace() . '\\DatabaseFactory';
+						$db = $namespacedClass::getDatabase();
 						
-						$sql = "SELECT `" . $fieldName . "` 
-									FROM `" . $this->collectionDefinitions[$tableName]["join_table"] . "`
+						$sql = "SELECT " . $db->getEscapeOpenCharacter().  $fieldName . $db->getEscapeCloseCharacter() .  "
+									FROM " . $db->getEscapeOpenCharacter().  $this->collectionDefinitions[$tableName]["join_table"] . $db->getEscapeCloseCharacter() . "
 									WHERE 1=1
 									AND " . $this->collectionDefinitions[$tableName]["local_join_key"] . " = " . $db->quote($this->getID()) . "
-									AND " . $this->collectionDefinitions[$tableName]["collection_join_key"] . " = " . $db->quote($modelObject->getID());
+									AND " . $this->collectionDefinitions[$tableName]["foreign_join_key"] . " = " . $db->quote($modelObject->getID());
 						if($row = $db->doQuery($sql)->getRow()) {
 							return $row[$fieldName];
 						}
 						return false;
 					}
 					else {
+						error_log($fieldName);
 						throw new InvalidGetExtraCollectionFieldException();
 					}
 				}
@@ -621,8 +680,7 @@
 					$errorMessages[$requiredField] = "You did not enter a value for " . $this->getDisplayName($requiredField);
 				}
 			}
-			
-			foreach($inputField as $key => $value) {
+			foreach($inputArray as $key => $value) {
 				if(isset($this->dataStructure[$key])) {
 					if(isset($this->validationTypes[$key])) {
 						$validationType = $this->validationTypes[$key];
@@ -630,8 +688,8 @@
 					else {
 						$validationType = $this->dataStructure[$key]["data_type"];
 					}
-					
-					if(!\Skeet\ValidationFactory::validate($value,$validationType)) {
+					$namespacedClass = $this->getCurrentNamespace() . "\\ValidationFactory";
+					if(!$namespacedClass::validate($value,$validationType)) {
 						if(isset($this->displayErrors[$key])) {
 							$errorMessages[$key] = $this->displayErrors[$key];
 						}
@@ -686,102 +744,13 @@
 		 */
 		
 		public function getDisplayLabel() {
-			return '';
+			if($this->getDisplayNameField()) {
+				return $this->get($this->getDisplayNameField());
+			}
+			return "";
 		}
 		
-		public function getImages() {
-			if(!is_object($this->images)) {
-				$this->checkImages();
-			}
-			return $this->images;
-		}
-		
-		protected function checkImages() {
-			$db = \Skeet\DatabaseFactory::getDatabase();
-			$sql = "SELECT * FROM image
-					  WHERE target_table = " . $db->quote($this->getTableName()) . "
-					  AND target_table_key_id = " . $db->quote($this->getID()) . " 
-					  AND is_retired = 0";
-			$this->images = \Skeet\ModelCollectionFactory::getModelCollection("image",array("custom_sql" => $sql));
-		}
-
-
-		public function getNotes() {
-			if(!is_object($this->notes)) {
-				$this->checkNotes();
-			}
-			return $this->notes;
-		}
-
-		protected function checkNotes() {
-			$sql = "SELECT * FROM note
-						WHERE target_table_name = '" . $this->getTableName() . "'
-						AND target_table_key_id = '" . $this->getID() . "'
-						AND is_retired = 0
-						ORDER BY creation_datetime DESC";
-			$this->notes = \Skeet\ModelCollectionFactory::getModelCollection("note",array("custom_sql" => $sql));
-		}
-
-		public function addNote($noteText) {
-			$note = \Skeet\ModelFactory::getModel("note");
-			$note->set("user_id",\Skeet\UserFactory::getCurrentUser()->getID());
-			$note->set("target_table_name",$this->getTableName());
-			$note->set("target_table_key_id",$this->getID());
-			$note->set("note_text",$noteText);
-			$note->save();
-		}
-
-		public function getEvents() {
-			if(!is_object($this->events)) {
-				$this->checkEvents();
-			}
-			return $this->events;
-		}
-
-		protected function checkEvents() {
-			$sql = "SELECT event.*
-					  FROM event
-					  INNER JOIN event_target_type ON event.event_target_type_id = event_target_type.event_target_type_id
-					  WHERE 1=1
-					  AND event_target_type.event_target_type_table_name = '" . $this->getTableName() . "'
-					  AND event.event_target_type_key_id = '" . $this->getID() . "'
-					  AND event.is_retired = 0
-					  ORDER BY event.creation_datetime DESC";
-			$this->events = \Skeet\ModelCollectionFactory::getModelCollection("event",array("custom_sql" => $sql));
-		}
-
-
-		public function getDocuments() {
-			if(!is_object($this->documents)) {
-				$this->checkDocuments();
-			}
-			return $this->documents;
-		}
-
-		protected function checkDocuments() {
-			$sql = "SELECT * FROM document
-						WHERE target_table_name = '" . $this->getTableName() . "'
-						AND target_table_key_id = '" . $this->getID() . "'
-						AND is_retired = 0
-						ORDER BY creation_datetime DESC";
-			$this->documents = \Skeet\ModelCollectionFactory::getModelCollection("document",array("custom_sql" => $sql));
-		}
-
-		public function addDocument($uploadArray,$description) {
-			$fileLocation = $uploadArray["tmp_name"];
-			if(file_exists($fileLocation)) {
-				$fileName = sha1_file($fileLocation);
-				$document = \Skeet\ModelFactory::getModel("document");
-				$document->set("user_id",\Skeet\UserFactory::getCurrentUser()->getID());
-				$document->set("target_table_name",$this->getTableName());
-				$document->set("target_table_key_id",$this->getID());
-				$document->set("file_name",$fileName);
-				$document->set("original_file_name",$uploadArray["name"]);
-				$document->set("description",$description);
-				$document->save();
-				rename($fileLocation,DOCUMENT_DIR . $fileName);
-			}
-		}
+	
 
 		public function getDisplayNameField() {
 			return $this->displayNameField;
@@ -813,6 +782,10 @@
 				$hashString .= $this->get($fieldName);
 			}
 			return sha1($hashString);
+		}
+		
+		public function getDataStructure() {
+			return $this->dataStructure;
 		}
 	}
 ?>

@@ -137,6 +137,10 @@
 		protected $defaultValueLabel = "Default";
 		
 		
+		protected $escapeOpenCharacter = '`';
+		protected $escapeCloseCharacter = '`';
+		
+		
 		/**
 		 * It's constructor time!
 		 *
@@ -269,20 +273,24 @@
 		 */
 		public function doInsert($tableName,$fields,$quotes=array()) {
 			$sql = "";
-			$sql .= "INSERT INTO " . $this->dbName . "." . $tableName . " ";
-			$fieldArray = $fields;
+			$sql .= "INSERT INTO " . $this->getEscapeOpenCharacter() . $tableName . $this->getEscapeCloseCharacter() . " ";
+			$fieldArray = array_keys($fields);
 			$valueArray = array();
+			
+			$escapedFieldArray = array();
 			
 			foreach($fields as $key => $value) {
 				$valueArray[] = ((isset($quotes[$key]) && $quotes[$key])) ? $this->quote($value) : $value;
+				$escapedFieldArray[] = $this->getEscapeOpenCharacter() . $key . $this->getEscapeCloseCharacter();
 			}
-			$valueList = "(" . explode(",",$valueList) . ")";
-			$fieldList = "(" . explode(",",$fieldList) . ")";
+			
+			$valueList = "(" . implode(",",$valueArray) . ")";
+			$fieldList = "(" . implode(",",$escapedFieldArray) . ")";
 			$sql .= $fieldList . " VALUES " . $valueList;
 			
 			$this->doQuery($sql);
-			$this->insertID = $this->getInsertID();
-			return $this->getInsertID();	
+			$this->insertID = $this->getInsertID($tableName);
+			return $this->getInsertID($tableName);	
 		}
 		
 		/**
@@ -309,7 +317,7 @@
 
 		public function doUpdate($tableName, $fields, $quotes=NULL, $where, $whereQuotes = NULL, $dbName = '', $escape = true) {
 			$sql = "";
-			$sql .= "UPDATE " . $this->dbName . "." . $tableName . " SET ";
+			$sql .= "UPDATE " . $this->getEscapeOpenCharacter() . $tableName . $this->getEscapeCloseCharacter() . " SET ";
 			$sql .= $this->generateSet($fields, $quotes);
 			$sql .= $this->generateWhere($where, $whereQuotes);
 			$this->doQuery($sql);
@@ -327,7 +335,7 @@
 		 */
 
 		public function doInsertOrUpdate($tableName, $fields, $quotes=NULL, $where) {
-			$sql = 'SELECT * FROM ' . $this->dbName . '.' . $tableName . ' ' . $this->generateWhere($where);
+			$sql = 'SELECT * FROM ' . $this->getEscapeOpenCharacter() . $tableName . $this->getEscapeCloseCharacter() .' ' . $this->generateWhere($where);
 			$result = $this->doQuery($sql);
 			if($result->getNumRows() > 0) {
 				$this->doUpdate($tableName, $fields, $quotes, $where);
@@ -346,7 +354,7 @@
 		
 		public function doInsertOnDupUpdate($tableName, $fields, $quotes=NULL) {
 				$sets = $this->generateSet($fields, $quotes);
-				$sql = 'INSERT INTO ' . $this->dbName . '.' . $tableName . ' SET ' . $sets . ' ON DUPLICATE KEY UPDATE ' . $sets;
+				$sql = 'INSERT INTO ' . $this->getEscapeOpenCharacter() . $tableName . $this->getEscapeCloseCharacter() . ' SET ' . $sets . ' ON DUPLICATE KEY UPDATE ' . $sets;
 				return $this->doQuery($sql);
 			}
 		
@@ -383,7 +391,7 @@
 		 * @return integer|null
 		 */
 
-		public function getInsertID() {}
+		public function getInsertID($tableName) {}
 		
 		/**
 		 *	Generate a SET statement from values
@@ -458,5 +466,15 @@
 		public function numRowsAffected() {
 			return $this->getAffectedRows();
 		}
+		
+		public function getEscapeOpenCharacter() {
+			return $this->escapeOpenCharacter;
+		}
+		
+		public function getEscapeCloseCharacter() {
+			return $this->escapeCloseCharacter;
+		}
+		
+		public function getError() {}
 	}
 ?>

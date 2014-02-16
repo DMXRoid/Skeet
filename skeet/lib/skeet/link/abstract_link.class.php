@@ -82,11 +82,17 @@
 
 		protected $forceSecure = false;
 
+		protected $dir;
+		
 		public function __construct($pageName) {
 			$this->pageName = $pageName;
 
 			if(preg_match("/[A-Z]/",$pageName)) {
-         	$fileName = substr_replace(preg_replace("/([A-Z])/e",'strtolower("_\\1")',$pageName),'',0,1);
+         	$fileName = substr_replace(preg_replace_callback("/([A-Z])/",
+							function ($matches) {
+								return strtolower("_" . $matches[0]);
+							},
+					  $pageName),'',0,1);
          	$fileArray = explode("_",$fileName);
 			}
 			else {
@@ -168,7 +174,7 @@
 
 		}
 
-		public function getLinkAsForm($overrideURL=NULL,$forUpload=NULL,$method="post") {
+		public function getLinkAsForm($overrideURL=NULL,$forUpload=NULL,$method="post",$extras=null) {
 
 			if($overrideURL) {
 				$page = $overrideURL;
@@ -201,12 +207,19 @@
 			}
 
 			$linkArgs = $this->getLinkArgs();
-			$formOutput = '<form id="' . $this->formID . '" action="' . $actionPage . '" method="' . $method . '" style="display: inline;" ' . $encType . '>';
+			$formOutput = '<form ' . $extras . ' id="' . $this->formID . '" action="' . $actionPage . '" method="' . $method . '" style="display: inline;" ' . $encType . '>';
 
 
 
 			foreach($linkArgs as $key => $value) {
-				if($value) {
+				if(is_array($value)) {
+					foreach($value as $v2 => $k2) {
+						if($v2) {
+							$formOutput .= '<input type="hidden" name="' . $k2 . '" value="' . $v2 . '">';
+						}
+					}
+				}
+				elseif($value) {
 					$formOutput .= '<input type="hidden" name="' . $key . '" value="' . $value . '">';
 				}
 			}
@@ -232,6 +245,13 @@
 
 		public function processLinkArgsIntoURL() {
 			return (($this->getFileName()) ? '?' : '&') . http_build_query($this->getLinkArgs());
+		}
+		
+		public function removeLinkArg($key) {
+			if(isset($this->linkArgs[$key])) {
+				unset($this->linkArgs[$key]);
+			}
+			return $this;
 		}
 	}
 ?>
