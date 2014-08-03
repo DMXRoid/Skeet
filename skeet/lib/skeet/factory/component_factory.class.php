@@ -1,18 +1,28 @@
 <?
 	/**
-	* @package Skeet
-	* @subpackage Factory
 	* @version 1.0
 	* @author Matthew Schiros <schiros@invisihosting.com>
 	* @copyright Copyright (c) 2011, Matthew Schiros
+	* @license FreeBSD
 	*/
 
 	namespace Skeet;
 	/**
-	 * Component factory 
+	 * A factory for display component classes
+	 * @package Skeet
+	 * @subpackage Factory
 	 */
 
 	class ComponentFactory {
+
+		/**
+		 * Get a component
+		 * @static
+		 * @access public
+		 * @param string $componentName The name of the componnent
+		 * @param \Skeet\Page\AbstractPage|null The calling page object
+		 * @return \Skeet\Component\AbstractComponent
+		 */
 		
 		public static function getComponent($componentName,$page=null) {
 			if(is_null($page)) {

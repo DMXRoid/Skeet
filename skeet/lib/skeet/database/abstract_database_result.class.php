@@ -1,10 +1,9 @@
 <?
 	/**
-	 * @package Skeet
-	 * @subpackage Database
 	 * @version 1.0
 	 * @author Matthew Schiros <schiros@invisihosting.com>
 	 * @copyright Copyright (c) 2011, Matthew Schiros
+	 * @license FreeBSD
 	 */
 
 	namespace Skeet\Database;
@@ -13,6 +12,8 @@
 	 * Abstract database result class
 	 * 
 	 * Parent class of all database result classes
+	 * @package Skeet
+	 * @subpackage Database
 	 * @abstract
 	 */
 	

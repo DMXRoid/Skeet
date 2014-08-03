@@ -1,17 +1,35 @@
 <?
 	/**
-	* @package Skeet
-	* @subpackage Factory
 	* @version 1.0
 	* @author Matthew Schiros <schiros@invisihosting.com>
 	* @copyright Copyright (c) 2011, Matthew Schiros
+	* @license FreeBSD
 	*/
 
 	namespace Skeet;
 	
+	/**
+	 * The place to get database objects
+	 * @package Skeet
+	 * @subpackage Factory
+	 */
+	
 	class DatabaseFactory {
+		/**
+		 * Caches database connections for future calls
+		 * @access public
+		 * @var \Skeet\Database\AbstractDatabase[]
+		 */
 		public static $dbList = array();		
 		
+		/**
+		 * Get a database object based on the config settings
+		 * @access public
+		 * @static
+		 * @param string $dbConfigName Config name to use when pulling info from \Skeet\Skeet::getDatabaseConfig
+		 * @return \Skeet\Database\AbstractDatabase
+		 */
+
 		public static function getDatabase($dbConfigName="default") {
 			$configArray = \Skeet\Skeet::getDatabaseConfig($dbConfigName);
 			if(!isset(self::$dbList[$dbConfigName]) || !is_object(self::$dbList[$dbConfigName])) {

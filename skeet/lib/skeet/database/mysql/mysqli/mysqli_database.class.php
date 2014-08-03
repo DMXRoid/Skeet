@@ -1,16 +1,18 @@
 <?
 	/**
-	* @package Skeet
-	* @subpackage Database
 	* @version 1.0
 	* @author Matthew Schiros <schiros@invisihosting.com>
 	* @copyright Copyright (c) 2011, Matthew Schiros
+	* @license FreeBSD
 	*/
 
 	namespace Skeet\Database\Mysql\Mysqli;
 	
 	/**
 	 * MySQL Database Object, using the MySQLi driver.
+	 * 
+	 * @package Skeet
+	 * @subpackage Database
 	 */
 	
 	class MysqliDatabase extends \Skeet\Database\Mysql\MysqlDatabase {

@@ -1,4 +1,20 @@
 <?
+	/**
+	 * @version 1.0
+	 * @author Matthew Schiros <schiros@invisihosting.com>
+	 * @copyright Copyright (c) 2011, Matthew Schiros
+	 * @license FreeBSD
+	 * @package Skeet
+	 * @subpackage Functions
+	 */
+
+
+
+	 /**
+	  * Debug function, wraps a print_r() in <pre> tags
+	  * @param mixed $toJam passed into print_r
+	  */ 
+
 	function jamvar($toJam) {
 		echo '<pre>';
 		print_r($toJam);

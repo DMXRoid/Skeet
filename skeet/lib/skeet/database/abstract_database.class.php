@@ -1,10 +1,9 @@
 <?
 	/**
-	 * @package Skeet
-	 * @subpackage Database
 	 * @version 1.0
 	 * @author Matthew Schiros <schiros@invisihosting.com>
 	 * @copyright Copyright (c) 2011, Matthew Schiros
+	 * @license FreeBSD
 	 */
 
 	 namespace Skeet\Database;
@@ -15,6 +14,8 @@
 	 * All databases within the framework will extend this and implement most/all of its
 	 * methods
 	 * @abstract
+	 * @package Skeet
+	 * @subpackage Database
 	 */
 	abstract class AbstractDatabase {
 

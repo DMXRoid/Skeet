@@ -1,10 +1,9 @@
 <?
 /**
- * @package Skeet
- * @subpackage Component
  * @version 1.0
  * @author Matthew Schiros <schiros@invisihosting.com>
  * @copyright Copyright (c) 2011, Matthew Schiros
+ * @license FreeBSD
  */
 
 	namespace Skeet\Component;
@@ -18,6 +17,8 @@
 	 * and therefore the page, etc...
 	 *
 	 * @abstract
+	 * @package Skeet
+ 	 * @subpackage Component
 	 */
 
 	abstract class AbstractComponent {

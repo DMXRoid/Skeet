@@ -1,5 +1,18 @@
 <?
+	/**
+	* @version 1.0
+	* @author Matthew Schiros <schiros@invisihosting.com>
+	* @copyright Copyright (c) 2011, Matthew Schiros
+	*/
+	
 	namespace Skeet;
+	
+	/**
+	 * A set of methods for validating input
+	 * @package Skeet
+	 * @subpackage Factory
+	 */
+
 	class ValidationFactory {
 		const VALIDATION_TYPE_STRING = 1;
 		const VALIDATION_TYPE_INT = 2;
