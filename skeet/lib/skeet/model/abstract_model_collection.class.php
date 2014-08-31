@@ -1,6 +1,18 @@
 <?
+	/**
+	 * @version 1.0
+	 * @author Matthew Schiros <schiros@invisihosting.com>
+	 * @copyright Copyright (c) 2010, Matthew Schiros
+	 * @license FreeBSD
+	 */
+	
 	namespace Skeet\Model;
 	
+	/**
+	 * An object for holding collections of models
+	 * @package Skeet
+	 * @subpackage Model
+	 */
 	abstract class AbstractModelCollection {
 		
 		/**

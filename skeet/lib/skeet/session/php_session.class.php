@@ -18,8 +18,26 @@
 	 */
 	
 	class PhpSession extends AbstractSession {
+
+
 		protected function open() {
 			session_start();
+		}
+
+		public function set($key,$value) {
+			parent::set($key,$value);
+			$_SESSION[$key] = $value;
+		}
+
+		public function get($key) {
+			return (parent::get($key)) ?: $_SESSION[$key];
+		}
+
+		public function destroy() {
+			$_SESSION = array();
+			$cookieParams = session_get_cookie_params();
+			setcookie(session_name(),'',time() - 36000,$cookieParams["path"],$cookieParams["domain"],$cookieParams["secure"],$cookieParams["httponly"]);
+			session_destroy();
 		}
 	}
 ?>

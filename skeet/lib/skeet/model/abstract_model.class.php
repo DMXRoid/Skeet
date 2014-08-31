@@ -1,39 +1,35 @@
 <?
 	/**
-	 * abstract_model.class.php
-	 * 
-	 * Abstract data driven object class
-	 * 
-	 * @package Skeet
+	 * @version 1.0
 	 * @author Matthew Schiros <schiros@invisihosting.com>
 	 * @copyright Copyright (c) 2010, Matthew Schiros
-	 * @license http://www.invisihosting.com/skeet/license.html 
-	 * 
-	 * 
+	 * @license FreeBSD
 	 */
 	namespace Skeet\Model;
+
+	/**
+	 *	The base class of all models
+	 * @package Skeet
+	 * @subpackage Model
+	 */
 
 	abstract class AbstractModel {
 		
 		/**
-		 * Current namespace
-		 * @var string
+		 * @var string The current (calling) namespace of the object
 		 */
 		
 		protected $currentNamespace;
 		
 		/**
-		 * Database name for the table
 		 * @access protected
-		 * @var string
+		 * @var string Database name for the table
 		 */
 		protected $databaseName;
 		
 		/**
-		 * Name of the table the data is pulled from
-		 * 
 		 * @access protected
-		 * @var string
+		 * @var string Name of the table the data is pulled from
 		 */
 		protected $tableName;
 		
@@ -43,7 +39,7 @@
 		 * array("primary_key_field_name" => "field_name", "primary_key_value" => "field_value")
 		 * 
 		 * @var array
-		 * @access protectedS
+		 * @access protected
 		 */
 		protected $primaryKey = array("primary_field_key_name" => "","primary_key_value" => 0);
 		
@@ -184,11 +180,12 @@
 		
 		
 		/**
-		 * Generic Constructor
+		 * The constructor for the model.  Can take a primary key ID, a custom SQL statement, or an array of values to populate 
+		 * the model with.  If nothing is passed, an object with no data values set is created
 		 * @access public
-		 * @var integer|NULL
-		 * @var string|NULL
-		 * @var array|NULL
+		 * @param int $primaryKeyID The primary key of the table the model is for
+		 * @param string $customSQL A custom SQL statement to populate the model object from the DB.  Only the first row is used
+		 * @param array $dataRow An array of values to populate the model with
 		 */
 		public function __construct($primaryKeyID=NULL,$customSQL=NULL,$dataRow=NULL) {
 			$namespaceArray = explode('\\',get_class($this));
@@ -217,20 +214,58 @@
 			$this->postConstruct();
 		}
 
+		/**
+		 * Gets run at the front of the constructor
+		 * @access protected
+		 */
+
 		protected function preConstruct() { }
+
+		/**
+		 * Gets run at the end of the constructor
+		 * @access protected
+		 */
+
 		protected function postConstruct() { }
+
+		/**
+		 * Get the field name for the primary key of the model
+		 * @access public
+		 * @return string
+		 */
+
 		public function getPrimaryKeyField() {
 			return $this->primaryKey["primary_key_field_name"];
 		}
 		
+		/**
+		 * Set the primary key of the object
+		 * @param int $primaryKeyID
+		 * @access public
+		 */
+
 		public function setPrimaryKeyID($primaryKeyID) {
 			$this->primaryKey["primary_key_value"] = $primaryKeyID;
 		}
+
+		/**
+		 * Get the current namespace of the model (ie, the application
+		 * that it's being called from)
+		 * @access public
+		 * @return string
+		 */
 		
 		public function getCurrentNamespace() {
 			return $this->currentNamespace;
 		}
 		
+		/**
+		 * Set the current namespace of the model (ie, the application
+		 * that it's being called from)
+		 * @access public
+		 * @param string $currentNamespace
+		 */
+
 		public function setCurrentNamespace($currentNamespace) {
 			$this->currentNamespace = $currentNamespace;
 		}
@@ -309,7 +344,8 @@
 		}
 		
 		/**
-		 * Save function.  Writes values in (@link $updatedFields) to the database
+		 * Save function.  Writes values in (@link $updatedFields) to the database,  
+		 * Will insert or update as necessary
 		 * @access public
 		 */
 	
