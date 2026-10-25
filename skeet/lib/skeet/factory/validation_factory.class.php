@@ -1,80 +1,38 @@
-<?
+<?php
 	/**
-	* @version 1.0
-	* @author Matthew Schiros <schiros@invisihosting.com>
+	* @version 2.0
+	* @author Matthew Schiros <matthew.schiros+skeet@gmail.com>
 	* @copyright Copyright (c) 2011, Matthew Schiros
 	*/
-	
+
+	declare(strict_types=1);
+
 	namespace Skeet;
-	
+
 	/**
-	 * A set of methods for validating input
+	 * Validates input against a {@see ValidationType}.
+	 *
+	 * (Historically this began with an unconditional `return true;` — a no-op —
+	 * and conflated validation with the storage DataType. It now validates for
+	 * real against the dedicated ValidationType vocabulary. See docs/findings.md
+	 * F-002/F-003.)
+	 *
 	 * @package Skeet
 	 * @subpackage Factory
 	 */
-
 	class ValidationFactory {
-		const VALIDATION_TYPE_STRING = 1;
-		const VALIDATION_TYPE_INT = 2;
-		const VALIDATION_TYPE_ARRAY = 3;
-		const VALIDATION_TYPE_DATETIME = 4;
-		const VALIDATION_TYPE_FLOAT = 5;
-		const VALIDATION_TYPE_TINYINT = 6;
-		const VALIDATION_TYPE_TEXT = 6;
-		const VALIDATION_TYPE_EXISTS = 8;
-		const VALIDATION_TYPE_EMAIL = 9;
-		
-		
-		public static function validate($input,$validationType=NULL) {
-			return true;
-			$isValid = false;
-			switch($validationType) {
-				case DATA_TYPE_TEXT:
-				case DATA_TYPE_STRING:
-					if(is_string($input)) {
-						$isValid = true;
-					}
-					break;
-				case DATA_TYPE_TINYINT:
-				case DATA_TYPE_INTEGER:
-					if(is_int($input)) {
-						$isValid = true;
-					}
-					break;
-				
-				case DATA_TYPE_ARRAY:
-					if(is_array($input)) {
-						$isValid = true;
-					}
-					break;
-					
-				case DATA_TYPE_DATETIME:
-					if(strtotime($input)) {
-						$isValid = true;
-					}
-					break;
-				
-				case DATA_TYPE_FLOAT:
-					if(is_float($input) || is_double($input) || is_numeric($input)) {
-						$isValid = true;
-					}
-					break;
-					
-				//case DATA_TYPE_EXISTS:
-				default:
-					if($input) {
-						$isValid = true;
-					}
-					break;
-					
-				case self::VALIDATION_TYPE_EMAIL:
-					$pattern = "/[[:print:]^@^ ]+(\+[[:print:]^@^ ]){0,1}+@+(([[:alnum:]\._\-])+\.){1,5}+[a-zA-Z]{2,6}/";
-					if(preg_match($pattern,$input)) { 
-						$isValid = true;	
-					}
-					break;
-			}
-			return $isValid;
+
+		public static function validate(mixed $input, ValidationType $type): bool {
+			return match ($type) {
+				ValidationType::String   => is_string($input),
+				ValidationType::Integer  => is_int($input) || (is_string($input) && ctype_digit($input)),
+				ValidationType::Float    => is_numeric($input),
+				ValidationType::Array    => is_array($input),
+				ValidationType::Boolean  => is_bool($input)
+					|| in_array(strtolower(trim((string) $input)), ['0', '1', 'true', 'false', 'on', 'off', 'yes', 'no'], true),
+				ValidationType::DateTime => $input !== null && $input !== '' && strtotime((string) $input) !== false,
+				ValidationType::Email    => is_string($input) && filter_var($input, FILTER_VALIDATE_EMAIL) !== false,
+				ValidationType::Exists   => $input !== null && $input !== '',
+			};
 		}
 	}
-?>

@@ -1,4 +1,4 @@
-<?
+<?php
 	if($this->getDoShowHeaders()) {
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -12,13 +12,13 @@
 		<?= $this->getJavascript() ?>
 	</head>
 	<body>
-<?
+<?php
 		ComponentFactory::getComponent("mainbody",$this)->render();
 	}
 	echo $this->getOutput();
 	if($this->getDoShowHeaders()) {
 ?>
 	</body>
-<?
+<?php
 	}
 ?>

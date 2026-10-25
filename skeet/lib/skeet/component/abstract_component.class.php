@@ -1,7 +1,7 @@
-<?
+<?php
 /**
  * @version 1.0
- * @author Matthew Schiros <schiros@invisihosting.com>
+ * @author Matthew Schiros <matthew.schiros+skeet@gmail.com>
  * @copyright Copyright (c) 2011, Matthew Schiros
  * @license FreeBSD
  */
@@ -72,6 +72,22 @@
 		 */
 
 		protected $settings = array();
+
+		/**
+		 * Captured output of the most recent render().
+		 * @access protected
+		 * @var string
+		 */
+
+		protected $output = '';
+
+		/**
+		 * When true, render() collapses runs of whitespace in the output.
+		 * @access protected
+		 * @var bool
+		 */
+
+		protected $stripSpaces = false;
 
 
 		/**
@@ -210,7 +226,7 @@
 				ob_start();
 				require($fileName);
 				$data = ob_get_contents();
-				if (isset($this->stripSpaces)) {
+				if ($this->stripSpaces) {
 					$data = preg_replace('/\s\s+/', ' ', $data);
 					$data = str_replace('<!-- ', "<!--\n", $data);
 				}
@@ -219,7 +235,7 @@
 				echo $this->output;
 			}
 			else {
-				throw new ComponentFileNotFoundException($this->getFilePath() . $this->getFileName());
+				throw new \Skeet\Exception\ComponentFileNotFoundException($this->getFilePath() . $this->getFileName());
 			}
 		}
 	}

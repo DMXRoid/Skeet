@@ -1,4 +1,4 @@
-<?
+<?php
 	require("../application.inc.php");
 	set_time_limit(10);
 	
@@ -190,7 +190,7 @@ Options:
 					$tempCollectionObjectArray["target_join_key"] = $primaryKey1;
 					$tempCollectionObjectArray["collection_join_key"] = $joinTableKey1;
 					$tempCollectionObjectArray["local_join_key"] = $joinTableKey0;
-					$tempCollectionObjectArray["collection_type"] = COLLECTION_TYPE_MANY_TO_MANY;
+					$tempCollectionObjectArray["collection_type"] = \Skeet\CollectionType::ManyToMany;
 					if(isset($firstTableExtraFieldsArray) && count($firstTableExtraFieldsArray)) {
 						$tempCollectionObjectArray["extra_fields"] = $firstTableExtraFieldsArray;
 					}
@@ -206,7 +206,7 @@ Options:
 					$tempCollectionObjectArray["target_join_key"] = $primaryKey0;
 					$tempCollectionObjectArray["collection_join_key"] = $joinTableKey0;
 					$tempCollectionObjectArray["local_join_key"] = $joinTableKey1;
-					$tempCollectionObjectArray["collection_type"] = COLLECTION_TYPE_MANY_TO_MANY;
+					$tempCollectionObjectArray["collection_type"] = \Skeet\CollectionType::ManyToMany;
 					if(isset($secondTableExtraFieldsArray) && count($secondTableExtraFieldsArray)) {
 						$tempCollectionObjectArray["extra_fields"] = $secondTableExtraFieldsArray;
 					}
@@ -281,7 +281,7 @@ Options:
 									$classSetupArray["target_object_definitions"][$tempTableName] = $tempTargetObjectArray;
 									$classSetupArray["target_object_fields"][$fieldName] = $targetTable;
 									
-									$tempCollectionObjectArray["collection_type"] = COLLECTION_TYPE_ONE_TO_MANY;
+									$tempCollectionObjectArray["collection_type"] = \Skeet\CollectionType::OneToMany;
 									$tempCollectionObjectArray["table_name"] = $tableName;
 									$tempCollectionObjectArray["primary_key"] = $fieldName;
 									echo $targetTable . " : " . $tableName . "\n";

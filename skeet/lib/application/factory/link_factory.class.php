@@ -1,4 +1,4 @@
-<?
+<?php
 	namespace Skeet;
 	class LinkFactory {
 		public static function getLink($linkName) {

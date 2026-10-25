@@ -1,4 +1,4 @@
-<?	
+<?php	
 	class ConfigFactory {
 		public static $configs = array();
 		

@@ -1,36 +1,25 @@
-<?
+<?php
 	/**
-	* @version 1.0
-	* @author Matthew Schiros <schiros@invisihosting.com>
-	* @copyright Copyright (c) 2011, Matthew Schiros
-	* @license FreeBSD
-	*/
+	 * @version 2.0
+	 * @author Matthew Schiros <matthew.schiros+skeet@gmail.com>
+	 * @copyright Copyright (c) 2011, Matthew Schiros
+	 * @license FreeBSD
+	 */
+
+	declare(strict_types=1);
 
 	namespace Skeet;
 
 	/**
-	 * The place to get link objects
+	 * The place to get link objects.
 	 * @package Skeet
 	 * @subpackage Factory
 	 */
 	class LinkFactory {
 
-		/**
-		 * Get a link
-		 * @access public
-		 * @static
-		 * @param string $linkName Name of the link
-		 * @return \Skeet\Link\AbstractLink
-		 */
-
-		public static function getLink($linkName) {
-			switch($linkName) {
-				default:
-					$linkObject = new \Skeet\Link\GenericLink($linkName);
-					break;
-			}
-
-			return $linkObject;
+		public static function getLink(string $linkName): \Skeet\Link\AbstractLink {
+			return match ($linkName) {
+				default => new \Skeet\Link\GenericLink($linkName),
+			};
 		}
 	}
-?>

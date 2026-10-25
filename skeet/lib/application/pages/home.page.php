@@ -1,4 +1,4 @@
-<?
+<?php
 	namespace Skeet;
 ?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -11,7 +11,7 @@
 		<?= $this->getJavascript() ?>
 	</head>
 	<body>
-		<? 
+		<?php 
 			ComponentFactory::getComponent("header",$this)->render(); 
 			ComponentFactory::getComponent("mainbody",$this)->render();
 			ComponentFactory::getComponent("footer",$this)->render();

@@ -1,4 +1,4 @@
-<?
+<?php
 	namespace Skeet\Exception;
 	
 	class PageNotFoundException extends \Skeet\Exception\AbstractException {

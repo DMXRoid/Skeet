@@ -1,257 +1,147 @@
-<?
+<?php
 	/**
-	* @package Skeet
-	* @subpackage Link
-	* @version 1.0
-	* @author Matthew Schiros <schiros@invisihosting.com>
-	* @copyright Copyright (c) 2011, Matthew Schiros
-	*/
+	 * @package Skeet
+	 * @subpackage Link
+	 * @version 2.0
+	 * @author Matthew Schiros <matthew.schiros+skeet@gmail.com>
+	 * @copyright Copyright (c) 2011, Matthew Schiros
+	 */
+
+	declare(strict_types=1);
 
 	namespace Skeet\Link;
 
 	/**
-	 * AbstractLink.
+	 * Builds URLs (and link-as-form markup) for a page plus a set of args.
 	 *
 	 * @abstract
 	 */
 	abstract class AbstractLink {
 
-		/**
-		 * The value of {@link PageFactory::$pageKey} to pass if there's
-		 * no redirect pattern or file name set.
-		 *
-		 *	@access protected
-		 * @var string
-		 * @see __construct()
-		 */
+		protected string $pageName = '';
 
-		protected $pageName;
+		/** @var array<string,mixed> arbitrary key/value pairs for the query string / hidden inputs */
+		protected array $linkArgs = [];
 
-		/**
-		 *	A set of arbitrary key/value pairs to
-		 * pass to the get string in a link, or as hidden
-		 * inputs in a form.
-		 *
-		 * @access protected
-		 * @var array
-		 * @see addLinkArg()
-		 * @see getLink()
-		 * @see getLinkAsForm()
-		 */
+		protected string $fileName = '';
+		protected string $formID = '';
+		protected bool $forceSecure = false;
+		protected string $dir = '';
 
-		
-		protected $linkArgs = array();
-
-		/**
-		 *	The file name the link should point to, 
-		 * relative to your webroot.
-		 *
-		 * @access protected
-		 * @var string
-		 * @see getLink()
-		 * @see getLinkAsForm()
-		 */
-
-
-		protected $fileName;
-
-		/**
-		 *	The HTML id of the most recent form created
-		 * by {@link getLinkAsForm()}, or the ID manually
-		 * set.
-		 *
-		 * @access protected
-		 * @var string
-		 * @see getLinkAsForm()
-		 * @see getFormID()
-		 * @see setFormID()
-		 */
-
-		protected $formID;
-
-		/**
-		 *	Whether or not to force links to point to 
-		 * https instead of http, for example a checkout page
-		 * or account info or what have you.
-		 *
-		 * @access protected
-		 * @var boolean
-		 * @see getLink()
-		 * @see getLinkAsForm()
-		 */
-
-		protected $forceSecure = false;
-
-		protected $dir;
-		
-		public function __construct($pageName) {
+		public function __construct(string $pageName) {
 			$this->pageName = $pageName;
 
-			if(preg_match("/[A-Z]/",$pageName)) {
-         	$fileName = substr_replace(preg_replace_callback("/([A-Z])/",
-							function ($matches) {
-								return strtolower("_" . $matches[0]);
-							},
-					  $pageName),'',0,1);
-         	$fileArray = explode("_",$fileName);
+			if (preg_match("/[A-Z]/", $pageName)) {
+				$fileName = substr_replace(preg_replace_callback(
+					"/([A-Z])/",
+					static fn($matches) => strtolower("_" . $matches[0]),
+					$pageName
+				), '', 0, 1);
+				$fileArray = explode("_", $fileName);
 			}
 			else {
 				$fileArray = explode(" ", $pageName);
 			}
 
-         if(file_exists(strtolower($pageName) . ".html")) {
-            $this->fileName = strtolower($pageName) . ".html";
-         }
-         else {
-            $this->fileName = implode("/",$fileArray);
-         }
-			$this->pageName = $pageName;
-
+			$this->fileName = file_exists(strtolower($pageName) . ".html")
+				? strtolower($pageName) . ".html"
+				: implode("/", $fileArray);
 		}
 
-		/**
-		 *	Get the page name for this link
-		 * 
-		 * @access public
-		 * @return string
-		 * @see $pageName
-		 */
-
-		public function getPageName() {
+		public function getPageName(): string {
 			return $this->pageName;
 		}
 
-		/**
-		 *	Return the file name for this link
-		 *
-		 * @access public
-		 * @return string
-		 * @see $fileName
-		 */
-
-		public function getFileName() {
+		public function getFileName(): string {
 			return $this->fileName;
 		}
 
 		/**
-		 * Automatically send a Location: header to the browser,
-		 * redirecting the client to the location produced by
-		 * {@link getLink()}.  Useful after a form submission.
-		 *
-		 * @access public
-		 * @see getLink()
+		 * Send a Location: header redirecting to getLink(). Useful after a form
+		 * submission.
 		 */
-		
-		public function doRedirect() {
-			$url = $this->getLink();
-			header("Location: " . $url);
+		public function doRedirect(): never {
+			header("Location: " . $this->getLink());
 			die();
 		}
 
-		public function setFileName($fileName) {
+		public function setFileName(string $fileName): void {
 			$this->fileName = $fileName;
 		}
 
-		
-
-		public function getLink() {
-			if(strstr($this->getPageName(),"Admin")) {
+		public function getLink(): string {
+			if (strstr($this->getPageName(), "Admin")) {
 				$this->dir = '/admin/';
 			}
 			$page = $this->getPageName();
-			if(!$this->getFileName() && !($this instanceof HomeLink)) {
+			if (!$this->getFileName() && !($this instanceof HomeLink)) {
 				$pageString = $this->dir . INDEX_PAGE . "?page=" . $page;
 			}
 			else {
-				$pageString = $this->dir  . '/' .  $this->getFileName();
+				$pageString = $this->dir . '/' . $this->getFileName();
 			}
-
-			$argString = $this->processLinkArgsIntoURL();
-
-			$url = $pageString . $argString;
-
-			return $url;
-
+			return $pageString . $this->processLinkArgsIntoURL();
 		}
 
-		public function getLinkAsForm($overrideURL=NULL,$forUpload=NULL,$method="post",$extras=null) {
+		public function getLinkAsForm(?string $overrideURL = null, bool $forUpload = false, string $method = "post", ?string $extras = null): string {
+			$page = $overrideURL ?: $this->getPageName();
 
-			if($overrideURL) {
-				$page = $overrideURL;
-			}
-			else {
-				$page = $this->getPageName();
-			}
+			$actionPage = $this->fileName
+				? '/' . $this->dir . $this->fileName
+				: '/' . $this->dir . INDEX_PAGE . "?page=" . $page;
 
-			if($this->fileName) {
-				$actionPage = '/' . $this->dir . $this->fileName;
-			}
-			else {
-				$actionPage = '/' . $this->dir . INDEX_PAGE . "?page=" . $page;
-			}
-
-			if(!$this->formID) {
-				$formID = 1;
-				while(is_numeric(substr($formID,0,1))) {
-					$formID = md5(strtotime("now") . mt_rand(1,10000000));
-					$formID = substr_replace($formID,'',6);
+			if (!$this->formID) {
+				$formID = '1';
+				while (is_numeric(substr($formID, 0, 1))) {
+					$formID = substr(md5(uniqid('', true)), 0, 6);
 				}
 				$this->formID = $formID;
 			}
 
-			if($forUpload) {
-				$encType = ' enctype="multipart/form-data" ';
-			}
-			else {
-				$encType = "";
-			}
+			$encType = $forUpload ? ' enctype="multipart/form-data" ' : '';
 
-			$linkArgs = $this->getLinkArgs();
-			$formOutput = '<form ' . $extras . ' id="' . $this->formID . '" action="' . $actionPage . '" method="' . $method . '" style="display: inline;" ' . $encType . '>';
+			$formOutput = '<form ' . $extras . ' id="' . $this->formID . '" action="' . $actionPage
+				. '" method="' . $method . '" style="display: inline;" ' . $encType . '>';
 
-
-
-			foreach($linkArgs as $key => $value) {
-				if(is_array($value)) {
-					foreach($value as $v2 => $k2) {
-						if($v2) {
+			foreach ($this->getLinkArgs() as $key => $value) {
+				if (is_array($value)) {
+					foreach ($value as $v2 => $k2) {
+						if ($v2) {
 							$formOutput .= '<input type="hidden" name="' . $k2 . '" value="' . $v2 . '">';
 						}
 					}
 				}
-				elseif($value) {
+				elseif ($value) {
 					$formOutput .= '<input type="hidden" name="' . $key . '" value="' . $value . '">';
 				}
 			}
 			return $formOutput;
 		}
 
-		public function setFormID($formID) {
+		public function setFormID(string $formID): void {
 			$this->formID = $formID;
 		}
 
-		public function getFormId() {
+		public function getFormId(): string {
 			return $this->formID;
 		}
 
-		public function getLinkArgs() {
+		/** @return array<string,mixed> */
+		public function getLinkArgs(): array {
 			return $this->linkArgs;
 		}
-		
-		public function addLinkArg($key,$value) {
+
+		public function addLinkArg(string $key, mixed $value): static {
 			$this->linkArgs[$key] = $value;
 			return $this;
 		}
 
-		public function processLinkArgsIntoURL() {
+		public function processLinkArgsIntoURL(): string {
 			return (($this->getFileName()) ? '?' : '&') . http_build_query($this->getLinkArgs());
 		}
-		
-		public function removeLinkArg($key) {
-			if(isset($this->linkArgs[$key])) {
-				unset($this->linkArgs[$key]);
-			}
+
+		public function removeLinkArg(string $key): static {
+			unset($this->linkArgs[$key]);
 			return $this;
 		}
 	}
-?>

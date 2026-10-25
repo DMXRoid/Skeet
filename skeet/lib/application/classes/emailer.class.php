@@ -1,4 +1,4 @@
-<?
+<?php
 	/*
 		emailer.class.php
 		

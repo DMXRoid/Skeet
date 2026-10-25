@@ -1,0 +1,69 @@
+#!/usr/bin/env php
+<?php
+	/**
+	 * Skeet command-line entrypoint (DD-017).
+	 *
+	 * Usage: skeet <command> [options]
+	 *   new <path>              scaffold a new application skeleton
+	 *   migrate                 apply pending migrations
+	 *   migrate:rollback        roll back the last migration(s) (--steps=N)
+	 *   migrate:status          show migration status
+	 *   generate:models         generate model/collection/factory classes
+	 *   version                 show the Skeet version
+	 *
+	 * Common options: --env=, --config=, --db=, --path= (migrations),
+	 *                 --namespace=, --php=, --out= (generate).
+	 */
+
+	declare(strict_types=1);
+
+	// Minimal bootstrap: register Skeet's autoloader rooted at the framework lib.
+	require __DIR__ . '/../lib/skeet/skeet.class.php';
+	\Skeet\Skeet::setConfig('application_path', __DIR__ . '/../');
+	spl_autoload_register('\Skeet\Skeet::autoload');
+
+	$console = new \Skeet\Cli\Console();
+	$cli = new \Skeet\Cli\Cli($console);
+	$args = \Skeet\Cli\Args::fromArgv($argv);
+
+	// Bootstrap application config + a database connection on demand.
+	$bootstrapDb = static function (\Skeet\Cli\Args $a): \Skeet\Database\AbstractDatabase {
+		\Skeet\Skeet::init((string) $a->option('env', 'default'), (string) $a->option('config', 'skeet.ini'));
+		return \Skeet\DatabaseFactory::getDatabase((string) $a->option('db', 'default'));
+	};
+	$migrationsPath = static function (\Skeet\Cli\Args $a): string {
+		$opt = $a->option('path');
+		if (is_string($opt) && $opt !== '') {
+			return $opt;
+		}
+		$configured = \Skeet\Skeet::getConfig('migrations_path');
+		return is_string($configured) && $configured !== '' ? $configured : (__DIR__ . '/../migrations');
+	};
+	$makeMigrateCommand = static function (\Skeet\Cli\Args $a) use ($bootstrapDb, $migrationsPath): \Skeet\Cli\Command\MigrateCommand {
+		return new \Skeet\Cli\Command\MigrateCommand(new \Skeet\Migration\Migrator($bootstrapDb($a), $migrationsPath($a)));
+	};
+
+	$cli->register('new', static fn($a, $c) => (new \Skeet\Cli\Command\NewCommand())->run($a, $c), 'Scaffold a new application skeleton');
+	$cli->register('migrate', static fn($a, $c) => $makeMigrateCommand($a)->up($a, $c), 'Apply pending migrations');
+	$cli->register('migrate:rollback', static fn($a, $c) => $makeMigrateCommand($a)->down($a, $c), 'Roll back the last migration(s) (--steps=N)');
+	$cli->register('migrate:status', static fn($a, $c) => $makeMigrateCommand($a)->status($a, $c), 'Show migration status');
+	$cli->register('generate:models', static function ($a, $c) use ($bootstrapDb) {
+		$generator = new \Skeet\Generator\Generator($bootstrapDb($a), [
+			'namespace' => (string) $a->option('namespace', 'Application'),
+			'phpTarget' => $a->option('php') ? (int) $a->option('php') : \PHP_VERSION_ID,
+		]);
+		return (new \Skeet\Cli\Command\GenerateCommand($generator))->models($a, $c);
+	}, 'Generate model/collection/factory classes from the schema');
+	$cli->register('generate:crud', static function ($a, $c) use ($bootstrapDb) {
+		$generator = new \Skeet\Generator\Generator($bootstrapDb($a), [
+			'namespace' => (string) $a->option('namespace', 'Application'),
+			'phpTarget' => $a->option('php') ? (int) $a->option('php') : \PHP_VERSION_ID,
+		]);
+		return (new \Skeet\Cli\Command\GenerateCommand($generator))->crud($a, $c);
+	}, 'Generate CRUD page classes for the given table(s)');
+	$cli->register('version', static function ($a, $c) {
+		$c->writeln('Skeet ' . \Skeet\Skeet::VERSION);
+		return 0;
+	}, 'Show the Skeet version');
+
+	exit($cli->run($args));

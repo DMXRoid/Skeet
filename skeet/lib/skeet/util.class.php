@@ -1,57 +1,56 @@
-<?
+<?php
 	/**
 	* @package Skeet
 	* @version 1.0
-	* @author Matthew Schiros <schiros@invisihosting.com>
+	* @author Matthew Schiros <matthew.schiros+skeet@gmail.com>
 	* @copyright Copyright (c) 2011, Matthew Schiros
 	*/
+
+	declare(strict_types=1);
 
 	namespace Skeet;
 
 	class Util {
 
-		const DATA_TYPE_STRING = 1;
-		const DATA_TYPE_INTEGER = 2;
-		const DATA_TYPE_ARRAY = 3;
-		const DATA_TYPE_DATETIME = 4;
-		const DATA_TYPE_FLOAT = 5;
-		const DATA_TYPE_TINYINT = 6;
-		const DATA_TYPE_TEXT = 7;
-		const DATA_TYPE_TIME = 8;
-
-
-		public static function jamvar($toJam) {
+		public static function jamvar(mixed $toJam): void {
 			echo "<pre>";
 			print_r($toJam);
 			echo "</pre>";
 		}
 
-		public static function requestExists($key) {
-			if(is_array($key)) {
+		/**
+		 * @param string|array<int,string> $key
+		 */
+		public static function requestExists(string|array $key): bool {
+			if (is_array($key)) {
 				$tempRequest = $_REQUEST;
-				foreach($key as $arrayKey) {
-					if(isset($tempRequest[$arrayKey]) && $tempRequest[$arrayKey]) {
+				foreach ($key as $arrayKey) {
+					if (isset($tempRequest[$arrayKey]) && $tempRequest[$arrayKey]) {
 						$tempRequest = $tempRequest[$arrayKey];
 					}
 					else {
-					return false;
+						return false;
 					}
 				}
 				return true;
 			}
 			else {
-				if(isset($_REQUEST[$key]) && $_REQUEST[$key]) {
+				if (isset($_REQUEST[$key]) && $_REQUEST[$key]) {
 					return true;
 				}
 			}
 			return false;
 		}
-		
-		public static function getRequestValue($key) {
-			if(!is_array($key)) {
-				if(self::requestExists($key)) {
-					if(is_array($_REQUEST[$key])) {
-						return $_REQUEST[$key];	
+
+		/**
+		 * @param string|array<int,string> $key
+		 * @return string|array<mixed>
+		 */
+		public static function getRequestValue(string|array $key): string|array {
+			if (!is_array($key)) {
+				if (self::requestExists($key)) {
+					if (is_array($_REQUEST[$key])) {
+						return $_REQUEST[$key];
 					}
 					else {
 						return trim($_REQUEST[$key]);
@@ -59,10 +58,10 @@
 				}
 			}
 			else {
-				if(self::requestExists($key)) {
+				if (self::requestExists($key)) {
 					$tempRequest = $_REQUEST;
-					foreach($key as $arrayKey) {
-						if(isset($tempRequest[$arrayKey]) && $tempRequest[$arrayKey]) {
+					foreach ($key as $arrayKey) {
+						if (isset($tempRequest[$arrayKey]) && $tempRequest[$arrayKey]) {
 							$tempRequest = $tempRequest[$arrayKey];
 						}
 					}
@@ -73,45 +72,13 @@
 			return '';
 		}
 
-		public static function getDatatypeFromSQL($sqlDatatype) {
-			$sqlDatatype = preg_replace("/[^a-zA-Z]/",'',$sqlDatatype);
-			$dataType = self::DATA_TYPE_STRING;
-			switch($sqlDatatype) {
-				case "varchar":
-				$dataType = self::DATA_TYPE_STRING;
-				break;
-
-				case "text":
-				case "bigtext":
-				$dataType = self::DATA_TYPE_TEXT;
-				break;
-
-				case "int":
-				case "int identity":
-				case "bigint":
-				$dataType = self::DATA_TYPE_INTEGER;
-				break;
-
-				case "date":
-				case "datetime":
-				case "timestamp":
-				$dataType = self::DATA_TYPE_DATETIME;
-				break;
-
-				case "float":
-				case "decimal":
-				$dataType = self::DATA_TYPE_FLOAT;
-				break;
-
-				case "tinyint":
-				$dataType = self::DATA_TYPE_TINYINT;
-				break;
-			
-				case "time":
-					$dataType = self::DATA_TYPE_TIME;
-					break;
-			}
-			return $dataType;
+		/**
+		 * Map a SQL column type to the framework {@see DataType}.
+		 *
+		 * The mapping now lives on the enum ({@see DataType::fromSql()}); this
+		 * remains as a convenience wrapper. See docs/findings.md F-004.
+		 */
+		public static function getDatatypeFromSQL(string $sqlDatatype): DataType {
+			return DataType::fromSql($sqlDatatype);
 		}
 	}
-?>

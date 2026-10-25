@@ -2,18 +2,19 @@
 	/**
 	 * @package Skeet
 	 * @subpackage Theme
-	 * @version 1.0
-	 * @author Matthew Schiros <schiros@invisihosting.com>
+	 * @version 2.0
+	 * @author Matthew Schiros <matthew.schiros+skeet@gmail.com>
 	 * @copyright Copyright (c) 2011, Matthew Schiros
 	 */
+
+	declare(strict_types=1);
 
 	namespace Skeet\Theme;
 
 	class SkelTheme extends AbstractTheme {
-		protected $themeName = "Application Skeleton Files";
-		
+		protected string $themeName = "Application Skeleton Files";
+
 		public function __construct() {
-			$this->themeDirectory = \Skeet\Skeet::getConfig("application_path") . "lib/skeet/components/skel/";
+			$this->themeDirectory = (string) \Skeet\Skeet::getConfig("application_path") . "lib/skeet/components/skel/";
 		}
 	}
-?>

@@ -1,4 +1,4 @@
-<?
+<?php
 	/*
 		database_query_debug.class.php
 		

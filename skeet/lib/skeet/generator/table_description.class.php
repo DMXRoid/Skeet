@@ -1,9 +1,9 @@
-<?
+<?php
 	/**
 	* @package Skeet
 	* @subpackage Generator
 	* @version 1.0
-	* @author Matthew Schiros <schiros@invisihosting.com>
+	* @author Matthew Schiros <matthew.schiros+skeet@gmail.com>
 	* @copyright Copyright (c) 2011, Matthew Schiros
 	*/
 
@@ -125,7 +125,7 @@
 		public function addOneToManyCollection($tableName,$foreignDescription,$foreignKeyName) {
 			$this->oneToManyCollections[$foreignDescription] = array(
 				"table_name" => $tableName,
-				"collection_type" => \Skeet\Skeet::COLLECTION_TYPE_ONE_TO_MANY,
+				"collection_type" => \Skeet\CollectionType::OneToMany,
 				"foreign_key_name" => $foreignKeyName,
 				"where" => array()
 			);
@@ -139,7 +139,7 @@
 				"foreign_join_key" => $foreignJoinKey,
 				"local_join_key" => $localJoinKey,
 				"class_name" => str_replace(" ","",ucwords(str_replace("_"," ",$tableName))),
-				"collection_type" => \Skeet\Skeet::COLLECTION_TYPE_MANY_TO_MANY,
+				"collection_type" => \Skeet\CollectionType::ManyToMany,
 				"extra_fields" => $extraColumns,
 				"where" => array()
 			);

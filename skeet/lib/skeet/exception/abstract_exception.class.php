@@ -1,55 +1,57 @@
-<?
+<?php
 	/*
 		abstract_exception.class.php
-		
+
 		Don't let the naming fool you.  Exception is the base PHP Exception class,
 		AbstractException extends that to allow for all the methods and properties
-		that it has while being able to provide a central point of customization for 
+		that it has while being able to provide a central point of customization for
 		all the other exceptions in the framework.
-		
-		All exceptions should extend AbstractException.
+
+		All Skeet exceptions should extend AbstractException.
 	*/
 
+	declare(strict_types=1);
+
 	namespace Skeet\Exception;
-	
+
 	abstract class AbstractException extends \Exception {
-		/*
-			normally, we don't care about being emailed exceptions,
-			we'll just deal with them in the code.  However, for things 
-			like Database exceptions, where there may be debugging information
-			that we want to see, it can be useful to email the developer(s) when
-			some shit goes down.  
-		*/
-		
-		protected $doEmail = false;
-		protected $emailList = array("schiros@invisihosting.com"); 
-		
-		public function __construct($message,$code) {
-			parent::__construct($message,$code);
+
+		/**
+		 * Whether to email this exception when processed. Off by default; turn
+		 * on for exceptions worth paging a developer about (e.g. database).
+		 */
+		protected bool $doEmail = false;
+
+		/** @var string[] recipients for $doEmail notifications (configure per app) */
+		protected array $emailList = [];
+
+		public function __construct(string $message = "", int $code = 0, ?\Throwable $previous = null) {
+			parent::__construct($message, $code, $previous);
 		}
-		
-		public function processException() {
-			if($this->doEmail) {
+
+		/**
+		 * Central handling: optionally email, and render when debugging.
+		 */
+		public function processException(): void {
+			if ($this->doEmail && $this->emailList !== []) {
 				$subject = "Exception thrown on " . \Skeet\Skeet::getConfig("hostname");
-				$to = implode(",",$this->emailList);
-				
-				$text = "An exception was thrown.  
-Exception message: " . $this->message . "
-Trace below:\n" . $this->getTraceAsString();
-				mail($to,$subject,$text);
+				$to = implode(",", $this->emailList);
+				$text = "An exception was thrown.\nException message: " . $this->getMessage()
+					. "\nTrace below:\n" . $this->getTraceAsString();
+				mail($to, $subject, $text);
 			}
-			
-			if(\Skeet\Skeet::getConfig("debug")) {
+
+			if (\Skeet\Skeet::getConfig("debug")) {
 				$this->renderException();
 			}
 		}
-		
-		public function renderException() {
-			\Skeet\Util::jamvar($this);
-			die();
-			$exceptionComponent = \Skeet\ComponentFactory::getComponent("exception",\Skeet\PageFactory::getCurrentPage());
-			$exceptionComponent->addSetting("exception",$this);
-			$exceptionComponent->render();
+
+		/**
+		 * Minimal, dependency-free rendering. Apps can override in a subclass or
+		 * route to a dedicated error page/component.
+		 */
+		public function renderException(): void {
+			echo "Exception: " . $this->getMessage() . "\n";
+			echo $this->getTraceAsString() . "\n";
 		}
 	}
-?>

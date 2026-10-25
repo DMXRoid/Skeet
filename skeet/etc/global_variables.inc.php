@@ -1,4 +1,4 @@
-<?
+<?php
 	/* 
 		global_variables.inc.php
 		
@@ -78,19 +78,11 @@
 	define("DEFAULT_FROM_ADDRESS","info@" . DOMAIN);
 	define("DEFAULT_FROM_NAME",DOMAIN . " Information");
 	
-	/* data types */
-	
-	define("DATA_TYPE_STRING",1);
-	define("DATA_TYPE_INTEGER",2);
-	define("DATA_TYPE_ARRAY",3);
-	define("DATA_TYPE_DATETIME",4);
-	define("DATA_TYPE_FLOAT",5);
-	define("DATA_TYPE_TINYINT",6);
-	define("DATA_TYPE_TEXT",7);
-	
-	/* collection types  */
-	define("COLLECTION_TYPE_ONE_TO_MANY",1);
-	define("COLLECTION_TYPE_MANY_TO_MANY",2);
-	
+	/*
+		Data types and collection types were previously defined here (and,
+		redundantly, on the Skeet and Util classes). They are now the
+		\Skeet\DataType and \Skeet\CollectionType enums. See docs/design-decisions.md.
+	*/
+
 	/* validation error types */
 ?>

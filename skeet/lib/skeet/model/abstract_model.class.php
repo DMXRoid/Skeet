@@ -1,827 +1,683 @@
-<?
+<?php
 	/**
-	 * @version 1.0
-	 * @author Matthew Schiros <schiros@invisihosting.com>
+	 * @version 2.0
+	 * @author Matthew Schiros <matthew.schiros+skeet@gmail.com>
 	 * @copyright Copyright (c) 2010, Matthew Schiros
 	 * @license FreeBSD
 	 */
+
+	declare(strict_types=1);
+
 	namespace Skeet\Model;
 
+	use Skeet\DataType;
+	use Skeet\Database\AbstractDatabase;
+
 	/**
-	 *	The base class of all models
+	 * The base class of all models.
+	 *
+	 * Field values live in a single backing array ($data); column metadata
+	 * (type per column) lives in $columnTypes, which generated subclasses
+	 * populate along with typed accessors over $data (DD-001/002). Writes are
+	 * tracked in $updatedFields (DD-003) and persisted through the parameterized
+	 * database API (DD-008). The database connection is an overridable seam
+	 * (DD-007): it defaults to the application's DatabaseFactory but can be
+	 * injected for testing or multi-connection use.
+	 *
 	 * @package Skeet
 	 * @subpackage Model
 	 */
-
 	abstract class AbstractModel {
-		
-		/**
-		 * @var string The current (calling) namespace of the object
-		 */
-		
-		protected $currentNamespace;
-		
-		/**
-		 * @access protected
-		 * @var string Database name for the table
-		 */
-		protected $databaseName;
-		
-		/**
-		 * @access protected
-		 * @var string Name of the table the data is pulled from
-		 */
-		protected $tableName;
-		
-		/**
-		 * Primary key value for the current object
-		 * in the format:
-		 * array("primary_key_field_name" => "field_name", "primary_key_value" => "field_value")
-		 * 
-		 * @var array
-		 * @access protected
-		 */
-		protected $primaryKey = array("primary_field_key_name" => "","primary_key_value" => 0);
-		
-		/**
-		 * A list of fields and datatypes in (@link $tableName)
-		 * the get() and set() methods will compare against this
-		 * 
-		 * In the format:
-		 * 
-		 * $dataStructure["field_name"] = array("data_type" => "field_data_type", "length" => "field_length","value" => "field_value");
-		 * @see get(), set()
-		 * @access protected
-		 * @var array
-		 */
-		
-		protected $dataStructure = array();
-		
-		/**
-		 * A list of fields that have been updated
-		 * @see save()
-		 * @access protected
-		 * @var array
-		 */
-		
-		protected $updatedFields = array();
-		
-		
-		/**
-		 * Collection definitions
-		 * @see getCollection()
-		 * @access protected
-		 * @var arary
-		 */
-		
-		protected $collectionDefinitions = array();
-		
-		/**
-		 * Collection holder
-		 * @see getCollection()
-		 * @access protected
-		 * @var array
-		 */
-		
-		protected $collections = array();
-		
-		/**
-		 *	Sometimes you just want a count of a collection without
-		 * loading the whole damn thing into memory.
-		 * 
-		 * @see getCollectionCount()
-		 * @access protected
-		 * @var array
-		 */
 
-		protected $collectionCounts = array();
+		/** The current (calling) namespace of the object, e.g. "\App". */
+		protected string $currentNamespace = '';
+
+		/** Named database config this model uses (null = default). */
+		protected ?string $databaseName = null;
+
+		/** The table the model maps to. */
+		protected string $tableName = '';
+
+		/** The primary key column name. */
+		protected string $primaryKeyField = '';
 
 		/**
-		 * One to one object definitions
-		 * @see getTargetObject()
-		 * @access protected 
-		 * @var array
+		 * Column metadata: column name => DataType. This is the authoritative
+		 * list of persistable columns; generated subclasses populate it.
+		 *
+		 * @var array<string,DataType>
 		 */
-		
-		protected $targetObjectDefinitions = array();
-		
-		/**
-		 * One to one object holder
-		 * @see getTargetObject()
-		 * @access protected
-		 * @var array
-		 */
-		
-		protected $targetObjects = array();
-		
-		
-		/**
-		 * Required fields for submit, can be set at will
-		 * or in the subclass
-		 * @see addRequiredField(),getRequiredFields(),validateInput()
-		 * @access protected
-		 * @var arary
-		 */
-		
-		protected $requiredFields = array();
-		
-		/**
-		 * Specific validation types.  If a field does
-		 * not exist, falls back to the datatype in (@link $dataStructure)
-		 * @see validateInput(),setValidationType()
-		 * @access protected
-		 * @var array
-		 */
-		
-		protected $validationTypes = array();
-		
-		/**
-		 * Validation errors
-		 * @see validateInput(),getValidationErrors()
-		 * @access protected
-		 * @var array
-		 */
-		
-		protected $validationErrors = array();
-		
-		
-		/**
-		 * Display name for fields in CRUD functionality.
-		 * Optional.  If they don't exist, just the field name 
-		 * will be used
-		 * 
-		 * @see getDisplayName()
-		 * @access protected
-		 * @var array
-		 */
-		
-		protected $displayNames = array();
-		
-		/**
-		 * Display errors.  If you want to standardize error output for 
-		 * a field across the application, you can do so in the subclasses
-		 * 
-		 * @see validateInput()
-		 * @access protected
-		 * @var array
-		 */
-		
-		
-		protected $displayErrors = array();
+		protected array $columnTypes = [];
 
-		protected $displayNameField;
-
-		protected $notes;
-
-		protected $events;
-
-		protected $documents;
-		
-		
-		
 		/**
-		 * The constructor for the model.  Can take a primary key ID, a custom SQL statement, or an array of values to populate 
-		 * the model with.  If nothing is passed, an object with no data values set is created
-		 * @access public
-		 * @param int $primaryKeyID The primary key of the table the model is for
-		 * @param string $customSQL A custom SQL statement to populate the model object from the DB.  Only the first row is used
-		 * @param array $dataRow An array of values to populate the model with
+		 * Backing store of column values.
+		 *
+		 * @var array<string,mixed>
 		 */
-		public function __construct($primaryKeyID=NULL,$customSQL=NULL,$dataRow=NULL) {
-			$namespaceArray = explode('\\',get_class($this));
-			$namespace = array_shift($namespaceArray);
-			$this->setCurrentNamespace('\\' . $namespace );
+		protected array $data = [];
+
+		/**
+		 * Columns changed since load/save (dirty set), column => value.
+		 *
+		 * @var array<string,mixed>
+		 */
+		protected array $updatedFields = [];
+
+		/** The connection seam; resolved lazily when null (DD-007). */
+		protected ?AbstractDatabase $db = null;
+
+		/** @var array<string,array<string,mixed>> collection definitions */
+		protected array $collectionDefinitions = [];
+
+		/** @var array<string,mixed> cached collection objects */
+		protected array $collections = [];
+
+		/** @var array<string,array<string,mixed>> one-to-one target definitions */
+		protected array $targetObjectDefinitions = [];
+
+		/** @var array<string,mixed> cached target objects */
+		protected array $targetObjects = [];
+
+		/** @var array<string,string> */
+		protected array $requiredFields = [];
+
+		/** @var array<string,\Skeet\ValidationType> per-field validation overrides */
+		protected array $validationTypes = [];
+
+		/** @var array<string,string> */
+		protected array $validationErrors = [];
+
+		/** @var array<string,string> */
+		protected array $displayNames = [];
+
+		/** @var array<string,string> */
+		protected array $displayErrors = [];
+
+		protected ?string $displayNameField = null;
+
+		/**
+		 * @param int|string|null       $primaryKeyId load this row by primary key when given
+		 * @param AbstractDatabase|null $db           inject a connection (DD-007); null = resolve lazily
+		 */
+		public function __construct(int|string|null $primaryKeyId = null, ?AbstractDatabase $db = null) {
+			$namespaceArray = explode('\\', get_class($this));
+			$this->currentNamespace = '\\' . array_shift($namespaceArray);
+
+			if ($db !== null) {
+				$this->db = $db;
+			}
+
 			$this->preConstruct();
-			$namespacedClass = $this->getCurrentNamespace() . "\\DatabaseFactory";
-			$db = $namespacedClass::getDatabase();
-			if($primaryKeyID) {
-				$sql = "SELECT * FROM [" . $this->getTableName() . "]
-							WHERE [" . $this->getPrimaryKeyField() . "] = " . $db->quote($primaryKeyID);
-				$dataRow = $db->doQuery($sql)->getRow();
-			}
-			elseif($customSQL) {
-				$dataRow = $db->doQuery($customSQL)->getRow();
-			}
-			
-			if($dataRow) {
-				foreach($dataRow as $key => $value) {
-					if($key == $this->getPrimaryKeyField()) {
-						$this->setPrimaryKeyID($value);
-					}
-					$this->set($key,$value);
+
+			// Ensure every known column exists in $data so toArray() is complete.
+			foreach (array_keys($this->columnTypes) as $column) {
+				if (!array_key_exists($column, $this->data)) {
+					$this->data[$column] = null;
 				}
 			}
+
+			if ($primaryKeyId !== null) {
+				$database = $this->getDatabase();
+				$sql = 'SELECT * FROM ' . $database->quoteIdentifier($this->tableName)
+					. ' WHERE ' . $database->quoteIdentifier($this->primaryKeyField) . ' = ?';
+				$row = $database->doQuery($sql, [$primaryKeyId])->getRow();
+				if ($row !== false) {
+					$this->loadRow($row);
+				}
+			}
+
 			$this->postConstruct();
 		}
 
-		/**
-		 * Gets run at the front of the constructor
-		 * @access protected
-		 */
+		/** Hook run at the front of the constructor. */
+		protected function preConstruct(): void {}
 
-		protected function preConstruct() { }
+		/** Hook run at the end of the constructor. */
+		protected function postConstruct(): void {}
 
-		/**
-		 * Gets run at the end of the constructor
-		 * @access protected
-		 */
-
-		protected function postConstruct() { }
+		/** Hook run after save(); $isInsert is true for a freshly inserted row. */
+		protected function postSave(bool $isInsert = false): void {}
 
 		/**
-		 * Get the field name for the primary key of the model
-		 * @access public
-		 * @return string
+		 * Populate $data from a DB row without marking fields dirty (loaded
+		 * state is clean). Only known columns are taken.
+		 *
+		 * @param array<string,mixed> $row
 		 */
-
-		public function getPrimaryKeyField() {
-			return $this->primaryKey["primary_key_field_name"];
-		}
-		
-		/**
-		 * Set the primary key of the object
-		 * @param int $primaryKeyID
-		 * @access public
-		 */
-
-		public function setPrimaryKeyID($primaryKeyID) {
-			$this->primaryKey["primary_key_value"] = $primaryKeyID;
+		public function loadRow(array $row): void {
+			foreach ($row as $key => $value) {
+				if (array_key_exists($key, $this->columnTypes) || $key === $this->primaryKeyField) {
+					$this->data[$key] = $value;
+				}
+			}
 		}
 
+		/* -------------------------------------------------- connection seam */
+
+		public function setDatabase(AbstractDatabase $db): void {
+			$this->db = $db;
+		}
+
+		protected function getDatabase(): AbstractDatabase {
+			if ($this->db === null) {
+				$factory = $this->resolveClass('DatabaseFactory');
+				$this->db = $this->databaseName !== null
+					? $factory::getDatabase($this->databaseName)
+					: $factory::getDatabase();
+			}
+			return $this->db;
+		}
+
 		/**
-		 * Get the current namespace of the model (ie, the application
-		 * that it's being called from)
-		 * @access public
-		 * @return string
+		 * Resolve a factory/service class, preferring the application's
+		 * namespace and falling back to the framework's.
 		 */
-		
-		public function getCurrentNamespace() {
+		protected function resolveClass(string $shortName): string {
+			$appClass = $this->currentNamespace . '\\' . $shortName;
+			return class_exists($appClass) ? $appClass : '\\Skeet\\' . $shortName;
+		}
+
+		/* -------------------------------------------------- identity */
+
+		public function getPrimaryKeyField(): string {
+			return $this->primaryKeyField;
+		}
+
+		public function setPrimaryKeyID(int|string $primaryKeyId): void {
+			$this->data[$this->primaryKeyField] = $primaryKeyId;
+		}
+
+		public function getID(): int|string|null {
+			return $this->data[$this->primaryKeyField] ?? null;
+		}
+
+		public function getCurrentNamespace(): string {
 			return $this->currentNamespace;
 		}
-		
-		/**
-		 * Set the current namespace of the model (ie, the application
-		 * that it's being called from)
-		 * @access public
-		 * @param string $currentNamespace
-		 */
 
-		public function setCurrentNamespace($currentNamespace) {
+		public function setCurrentNamespace(string $currentNamespace): void {
 			$this->currentNamespace = $currentNamespace;
 		}
-		
-		/**
-		 * Gets (@link $tableName)
-		 * @access public
-		 * @return string
-		 */
-		
-		public function getTableName() {
+
+		public function getTableName(): string {
 			return $this->tableName;
 		}
-		
-		/**
-		 * Gets (@link $databaseName)
-		 * @access public
-		 * @return string
-		 */
-		
-		public function getDatabaseName() {
+
+		public function getDatabaseName(): ?string {
 			return $this->databaseName;
 		}
-		
+
+		/* -------------------------------------------------- values */
+
 		/**
-		 * Gets the (@link $primaryKeyID)
-		 * @access public
-		 * @return integer
+		 * Get a column value. Throws if the column is not part of the model.
 		 */
-		
-		public function getID() {
-			return $this->primaryKey["primary_key_value"];
+		public function get(string $key): mixed {
+			if (!array_key_exists($key, $this->columnTypes)) {
+				throw new \Skeet\Exception\InvalidGetCallException($key);
+			}
+			return $this->data[$key] ?? null;
 		}
-		
+
 		/**
-		 * Gettor for data values.  Checks (@link $dataStructure) for the valid existence of a field
-		 * @access public
-		 * @return mixed
+		 * Set a column value and mark it dirty. Throws if the column is not
+		 * part of the model.
 		 */
-		
-		public function get($key) {
-			try {
-				if(isset($this->dataStructure[$key]) && is_array($this->dataStructure[$key])) {
-					return $this->dataStructure[$key]["value"];
-				}
-				else {
-					error_log($key);
-					throw new \Skeet\Exception\InvalidGetCallException($key);
-				}
+		public function set(string $key, mixed $value): void {
+			if (!array_key_exists($key, $this->columnTypes)) {
+				throw new \Skeet\Exception\InvalidSetCallException($key);
 			}
-			catch (Exception $e) {
-				$e->processException();
-			}
+			$this->data[$key] = $value;
+			$this->updatedFields[$key] = $value;
 		}
-		
+
 		/**
-		 * Settor for data values.  Checks (@link $dataStructure) for the valid existence of a field
-		 * @access public 
-		 * @var string
-		 * @var mixed
+		 * Persist changed fields: INSERT a new row or UPDATE the existing one.
 		 */
-		
-		public function set($key,$value) {
-			try {
-				if(isset($this->dataStructure[$key]) && is_array($this->dataStructure[$key])) {
-					$this->dataStructure[$key]["value"] = $value;
-					$this->updatedFields[$key] = $value;
+		public function save(): void {
+			$db = $this->getDatabase();
+
+			$isInsert = !$this->getID();
+
+			$fields = [];
+			foreach ($this->updatedFields as $key => $value) {
+				if ($key === $this->primaryKeyField) {
+					continue;
 				}
-				else {
-					throw new \Skeet\Exception\InvalidSetCallException($key);
+				$fields[$key] = $value;
+			}
+
+			$this->doApplyTimestamps($fields, $isInsert);
+
+			if (!$isInsert) {
+				if ($fields !== []) {
+					$db->doUpdate($this->tableName, $fields, [$this->primaryKeyField => $this->getID()]);
 				}
-			}
-			catch (Exception $e) {
-				$e->processException();
-			}
-		}
-		
-		/**
-		 * Save function.  Writes values in (@link $updatedFields) to the database,  
-		 * Will insert or update as necessary
-		 * @access public
-		 */
-	
-		
-		public function save() {
-			$db = \Skeet\DatabaseFactory::getDatabase();
-			$tableName = $this->getTableName();
-			$fields = array();
-			$quotes = array();
-			$isInsert = false;
-			
-			foreach($this->updatedFields as $key => $value) {
-				if($key != $this->primaryKey["primary_key_field_name"] && $key != "last_modified_date") {
-					if(!$value) {
-						if(0 && is_null($this->dataStructure[$key]["default_value"])) {
-							$fields[$key] = "NULL";
-							$quotes[$key] = false;
-						}
-						else {
-							$fields[$key] = $value;	
-							$quotes[$key] = true;	
-						}
-					}
-					else {
-						$fields[$key] = $value;	
-						$quotes[$key] = true;	
-					}
-				}
-			}
-			/*$fields["last_modified_date"] = "DEFAULT";
-			$quotes["last_modified_date"] = false;*/
-			
-			
-			if($this->getID()) {
-				$wheres = array($this->getPrimaryKeyField() => $this->getID());
-				$db->doInsertOrUpdate($tableName,$fields,$quotes,$wheres);
 			}
 			else {
-				if(isset($this->dataStructure["creation_datetime"])) {
-					$fields["creation_datetime"] = "GETDATE()";
-					if(isset($quotes["creation_datetime"])) {
-						unset($quotes["creation_datetime"]);
-					}
-				}
-				$isInsert = true;
-				$db->doInsert($tableName,$fields,$quotes);
-				$this->setPrimaryKeyID($db->getInsertID($tableName));
+				$newId = $db->doInsert($this->tableName, $fields);
+				$this->setPrimaryKeyID($newId);
 			}
+
+			$this->updatedFields = [];
 			$this->postSave($isInsert);
 		}
-		
-		protected function postSave() { }
 
 		/**
+		 * When timestamp management is on (config `manage_timestamps`, default
+		 * on), stamp the created/updated columns that exist on this model —
+		 * created on insert, updated on every write. When off, leave them to the
+		 * database (defaults / ON UPDATE).
 		 *
-		 * implement this for real at some poitn
+		 * @param array<string,mixed> $fields
 		 */
+		protected function doApplyTimestamps(array &$fields, bool $isInsert): void {
+			if (!$this->doesManageTimestamps()) {
+				return;
+			}
+			$now = date('Y-m-d H:i:s');
+			$createdField = $this->getCreatedAtField();
+			$updatedField = $this->getUpdatedAtField();
 
-		public function getCollectionCount($tableName) {
-			try {
-				if(isset($this->collectionDefinitions[$tableName])) {
-					if(!isset($this->collectionCounts[$tableName])) {
-						$this->checkCollection($tableName);
-					}
-					return $this->collections[$tableName];
-				}
-				else {
-					throw new InvalidGetCollectionException();
-				}
+			if ($isInsert && array_key_exists($createdField, $this->columnTypes) && !isset($fields[$createdField])) {
+				$fields[$createdField] = $now;
+				$this->data[$createdField] = $now;
 			}
-			catch(Exception $e) {
-				$e->processException();
+			if (array_key_exists($updatedField, $this->columnTypes)) {
+				$fields[$updatedField] = $now;
+				$this->data[$updatedField] = $now;
 			}
 		}
-		
-		/**
-		 * Get the collection definitions for a given model
-		 * @return array
-		 */
-		
-		public function getCollectionDefinitions() {
-			return $this->collectionDefinitions;
-		}
-		
-		/**
-		 * Gets a collection model object.  Calls the checkCollection function if 
-		 * one isn't stored yet
-		 * 
-		 * @see checkCollection()
-		 * @link $collections $collectionDefinitions
-		 * @var string
-		 * @return AbstractCollection
-		 */
-		
-		public function getCollection($tableName) {
-			try {
-				if(isset($this->collectionDefinitions[$tableName])) {
-					if(!isset($this->collections[$tableName]) || !is_object($this->collections[$tableName])) {
-						$this->checkCollection($tableName);
-					}
-					return $this->collections[$tableName];
-				}
-				else {
-					die($tableName);
-					throw new InvalidGetCollectionException();
-				}
-			}
-			catch(Exception $e) {
-				$e->processException();
-			}
-		}
-		
-		/**
-		 * Checks a collection via ModelCollectionFactory
-		 * 
-		 * @see getCollection()
-		 * @link $collections $collectionDefinitions
-		 * @access protected
-		 * @var string
-		 */
-		
-		protected function checkCollection($tableName) {
-			
-			$namespacedClass = $this->getCurrentNamespace() . '\\ModelCollectionFactory';
-			$this->collections[$tableName] = $namespacedClass::getModelCollection($this->collectionDefinitions[$tableName]["table_name"],$this->getCollectionOptionArray($tableName));
-		}
-		
-		protected function getCollectionOptionArray($tableName) {
-			if(!isset($this->collectionDefinitions[$tableName]["collection_options"]) || !is_array($this->collectionDefinitions[$tableName]["collection_options"])) {
-				$this->checkCollectionOptionArray($tableName);
-			}
-			return $this->collectionDefinitions[$tableName]["collection_options"];
-		}
-		
-		protected function checkCollectionOptionArray($tableName) {
-			$collectionOptionArray = array();
-			$namespacedClass = $this->getCurrentNamespace() . "\\DatabaseFactory";
-			$db = $namespacedClass::getDatabase();
-			switch($this->collectionDefinitions[$tableName]["collection_type"]) {
-				case \Skeet\Skeet::COLLECTION_TYPE_MANY_TO_MANY:
-					$joinSQL = " INNER JOIN ". $db->getEscapeOpenCharacter() . $this->collectionDefinitions[$tableName]["join_table"] . $db->getEscapeCloseCharacter() . "
-									 ON " . $db->getEscapeOpenCharacter() .  $this->collectionDefinitions[$tableName]["table_name"] . $db->getEscapeCloseCharacter() . "." . $this->collectionDefinitions[$tableName]["foreign_key_name"] . " = " . $db->getEscapeOpenCharacter() . $this->collectionDefinitions[$tableName]["join_table"] . $db->getEscapeCloseCharacter() . "." . $this->collectionDefinitions[$tableName]["foreign_join_key"] . "
-									 AND " . $db->getEscapeOpenCharacter() . $this->collectionDefinitions[$tableName]["join_table"] . $db->getEscapeCloseCharacter() . ".is_retired = 0 
-									 AND " . $db->getEscapeOpenCharacter() . $this->collectionDefinitions[$tableName]["join_table"] . $db->getEscapeCloseCharacter() ."." . $this->collectionDefinitions[$tableName]["local_join_key"] . " = '" . $this->getID() . "'";
-					$collectionOptionArray["join_table"] = array($joinSQL);
-					$where = array();
-					if(!isset($this->collectionDefinitions[$tableName]["show_retired"]) || !$this->collectionDefinitions[$tableName]["show_retired"]) {
-						$where[$db->getEscapeOpenCharacter() . $this->collectionDefinitions[$tableName]["table_name"] . $db->getEscapeCloseCharacter() . ".is_retired"] = "0";
-					}
-					else {
-						$collectionOptionArray["show_retired"] = true;
-					}
-					$collectionOptionArray["where"] = $where;
-					if(isset($this->collectionDefinitions[$tableName]["order_by"])) {
-						$collectionOptionArray["order_by"] = $this->collectionDefinitions[$tableName]["order_by"];
-					}
-					break;
-					
-				case \Skeet\Skeet::COLLECTION_TYPE_ONE_TO_MANY:
-				default:
-					$where = array();
-					$where[$db->getEscapeOpenCharacter() . $this->collectionDefinitions[$tableName]["table_name"] . $db->getEscapeCloseCharacter() . "." . $this->collectionDefinitions[$tableName]["foreign_key_name"]] = $this->getID();
-					$where[$db->getEscapeOpenCharacter() . $this->collectionDefinitions[$tableName]["table_name"] . $db->getEscapeCloseCharacter() . ".is_retired"] = "0";
-					$collectionOptionArray["where"] = array_merge($where,$this->collectionDefinitions[$tableName]["where"]);
-					if(isset($this->collectionDefinitions[$tableName]["order_by"])) {
-						$collectionOptionArray["order_by"] = $this->collectionDefinitions[$tableName]["order_by"];
-					}
-					break;
-			}
-			$this->collectionDefinitions[$tableName]["collection_options"] = $collectionOptionArray;
-		}
-		
-		/**
-		 * Gets a one to one object.  Calls checkTargetObject if one isn't 
-		 * stored yet
-		 * 
-		 * @see checkTargetObject()
-		 * @link $targetObjects $targetObjectDefinitions
-		 * @access public
-		 * @var string
-		 */
-		
-		public function getTargetObject($tableName) {
-			try {
-				if(isset($this->targetObjectDefinitions[$tableName])) {
-					if(!isset($this->targetObjects[$tableName]) || !is_object($this->targetObjects[$tableName])) {
-						$namespacedClass = $this->getCurrentNamespace() . '\\ModelFactory';
-						$this->targetObjects[$tableName] = $namespacedClass::getModel($this->targetObjectDefinitions[$tableName]["table_name"],$this->get($this->targetObjectDefinitions[$tableName]["foreign_key_name"]));
-					}
-					return $this->targetObjects[$tableName];
-				}
-				else {
-					error_log($this->getTableName() . "->" . $tableName);
-					throw new InvalidGetTargetObjectException();
-				}
-			}
-			catch (Exception $e) {
-				$e->processException();
-			}
-		}
-		
-		public function getTargetObjectDefinitions() {
-			return $this->targetObjectDefinitions;
-		}
-		
-		public function addObjectToCollection($tableName,$modelObject) {
-			try {
-				if(isset($this->collectionDefinitions[$tableName]) && is_array($this->collectionDefinitions[$tableName])) {
-					/**
-					 * TODO: change this so that the database call changes accordingly
-					 */
-					$namespacedClass = $this->getCurrentNamespace() . '\\DatabaseFactory';
-					$db = $namespacedClass::getDatabase();
-					
-					$targetTable = $this->collectionDefinitions[$tableName]["join_table"];
-					$fields = array();
-					$quotes = array();
-					$wheres = array();
-					
-					$fields[$this->collectionDefinitions[$tableName]["local_join_key"]] = $this->getID();
-					$fields[$this->collectionDefinitions[$tableName]["foreign_join_key"]] = $modelObject->getID();
-					
-					$wheres = $fields;
-					
-					$fields["is_retired"] = "0";
-					
-					$fields["creation_datetime"] = date("Y-m-d H:i:s");
-					$quotes["creation_datetime"] = true;
 
-					$this->getCollection($tableName)->add($modelObject);
-					$db->doInsertOrUpdate($targetTable,$fields,$quotes,$wheres);
-					
-				}
-				else {
-					throw new InvalidGetCollectionException();
-				}
-			}
-			catch (Exception $e){
-				$e->processException();
-			}
-		}
-		
-		public function removeObjectFromCollection($tableName,$modelObject) {
-			try {
-				if(isset($this->collectionDefinitions[$tableName]) && is_array($this->collectionDefinitions[$tableName])) {
-					$namespacedClass = $this->getCurrentNamespace() . '\\DatabaseFactory';
-					$db = $namespacedClass::getDatabase();
-					
-					$targetTable = $this->collectionDefinitions[$tableName]["join_table"];
-					$fields = array();
-					$quotes = array();
-					$wheres = array();
+		/* -------------------------------------------------- bulk value access (DD-001/002) */
 
-					$fields["is_retired"] = "1";
-					
-					$wheres[$this->collectionDefinitions[$tableName]["local_join_key"]] = $this->getID();
-					$wheres[$this->collectionDefinitions[$tableName]["foreign_join_key"]] = $modelObject->getID();
-					
-					
-					$this->getCollection($tableName)->remove($modelObject);
-					$db->doUpdate($targetTable,$fields,$quotes,$wheres);
-				}
-				else {
-					throw new InvalidGetCollectionException();
-				}
-			}
-			catch (Exception $e){
-				$e->processException();
+		/**
+		 * All column values. O(1) over the backing array.
+		 *
+		 * @return array<string,mixed>
+		 */
+		public function toArray(): array {
+			return $this->data;
+		}
+
+		/** Alias of {@see toArray()}. @return array<string,mixed> */
+		public function getValuesAsArray(): array {
+			return $this->data;
+		}
+
+		/** @return string[] the model's column names */
+		public function getColumns(): array {
+			return array_keys($this->columnTypes);
+		}
+
+		/* -------------------------------------------------- conventions (config-driven) */
+
+		protected function getConfigValue(string $key): mixed {
+			return \Skeet\Skeet::getConfig($key);
+		}
+
+		/** Soft-delete column name (config `soft_delete_field`, default `is_retired`). */
+		protected function getSoftDeleteField(): string {
+			$value = $this->getConfigValue('soft_delete_field');
+			return (is_string($value) && $value !== '') ? $value : 'is_retired';
+		}
+
+		/** The "active" value for the soft-delete column (config, default 0). */
+		protected function getSoftDeleteActiveValue(): mixed {
+			$value = $this->getConfigValue('soft_delete_active_value');
+			return $value === false ? 0 : $value;
+		}
+
+		/** The "retired" value for the soft-delete column (config, default 1). */
+		protected function getSoftDeleteRetiredValue(): mixed {
+			$value = $this->getConfigValue('soft_delete_retired_value');
+			return $value === false ? 1 : $value;
+		}
+
+		/** Whether the model manages timestamps (config `manage_timestamps`, default on). */
+		protected function doesManageTimestamps(): bool {
+			$value = $this->getConfigValue('manage_timestamps');
+			return $value === false ? true : filter_var($value, FILTER_VALIDATE_BOOLEAN);
+		}
+
+		protected function getCreatedAtField(): string {
+			$value = $this->getConfigValue('created_at_field');
+			return (is_string($value) && $value !== '') ? $value : 'creation_datetime';
+		}
+
+		protected function getUpdatedAtField(): string {
+			$value = $this->getConfigValue('updated_at_field');
+			return (is_string($value) && $value !== '') ? $value : 'last_modified_date';
+		}
+
+		/**
+		 * Soft-delete this record: set the soft-delete column to its retired
+		 * value and save. Skeet never hard-deletes model rows (DD-019); a no-op
+		 * if the model has no soft-delete column.
+		 */
+		public function doSoftDelete(): void {
+			$field = $this->getSoftDeleteField();
+			if (array_key_exists($field, $this->columnTypes)) {
+				$this->set($field, $this->getSoftDeleteRetiredValue());
+				$this->save();
 			}
 		}
-		
-		public function setExtraCollectionField($tableName,$fieldName,$modelObject,$value) {
-			try {
-				if(isset($this->collectionDefinitions[$tableName]) && is_array($this->collectionDefinitions[$tableName])) {
-					if(isset($this->collectionDefinitions[$tableName]["extra_fields"][$fieldName])) {
-						$namespacedClass = $this->getCurrentNamespace() . '\\DatabaseFactory';
-						$db = $namespacedClass::getDatabase();
-						
-						$targetTable = $this->collectionDefinitions[$tableName]["join_table"];
-						$fields = array();
-						$quotes = array();
-						$wheres = array();
-						
-						$fields[$fieldName] = $value;
-						$quotes[$fieldName] = true;
-						
-						$wheres[$this->collectionDefinitions[$tableName]["local_join_key"]] = $this->getID();
-						$wheres[$this->collectionDefinitions[$tableName]["foreign_join_key"]] = $modelObject->getID();
-						
-						$db->doUpdate($targetTable,$fields,$quotes,$wheres);
-					}
-					else {
-						throw new InvalidGetExtraCollectionFieldException();
-					}
-				}
-				else {
-					throw new InvalidGetCollectionException();
+
+		/**
+		 * Diff this model's current values against a previous value array,
+		 * returning human-readable "Field: old -> new" lines.
+		 *
+		 * @param array<string,mixed> $oldValues
+		 * @return string[]
+		 */
+		public function compareValueArray(array $oldValues): array {
+			$compareArray = [];
+			foreach ($this->data as $fieldName => $newValue) {
+				$oldValue = $oldValues[$fieldName] ?? null;
+				if ($oldValue != $newValue) {
+					$compareArray[] = $this->prettifyFieldName($fieldName) . ': ' . $oldValue . ' -> ' . $newValue;
 				}
 			}
-			catch (Exception $e) {
-				$e->processException();
-			}
+			return $compareArray;
 		}
-		
-		public function setNonExtraCollectionField($tableName,$fieldName,$modelObject,$value) {
-			try {
-				if(isset($this->collectionDefinitions[$tableName]) && is_array($this->collectionDefinitions[$tableName])) {
-						$namespacedClass = $this->getCurrentNamespace() . '\\DatabaseFactory';
-						$db = $namespacedClass::getDatabase();
-						
-						$targetTable = $this->collectionDefinitions[$tableName]["join_table"];
-						$fields = array();
-						$quotes = array();
-						$wheres = array();
-						
-						$fields[$fieldName] = $value;
-						$quotes[$fieldName] = true;
-						
-						$wheres[$this->collectionDefinitions[$tableName]["local_join_key"]] = $this->getID();
-						$wheres[$this->collectionDefinitions[$tableName]["foreign_join_key"]] = $modelObject->getID();
-						
-						$db->doUpdate($targetTable,$fields,$quotes,$wheres);
-				}
-				else {
-					throw new InvalidGetCollectionException();
-				}
-			}
-			catch (Exception $e) {
-				$e->processException();
-			}
+
+		public function getHash(): string {
+			return sha1(implode('', array_map(static fn($v) => (string) $v, $this->data)));
 		}
-		
-		public function getExtraCollectionField($tableName,$fieldName,$modelObject) {
-			try {
-				if(isset($this->collectionDefinitions[$tableName]) && is_array($this->collectionDefinitions[$tableName])) {
-					if(isset($this->collectionDefinitions[$tableName]["extra_fields"][$fieldName])) {
-						$namespacedClass = $this->getCurrentNamespace() . '\\DatabaseFactory';
-						$db = $namespacedClass::getDatabase();
-						
-						$sql = "SELECT " . $db->getEscapeOpenCharacter().  $fieldName . $db->getEscapeCloseCharacter() .  "
-									FROM " . $db->getEscapeOpenCharacter().  $this->collectionDefinitions[$tableName]["join_table"] . $db->getEscapeCloseCharacter() . "
-									WHERE 1=1
-									AND " . $this->collectionDefinitions[$tableName]["local_join_key"] . " = " . $db->quote($this->getID()) . "
-									AND " . $this->collectionDefinitions[$tableName]["foreign_join_key"] . " = " . $db->quote($modelObject->getID());
-						if($row = $db->doQuery($sql)->getRow()) {
-							return $row[$fieldName];
-						}
-						return false;
-					}
-					else {
-						error_log($fieldName);
-						throw new InvalidGetExtraCollectionFieldException();
-					}
-				}
-				else {
-					throw new InvalidGetCollectionException();
-				}
+
+		/**
+		 * Back-compat view of the legacy $dataStructure shape, derived on the
+		 * fly from column metadata + values.
+		 *
+		 * @return array<string,array<string,mixed>>
+		 */
+		public function getDataStructure(): array {
+			$structure = [];
+			foreach ($this->columnTypes as $field => $type) {
+				$structure[$field] = ['data_type' => $type, 'value' => $this->data[$field] ?? null];
 			}
-			catch (Exception $e) {
-				$e->processException();
-			}			
+			return $structure;
 		}
-		
-		public function validateInput($inputArray) {
-			$errorMessages = array();
-			foreach($this->getRequiredFields() as $requiredField) {
-				if(!isset($inputArray[$requiredField])) {
-					$errorMessages[$requiredField] = "You did not enter a value for " . $this->getDisplayName($requiredField);
+
+		/* -------------------------------------------------- validation */
+
+		/**
+		 * @param array<string,mixed> $inputArray
+		 * @return array<string,string> field => error message
+		 */
+		public function validateInput(array $inputArray): array {
+			$errorMessages = [];
+			foreach ($this->getRequiredFields() as $requiredField) {
+				if (!isset($inputArray[$requiredField])) {
+					$errorMessages[$requiredField] = 'You did not enter a value for ' . $this->getDisplayName($requiredField);
 				}
 			}
-			foreach($inputArray as $key => $value) {
-				if(isset($this->dataStructure[$key])) {
-					if(isset($this->validationTypes[$key])) {
-						$validationType = $this->validationTypes[$key];
-					}
-					else {
-						$validationType = $this->dataStructure[$key]["data_type"];
-					}
-					$namespacedClass = $this->getCurrentNamespace() . "\\ValidationFactory";
-					if(!$namespacedClass::validate($value,$validationType)) {
-						if(isset($this->displayErrors[$key])) {
-							$errorMessages[$key] = $this->displayErrors[$key];
-						}
-						else {
-							$errorMessages[$key] = "Invalid input for " . $this->getDisplayName($key) . ".";
-						}
+			$validationFactory = $this->resolveClass('ValidationFactory');
+			foreach ($inputArray as $key => $value) {
+				if (array_key_exists($key, $this->columnTypes)) {
+					$validationType = $this->validationTypes[$key] ?? \Skeet\ValidationType::fromDataType($this->columnTypes[$key]);
+					if (!$validationFactory::validate($value, $validationType)) {
+						$errorMessages[$key] = $this->displayErrors[$key]
+							?? ('Invalid input for ' . $this->getDisplayName($key) . '.');
 					}
 				}
 			}
 			$this->validationErrors = $errorMessages;
 			return $errorMessages;
 		}
-		
-		public function addRequiredField($requiredField) {
-			if(isset($this->dataStructure[$requiredField])) {
+
+		public function addRequiredField(string $requiredField): void {
+			if (array_key_exists($requiredField, $this->columnTypes)) {
 				$this->requiredFields[$requiredField] = $requiredField;
 			}
 		}
-		
-		public function getRequiredFields() {
+
+		/** @return array<string,string> */
+		public function getRequiredFields(): array {
 			return $this->requiredFields;
 		}
-		
-		/**
-		 * Returns (@link $validationErrors)
-		 * @return array
-		 */
-		
-		public function getValidationErrors() {
+
+		/** @return array<string,string> */
+		public function getValidationErrors(): array {
 			return $this->validationErrors;
 		}
-		
-		public function getDisplayName($field) {
-			if(!isset($this->displayNames[$field]) || !$this->displayNames[$field]) {
-				if(isset($this->dataStructure[$field])) {
-					if(substr($field,-3) == "_id") {
-						$field = substr_replace($field,"",-3);
-					}
-					return ucwords(str_replace("_"," " ,$field));
-				}
-			}
-			return $this->displayNames[$field];
-		}
-		
-		/**
-		 * Returns a label to be used for displaying in the 
-		 * collection getDropdown() functions (or wherever 
-		 * else you want), for example the name or a concatenation
-		 * of various tables
-		 * 
-		 * @return string
-		 */
-		
-		public function getDisplayLabel() {
-			if($this->getDisplayNameField()) {
-				return $this->get($this->getDisplayNameField());
-			}
-			return "";
-		}
-		
-	
 
-		public function getDisplayNameField() {
+		public function getDisplayName(string $field): string {
+			if (isset($this->displayNames[$field]) && $this->displayNames[$field] !== '') {
+				return $this->displayNames[$field];
+			}
+			if (str_ends_with($field, '_id')) {
+				$field = substr($field, 0, -3);
+			}
+			return ucwords(str_replace('_', ' ', $field));
+		}
+
+		public function getDisplayLabel(): string {
+			if ($this->displayNameField !== null && $this->displayNameField !== '') {
+				return (string) $this->get($this->displayNameField);
+			}
+			return '';
+		}
+
+		public function getDisplayNameField(): ?string {
 			return $this->displayNameField;
 		}
 
-		public function getValuesAsArray() {
-			$valuesArray = array();
-			foreach($this->dataStructure as $fieldName => $structure) {
-				$valuesArray[$fieldName] = $this->get($fieldName);
-			}
-			return $valuesArray;
+		private function prettifyFieldName(string $fieldName): string {
+			return ucwords(str_replace('_', ' ', $fieldName));
 		}
 
-		public function compareValueArray($oldValues) {
-			$newValues = $this->getValuesAsArray();
-			$compareArray = array();
-			foreach($this->dataStructure as $fieldName => $structure) {
-				if($oldValues[$fieldName] != $newValues[$fieldName]) {
-					$compareArray[] = prettifyFieldName($fieldName) . ":" . $oldValues[$fieldName] . " -> " . $newValues[$fieldName];
-				}
-			}
-			return $compareArray;
+		/* -------------------------------------------------- relationships */
+
+		/** @return array<string,array<string,mixed>> */
+		public function getCollectionDefinitions(): array {
+			return $this->collectionDefinitions;
 		}
 
-
-		public function getHash() {
-			$hashString = '';
-			foreach($this->dataStructure as $fieldName => $structure) {
-				$hashString .= $this->get($fieldName);
-			}
-			return sha1($hashString);
+		/** @return array<string,array<string,mixed>> */
+		public function getTargetObjectDefinitions(): array {
+			return $this->targetObjectDefinitions;
 		}
-		
-		public function getDataStructure() {
-			return $this->dataStructure;
+
+		/**
+		 * Get a one-to-one related object via the application's ModelFactory.
+		 */
+		public function getTargetObject(string $tableName): mixed {
+			if (!isset($this->targetObjectDefinitions[$tableName])) {
+				throw new \Skeet\Exception\InvalidTargetObjectException("No target-object definition for '{$tableName}' on " . $this->tableName);
+			}
+			if (!isset($this->targetObjects[$tableName]) || !is_object($this->targetObjects[$tableName])) {
+				$modelFactory = $this->resolveClass('ModelFactory');
+				$this->targetObjects[$tableName] = $modelFactory::getModel(
+					$this->targetObjectDefinitions[$tableName]['table_name'],
+					$this->get($this->targetObjectDefinitions[$tableName]['foreign_key_name']),
+					$this->getDatabase()
+				);
+			}
+			return $this->targetObjects[$tableName];
+		}
+
+		/**
+		 * Link a model into a many-to-many collection (join-table row).
+		 */
+		public function addObjectToCollection(string $tableName, AbstractModel $modelObject): void {
+			$definition = $this->requireCollectionDefinition($tableName);
+			$db = $this->getDatabase();
+			$joinTable = $definition['join_table'];
+
+			$keys = [
+				$definition['local_join_key']   => $this->getID(),
+				$definition['foreign_join_key'] => $modelObject->getID(),
+			];
+			$fields = $keys + [$this->getSoftDeleteField() => $this->getSoftDeleteActiveValue()];
+			if ($this->doesManageTimestamps()) {
+				$fields[$this->getCreatedAtField()] = date('Y-m-d H:i:s');
+			}
+
+			$this->getCollection($tableName)->add($modelObject);
+			$db->doInsertOrUpdate($joinTable, $fields, $keys);
+		}
+
+		/**
+		 * Unlink a model from a many-to-many collection (soft delete).
+		 */
+		public function removeObjectFromCollection(string $tableName, AbstractModel $modelObject): void {
+			$definition = $this->requireCollectionDefinition($tableName);
+			$db = $this->getDatabase();
+
+			$where = [
+				$definition['local_join_key']   => $this->getID(),
+				$definition['foreign_join_key'] => $modelObject->getID(),
+			];
+			$this->getCollection($tableName)->remove($modelObject);
+			$db->doUpdate($definition['join_table'], [$this->getSoftDeleteField() => $this->getSoftDeleteRetiredValue()], $where);
+		}
+
+		public function setExtraCollectionField(string $tableName, string $fieldName, AbstractModel $modelObject, mixed $value): void {
+			$definition = $this->requireCollectionDefinition($tableName);
+			if (!isset($definition['extra_fields'][$fieldName])) {
+				throw new \Skeet\Exception\InvalidCollectionException("No extra collection field '{$fieldName}' on '{$tableName}'.");
+			}
+			$this->writeJoinField($definition, $fieldName, $modelObject, $value);
+		}
+
+		public function setNonExtraCollectionField(string $tableName, string $fieldName, AbstractModel $modelObject, mixed $value): void {
+			$definition = $this->requireCollectionDefinition($tableName);
+			$this->writeJoinField($definition, $fieldName, $modelObject, $value);
+		}
+
+		/**
+		 * @param array<string,mixed> $definition
+		 */
+		private function writeJoinField(array $definition, string $fieldName, AbstractModel $modelObject, mixed $value): void {
+			$db = $this->getDatabase();
+			$where = [
+				$definition['local_join_key']   => $this->getID(),
+				$definition['foreign_join_key'] => $modelObject->getID(),
+			];
+			$db->doUpdate($definition['join_table'], [$fieldName => $value], $where);
+		}
+
+		public function getExtraCollectionField(string $tableName, string $fieldName, AbstractModel $modelObject): mixed {
+			$definition = $this->requireCollectionDefinition($tableName);
+			if (!isset($definition['extra_fields'][$fieldName])) {
+				throw new \Skeet\Exception\InvalidCollectionException("No extra collection field '{$fieldName}' on '{$tableName}'.");
+			}
+			$db = $this->getDatabase();
+			$sql = 'SELECT ' . $db->quoteIdentifier($fieldName)
+				. ' FROM ' . $db->quoteIdentifier($definition['join_table'])
+				. ' WHERE ' . $db->quoteIdentifier($definition['local_join_key']) . ' = ?'
+				. ' AND ' . $db->quoteIdentifier($definition['foreign_join_key']) . ' = ?';
+			$row = $db->doQuery($sql, [$this->getID(), $modelObject->getID()])->getRow();
+			return $row === false ? false : $row[$fieldName];
+		}
+
+		/**
+		 * @return array<string,mixed>
+		 */
+		private function requireCollectionDefinition(string $tableName): array {
+			if (!isset($this->collectionDefinitions[$tableName]) || !is_array($this->collectionDefinitions[$tableName])) {
+				throw new \Skeet\Exception\InvalidCollectionException("No collection definition for '{$tableName}' on " . $this->tableName);
+			}
+			return $this->collectionDefinitions[$tableName];
+		}
+
+		/**
+		 * Get a related collection object via the application's
+		 * ModelCollectionFactory, populated by the model-composed query for the
+		 * relationship (see checkCollectionOptionArray()).
+		 */
+		public function getCollection(string $tableName): mixed {
+			$this->requireCollectionDefinition($tableName);
+			if (!isset($this->collections[$tableName]) || !is_object($this->collections[$tableName])) {
+				$this->checkCollection($tableName);
+			}
+			return $this->collections[$tableName];
+		}
+
+		protected function checkCollection(string $tableName): void {
+			$collectionFactory = $this->resolveClass('ModelCollectionFactory');
+			$this->collections[$tableName] = $collectionFactory::getModelCollection(
+				$this->collectionDefinitions[$tableName]['table_name'],
+				$this->getCollectionOptionArray($tableName),
+				$this->getDatabase()
+			);
+		}
+
+		/**
+		 * @return array<string,mixed>
+		 */
+		protected function getCollectionOptionArray(string $tableName): array {
+			if (!isset($this->collectionDefinitions[$tableName]['collection_options'])
+				|| !is_array($this->collectionDefinitions[$tableName]['collection_options'])) {
+				$this->checkCollectionOptionArray($tableName);
+			}
+			return $this->collectionDefinitions[$tableName]['collection_options'];
+		}
+
+		/**
+		 * Compose the query (SQL + bound params) for a relationship collection
+		 * and cache it as the collection's options.
+		 *
+		 * The model composes this SQL on purpose — the standard one-to-many /
+		 * many-to-many cases are the straightforward ones Skeet handles for you
+		 * (DD-014). Values are bound (no interpolation) and identifiers go
+		 * through the dialect's quoteIdentifier(). For anything beyond the
+		 * standard shapes, write SQL and pass it as the collection's `sql`
+		 * option directly.
+		 */
+		protected function checkCollectionOptionArray(string $tableName): void {
+			$definition = $this->collectionDefinitions[$tableName];
+			$db = $this->getDatabase();
+			$table = $db->quoteIdentifier($definition['table_name']);
+			$getSoftDeleteField = $this->getSoftDeleteField();
+			$activeValue = $this->getSoftDeleteActiveValue();
+
+			$params = [];
+			$conditions = [];
+			$joinSql = '';
+			$distinct = '';
+
+			switch ($definition['collection_type']) {
+				case \Skeet\CollectionType::ManyToMany:
+					$joinTable = $db->quoteIdentifier($definition['join_table']);
+					$distinct = 'DISTINCT ';
+					$joinSql = ' INNER JOIN ' . $joinTable
+						. ' ON ' . $table . '.' . $db->quoteIdentifier($definition['foreign_key_name'])
+						. ' = ' . $joinTable . '.' . $db->quoteIdentifier($definition['foreign_join_key']);
+					$conditions[] = $joinTable . '.' . $db->quoteIdentifier($definition['local_join_key']) . ' = ?';
+					$params[] = $this->getID();
+					$conditions[] = $joinTable . '.' . $db->quoteIdentifier($getSoftDeleteField) . ' = ?';
+					$params[] = $activeValue;
+					if (empty($definition['show_retired'])) {
+						$conditions[] = $table . '.' . $db->quoteIdentifier($getSoftDeleteField) . ' = ?';
+						$params[] = $activeValue;
+					}
+					break;
+
+				case \Skeet\CollectionType::OneToMany:
+				default:
+					$conditions[] = $table . '.' . $db->quoteIdentifier($definition['foreign_key_name']) . ' = ?';
+					$params[] = $this->getID();
+					$conditions[] = $table . '.' . $db->quoteIdentifier($getSoftDeleteField) . ' = ?';
+					$params[] = $activeValue;
+					break;
+			}
+
+			// Extra developer-provided equality conditions (keys are raw column refs).
+			foreach ($definition['where'] ?? [] as $column => $value) {
+				$conditions[] = $column . ' = ?';
+				$params[] = $value;
+			}
+
+			$sql = 'SELECT ' . $distinct . $table . '.* FROM ' . $table . $joinSql;
+			if ($conditions !== []) {
+				$sql .= ' WHERE ' . implode(' AND ', $conditions);
+			}
+			if (isset($definition['order_by'])) {
+				$sql .= ' ORDER BY ' . implode(', ', (array) $definition['order_by']);
+			}
+
+			$this->collectionDefinitions[$tableName]['collection_options'] = ['sql' => $sql, 'params' => $params];
 		}
 	}
-?>

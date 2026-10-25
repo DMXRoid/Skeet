@@ -1,0 +1,58 @@
+# Skeet development setup.
+#
+#   docker compose up                      # SQLite (default), http://localhost:8080
+#   docker compose --profile mysql up      # also start MySQL    (host: mysql)
+#   docker compose --profile postgres up   # also start Postgres (host: postgres)
+#   docker compose run --rm web composer install
+#   docker compose run --rm web vendor/bin/phpunit
+#   docker compose run --rm web php skeet/bin/skeet migrate
+#
+# SQLite needs no database container. For MySQL/Postgres, enable the profile and
+# point your app's DB config at the service hostname (`mysql` / `postgres`) with
+# the credentials below. Override docroot/port/env/credentials via the
+# SKEET_* / MYSQL_* / POSTGRES_* variables.
+
+services:
+  web:
+    build: .
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "${SKEET_PORT:-8080}:8080"
+    environment:
+      APP_ENV: "${APP_ENV:-default}"
+    # Install dev deps on first run (vendor/ is git-ignored), then serve the
+    # docroot through a front-controller router.
+    command: >
+      sh -c "[ -d vendor ] || composer install;
+             php -S 0.0.0.0:8080 -t ${SKEET_DOCROOT:-skeet/www} docker/router.php"
+
+  mysql:
+    image: mysql:8.4
+    profiles: ["mysql"]
+    environment:
+      MYSQL_DATABASE: "${MYSQL_DATABASE:-skeet}"
+      MYSQL_USER: "${MYSQL_USER:-skeet}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:-skeet}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-root}"
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  postgres:
+    image: postgres:16
+    profiles: ["postgres"]
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB:-skeet}"
+      POSTGRES_USER: "${POSTGRES_USER:-skeet}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-skeet}"
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+
+volumes:
+  mysql-data:
+  pg-data:

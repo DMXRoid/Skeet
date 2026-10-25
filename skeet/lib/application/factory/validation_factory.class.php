@@ -1,4 +1,4 @@
-<?
+<?php
 	namespace Skeet;
 	class ValidationFactory {
 		const VALIDATION_TYPE_STRING = 1;

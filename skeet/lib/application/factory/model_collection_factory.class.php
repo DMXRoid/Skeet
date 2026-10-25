@@ -1,4 +1,4 @@
-<?
+<?php
 	namespace Skeet;
 	
 	class ModelCollectionFactory extends \Skeet\Generated\Factory\ModelCollectionFactoryGenerated {

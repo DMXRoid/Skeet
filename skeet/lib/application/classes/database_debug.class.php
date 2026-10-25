@@ -1,4 +1,4 @@
-<?
+<?php
 	class DatabaseDebug {
 		public static $databaseQueryDebugs = array();		
 

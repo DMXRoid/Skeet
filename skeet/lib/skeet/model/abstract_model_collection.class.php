@@ -1,377 +1,270 @@
-<?
+<?php
 	/**
-	 * @version 1.0
-	 * @author Matthew Schiros <schiros@invisihosting.com>
+	 * @version 2.0
+	 * @author Matthew Schiros <matthew.schiros+skeet@gmail.com>
 	 * @copyright Copyright (c) 2010, Matthew Schiros
 	 * @license FreeBSD
 	 */
-	
+
+	declare(strict_types=1);
+
 	namespace Skeet\Model;
-	
+
+	use Skeet\Database\AbstractDatabase;
+
 	/**
-	 * An object for holding collections of models
+	 * Holds and iterates a collection of models.
+	 *
+	 * The collection is populated by running a query (SQL + bound params) and
+	 * hydrating each row into an instance of $modelClass via loadRow(). The
+	 * query itself is composed by the caller (typically AbstractModel for the
+	 * standard relationship cases, or hand-written SQL for anything else —
+	 * DD-014); this class just runs it and holds the results.
+	 *
 	 * @package Skeet
 	 * @subpackage Model
 	 */
 	abstract class AbstractModelCollection {
-		
-		/**
-		 * Current namespace
-		 * @var string
-		 */
-		
-		protected $currentNamespace;
-		
-		/**
-		 * Counter to step through populated list
-		 *
-		 * @see hasNext(),getNext()
-		 * @var integer
-		 * 
-		 */
-		protected $counter = 0;
-		
-		/**
-		 * Collection container
-		 * @see getNext()
-		 * @var array
-		 */
-		
-		protected $collection = array();
-		
-		/**
-		 * A cache of the primary key id's of the objects in the collection
-		 * @see has()
-		 * @var array
-		 */
-		
-		protected $cachedPrimaryKeyIDList = array();
-		
-		
-		/**
-		 * The SQL that initialized the collection
-		 * @var string
-		 */
-				
-		protected $initSQL;
-		
-		
-		/**
-		 * Database name for the table
-		 * @access protected
-		 * @var string
-		 */
-		protected $databaseName = MODEL_DATABASE_NAME;
-		
-		/**
-		 * Name of the table the data is pulled from
-		 * 
-		 * @access protected
-		 * @var string
-		 */
-		protected $tableName;
 
+		protected string $currentNamespace = '';
+
+		/** Iteration cursor for hasNext()/getNext(). */
+		protected int $counter = 0;
+
+		/** @var array<int,AbstractModel> */
+		protected array $collection = [];
+
+		/** @var array<int|string,int|string> primary keys present, for has()/hasID() */
+		protected array $cachedPrimaryKeyIDList = [];
+
+		/** The table this collection draws from. */
+		protected string $tableName = '';
+
+		/** FQCN of the model class rows are hydrated into (generated subclasses set this). */
+		protected ?string $modelClass = null;
+
+		/** Optional column used for default ordering and display. */
+		protected ?string $nameField = null;
+
+		/** Named database config (null = default). */
+		protected ?string $databaseName = null;
+
+		/** Connection seam (DD-007); resolved lazily when null. */
+		protected ?AbstractDatabase $db = null;
+
+		/** Total count ignoring any LIMIT (set when a count query is supplied). */
+		protected int $noLimitCount = 0;
+
+		/** The SQL that populated the collection. */
+		protected string $initSql = '';
 
 		/**
-		 *	The name field of a table, used to order a collection if it
-		 * exists
-		 * @var string
+		 * @param array<string,mixed>   $options sql, params, count_sql, count_params, create_empty
+		 * @param AbstractDatabase|null $db      injected connection (DD-007)
+		 * @param string|null           $modelClass override the model class to hydrate
 		 */
+		public function __construct(array $options = [], ?AbstractDatabase $db = null, ?string $modelClass = null) {
+			$namespaceArray = explode('\\', get_class($this));
+			$this->currentNamespace = '\\' . array_shift($namespaceArray);
 
-		protected $nameField;
+			if ($db !== null) {
+				$this->db = $db;
+			}
+			if ($modelClass !== null) {
+				$this->modelClass = $modelClass;
+			}
 
-		protected $noLimitCount = 0;
-		
-		public function __construct($options = array(
-									"where"=>array(),
-									"join_table"=>array(),
-									"order_by"=>array(),
-									"create_emtpy"=>NULL,
-									"group_by"=>array(),
-									"limit" => "",
-									"custom_sql" => NULL,
-									"append_where" => NULL,
-									"show_retired" => false
-									)) {
-			$namespaceArray = explode('\\',get_class($this));
-			$namespace = array_shift($namespaceArray);
-			$this->setCurrentNamespace('\\' . $namespace );
 			$this->preConstruct();
-			if(!isset($options["create_empty"]) || is_null($options["create_empty"])) {
-				$db = \Skeet\DatabaseFactory::getDatabase();
-				$collection = array();
-				if(!isset($options["show_retired"]) || !$options["show_retired"]) {
-					$where = " WHERE " . $db->getEscapeOpenCharacter() . $this->getTableName() . $db->getEscapeCloseCharacter() . ".is_retired = 0 ";
-				}
-				else {
-					$where = " WHERE 1=1 ";
-				}
-				
-				if(isset($options["where"]) && count($options["where"]) > 0) {
-					foreach($options["where"] as $field => $value) {
-						if(!is_array($value)) {
-							if(is_null($value)) {
-								$where .= " AND " . $field . " IS NULL ";
-							}
-							else {
-								$where .= " AND " . $field . " = '" . $value . "'";
-							}
-						}
-						else {
-							$where .= " AND " . $field . " IN (";
-							foreach($value as $searchVal) {
-								$where .= $searchVal . ",";
-							}
-							$where = substr_replace($where,'',-1) . ")";
-						}
-					}
-				}
-				if(isset($options["append_where"]) && $options["append_where"]) {
-					$where .= " AND " . $options["append_where"] . " ";
-				}
-				$order = "";
-				if(isset($options["order_by"]) && count($options["order_by"]) > 0) {
-					$order = " ORDER BY ";
-					$order .= implode(",",$options["order_by"]) . " DESC";
-					
-				}
-				elseif($this->nameField) {
-					$order = " ORDER BY " . $this->nameField . " ASC ";
-				}
-				
-				$group = "";
-				if(isset($options["group_by"]) && count($options["group_by"]) > 0) {
-					$group = " GROUP BY ";
-					foreach($options["group_by"] as $grouping) {
-						$group .= $grouping . ",";
-					}
-					$group = substr_replace($group,'',-1);
-				}
-				
-				$joinTableSQL = "";
-				
-				if(isset($options["join_table"]) && count($options["join_table"])) {
-					foreach($options["join_table"] as $joinTable) {
-						$joinTableSQL .= $joinTable . "\n";
-					}
-				}
-				
-				$sql = "SELECT DISTINCT " . $db->getEscapeOpenCharacter() . $this->getTableName() . $db->getEscapeCloseCharacter() . ".* FROM " . $db->getEscapeOpenCharacter() . $this->getTableName() . $db->getEscapeCloseCharacter() ."
-							
-							" . $joinTableSQL . "
-							" . $where . $group . $order;
-				if(isset($options["custom_sql"]) && !is_null($options["custom_sql"])) {
-					$sql = $options["custom_sql"];
-				}
-				if(isset($options["limit"]) && $options["limit"]) {
-					$countSQL = "SELECT COUNT(*) AS row_count FROM (" . $sql . ") AS foo";
-					$countRow = $db->doQuery($countSQL)->getRow();
-					$this->noLimitCount = $countRow["row_count"];
-					$sql .= " LIMIT " . $options["limit"];
-				}
-				
-				$result = $db->doQuery($sql);
-				$namespacedClass = $this->getCurrentNamespace() . "\\ModelFactory";
-				while($row = $result->getRow()) {
-					$model =  $namespacedClass::getModel($this->getTableName(),NULL,NULL,$row);
-					$this->cachedPrimaryKeyIDList[$model->getID()] = $model->getID();
-					$this->collection[] = $model;
-				}
-				$this->initSQL = $sql;
-			}										
+
+			if (empty($options['create_empty'])) {
+				$this->populate($options);
+			}
+
 			$this->postConstruct();
 		}
 
-		protected function preConstruct() {	}
-		protected function postConstruct() { }
-		
-		public function getCurrentNamespace() {
+		protected function preConstruct(): void {}
+		protected function postConstruct(): void {}
+
+		/**
+		 * Run the query and hydrate rows into models.
+		 *
+		 * @param array<string,mixed> $options
+		 */
+		protected function populate(array $options): void {
+			$db = $this->getDatabase();
+
+			$sql = $options['sql'] ?? ('SELECT ' . $db->quoteIdentifier($this->tableName) . '.* FROM ' . $db->quoteIdentifier($this->tableName));
+			$params = $options['params'] ?? [];
+
+			if (!empty($options['count_sql'])) {
+				$countRow = $db->doQuery($options['count_sql'], $options['count_params'] ?? [])->getRow();
+				$this->noLimitCount = $countRow === false ? 0 : (int) reset($countRow);
+			}
+
+			$result = $db->doQuery($sql, $params);
+			$this->initSql = $db->getQuery();
+
+			while (($row = $result->getRow()) !== false) {
+				$model = $this->hydrate($row);
+				$id = $model->getID();
+				if ($id !== null) {
+					$this->cachedPrimaryKeyIDList[$id] = $id;
+				}
+				$this->collection[] = $model;
+			}
+
+			if ($this->noLimitCount === 0) {
+				$this->noLimitCount = count($this->collection);
+			}
+		}
+
+		/**
+		 * @param array<string,mixed> $row
+		 */
+		protected function hydrate(array $row): AbstractModel {
+			if ($this->modelClass === null) {
+				throw new \Skeet\Exception\InvalidCollectionException('No $modelClass set on collection ' . static::class);
+			}
+			$class = $this->modelClass;
+			$model = new $class(null, $this->getDatabase());
+			$model->loadRow($row);
+			return $model;
+		}
+
+		protected function getDatabase(): AbstractDatabase {
+			if ($this->db === null) {
+				$appClass = $this->currentNamespace . '\\DatabaseFactory';
+				$factory = class_exists($appClass) ? $appClass : '\\Skeet\\DatabaseFactory';
+				$this->db = $this->databaseName !== null
+					? $factory::getDatabase($this->databaseName)
+					: $factory::getDatabase();
+			}
+			return $this->db;
+		}
+
+		public function getCurrentNamespace(): string {
 			return $this->currentNamespace;
 		}
-		
-		public function setCurrentNamespace($currentNamespace) {
+
+		public function setCurrentNamespace(string $currentNamespace): void {
 			$this->currentNamespace = $currentNamespace;
 		}
-		
-		/**
-		 * Gets (@link $tableName)
-		 * @access public
-		 * @return string
-		 */
-		
-		public function getTableName() {
+
+		public function getTableName(): string {
 			return $this->tableName;
 		}
-		
-		/**
-		 * Gets (@link $databaseName)
-		 * @access public
-		 * @return string
-		 */
-		
-		public function getDatabaseName() {
+
+		public function getDatabaseName(): ?string {
 			return $this->databaseName;
 		}
-		
-		/**
-		 * See if there's another element in the collection
-		 * @see getCounter()
-		 * @link $counter
-		 */
-		
-		public function hasNext() {
-			if(isset($this->collection[$this->getCounter()])) {
-				 return TRUE;
-			}
-			return FALSE;
+
+		public function getInitSql(): string {
+			return $this->initSql;
 		}
-		
-		/**
-		 * Get the counter
-		 * @see hasNext()
-		 * @return integer
-		 */
-		
-		public function getCounter() {
+
+		/* -------------------------------------------------- iteration */
+
+		public function hasNext(): bool {
+			return isset($this->collection[$this->counter]);
+		}
+
+		public function getCounter(): int {
 			return $this->counter;
 		}
-		
-		/**
-		 * Get the number of objects in the collection
-		 * @return integer
-		 */
-		
-		public function getCount() {
-			return count($this->collection);
-		}
-		
-		/**
-		 * Returns the collection as an array
-		 * @return array
-		 */
-		
-		public function getCollection() {
-			return $this->collection;
-		}
-		
-		/**
-		 * Gets the next object in the collection
-		 * @return object|boolean
-		 */
-		
-		public function getNext() {
-			if($this->hasNext()) {
-				$modelObject = $this->collection[$this->getCounter()];
-				$this->counter++;
+
+		public function getNext(): AbstractModel|false {
+			if ($this->hasNext()) {
+				return $this->collection[$this->counter++];
 			}
-			else {
-				$modelObject = FALSE;
-			}
-		
-			return $modelObject;
+			return false;
 		}
-		
-		public function reInit() {
+
+		public function reInit(): void {
 			$this->counter = 0;
 		}
-		
-		/**
-		 * Get the last object in the collection
-		 * @return object|boolean
-		 */
-		
-		public function getLast() {
-			if(isset($this->collection[(count($this->getCount()) - 1)])) {
-				return $this->collection[(count($this->getCount()) - 1)];
-			}
+
+		public function getCount(): int {
+			return count($this->collection);
 		}
-		
-		public function getFirst() {
-			if(isset($this->collection[0])) {
-				return $this->collection[0];
-			}
+
+		/** @return array<int,AbstractModel> */
+		public function getCollection(): array {
+			return $this->collection;
 		}
-		
-		/**
-		 * See if there's an object in the collection
-		 * @var integer
-		 * @return boolean
-		 */
-		
-		public function has($model) {
-			if(isset($this->cachedPrimaryKeyIDList[$model->getID()])) {
-				return true;
-			}
-			return false;
+
+		public function getFirst(): ?AbstractModel {
+			return $this->collection[0] ?? null;
 		}
-		
-		public function hasID($id) {
-			if(isset($this->cachedPrimaryKeyIDList[$id])) {
-				return true;
+
+		public function getLast(): ?AbstractModel {
+			if ($this->collection === []) {
+				return null;
 			}
-			return false;
+			return $this->collection[count($this->collection) - 1];
 		}
-		
-		/**
-		 * Add an object to the collection
-		 * @var object
-		 */
-		
-		public function add($object) {
+
+		public function has(AbstractModel $model): bool {
+			return $this->hasID($model->getID());
+		}
+
+		public function hasID(int|string|null $id): bool {
+			return $id !== null && isset($this->cachedPrimaryKeyIDList[$id]);
+		}
+
+		public function add(AbstractModel $object): void {
 			$this->collection[] = $object;
+			$id = $object->getID();
+			if ($id !== null) {
+				$this->cachedPrimaryKeyIDList[$id] = $id;
+			}
 		}
 
-
-		public function remove($object) {
-			$didRemove = false;
-			foreach($this->collection as $key => $tempObject) {
-				if(!$didRemove) {
-					if($tempObject->getID() == $object->getID()) {
-						unset($this->collection[$key]);
-						$didRemove = true;
-					}
-				}
-				else {
-					$newKey = $key - 1;
-					$this->collection[$newKey] = $tempObject;
+		public function remove(AbstractModel $object): void {
+			foreach ($this->collection as $key => $tempObject) {
+				if ($tempObject->getID() == $object->getID()) {
+					unset($this->collection[$key]);
 				}
 			}
+			$this->collection = array_values($this->collection);
+			unset($this->cachedPrimaryKeyIDList[$object->getID()]);
 			$this->reInit();
 		}
 
+		/* -------------------------------------------------- views */
 
-		public function getDropdown($name,$selected=NULL,$extras=NULL,$skipLabel=false) {
+		public function getDropdown(string $name, int|string|array|null $selected = null, string $extras = '', bool $skipLabel = false): string {
 			$this->reInit();
 			$output = '<select name="' . $name . '" ' . $extras . '>' . "\n";
-			if(!$skipLabel) {
+			if (!$skipLabel) {
 				$output .= '<option value="">--- Select One ---</option>' . "\n";
 			}
-			while($specificObject = $this->getNext()) {
-				if($specificObject->getID() == $selected || (is_array($selected) && in_array($specificObject->getID(),$selected))) {
-					$isSelected = " selected ";
-				}
-				else {
-					$isSelected = "";
-				}
-				
-				$output .= '<option value="' . $specificObject->getID() . '" ' . $isSelected . '>' . $specificObject->getDisplayLabel() . '</option>' . "\n";
+			while (($model = $this->getNext()) !== false) {
+				$id = $model->getID();
+				$isSelected = ($id == $selected || (is_array($selected) && in_array($id, $selected)))
+					? ' selected '
+					: '';
+				$output .= '<option value="' . $id . '"' . $isSelected . '>' . $model->getDisplayLabel() . '</option>' . "\n";
 			}
 			$output .= '</select>' . "\n";
+			$this->reInit();
 			return $output;
 		}
 
-		public function toArray() {
-			$returnArray = array();
-			$this->reInit();
-			while($tempObject = $this->getNext()) {
-				$returnArray[$tempObject->getID()] = $tempObject->getDisplayLabel();
+		/**
+		 * id => display label map.
+		 *
+		 * @return array<int|string,string>
+		 */
+		public function toArray(): array {
+			$returnArray = [];
+			foreach ($this->collection as $model) {
+				$returnArray[$model->getID()] = $model->getDisplayLabel();
 			}
 			return $returnArray;
 		}
-		
-			public function getNoLimitCount() {
+
+		public function getNoLimitCount(): int {
 			return $this->noLimitCount;
 		}
-		
 	}
-?>

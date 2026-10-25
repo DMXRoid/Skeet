@@ -1,7 +1,7 @@
-<?
+<?php
 	/**
 	* @version 1.0
-	* @author Matthew Schiros <schiros@invisihosting.com>
+	* @author Matthew Schiros <matthew.schiros+skeet@gmail.com>
 	* @copyright Copyright (c) 2011, Matthew Schiros
 	* @license FreeBSD
 	*/
@@ -34,10 +34,10 @@
 					switch($page->getPageName()) {
 						
 						default:
-							if($page instanceof \Canvasser\Page\AbstractCrudManagePage) {
+							if($page instanceof \Skeet\Page\AbstractCrudManagePage) {
 								$componentLabel = "MainbodyCrudManage";
 							}
-							elseif($page instanceof \Canvasser\Page\AbstractCrudCollectionPage) {
+							elseif($page instanceof \Skeet\Page\AbstractCrudCollectionPage) {
 								$componentLabel = "MainbodyCrudList";
 							}
 							else {

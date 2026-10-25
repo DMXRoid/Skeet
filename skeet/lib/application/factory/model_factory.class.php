@@ -1,4 +1,4 @@
-<?
+<?php
 	namespace Skeet;
 	class ModelFactory extends \Skeet\Generated\Factory\ModelFactoryGenerated {
 		public static function getModel($tableName,$primaryKeyID=NULL,$customSQL=NULL,$dataRow=NULL) {

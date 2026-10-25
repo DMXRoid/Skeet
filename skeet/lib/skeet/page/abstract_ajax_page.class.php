@@ -1,11 +1,13 @@
-<?
-	namespace Skeet\Page;
-	class AbstractAjaxPage extends AbstractPage {
-		protected $fileName = "ajax.page.php";
-		protected $ajaxReturn;
+<?php
+	declare(strict_types=1);
 
-		public function getAjaxReturn() {
+	namespace Skeet\Page;
+
+	class AbstractAjaxPage extends AbstractPage {
+		protected string $fileName = "ajax.page.php";
+		protected mixed $ajaxReturn = null;
+
+		public function getAjaxReturn(): mixed {
 			return $this->ajaxReturn;
 		}
 	}
-?>

@@ -1,89 +1,75 @@
-<?
+<?php
 	/**
-	 * @version 1.0
-	 * @author Matthew Schiros <schiros@invisihosting.com>
+	 * @version 2.0
+	 * @author Matthew Schiros <matthew.schiros+skeet@gmail.com>
 	 * @copyright Copyright (c) 2011, Matthew Schiros
 	 * @license FreeBSD
 	 */
 
+	declare(strict_types=1);
+
 	namespace Skeet\Database;
-	
+
 	/**
-	 * Abstract database result class
-	 * 
-	 * Parent class of all database result classes
+	 * A database result — a thin wrapper over a PDOStatement.
+	 *
+	 * With PDO the result handling is uniform across drivers, so this is now a
+	 * single concrete class rather than one subclass per driver.
+	 *
 	 * @package Skeet
 	 * @subpackage Database
-	 * @abstract
 	 */
-	
-	
+	class AbstractDatabaseResult {
 
-	abstract class AbstractDatabaseResult {
-		/**
-		 * Enter description here...
-		 *
-		 * @var MySQLResult|PGSQLResult
-		 * @access protected
-		 */
-		protected $result;
+		public function __construct(protected \PDOStatement $statement) {}
 
 		/**
-		 * Set the object $result var
+		 * Fetch the next row as an associative array, or false when exhausted.
 		 *
-		 * @param unknown_type $result
-		 * @access public
+		 * @return array<string,mixed>|false
 		 */
-
-		public function setResult($result) {
-			$this->result = $result;
+		public function getRow(): array|false {
+			return $this->statement->fetch(\PDO::FETCH_ASSOC);
 		}
 
-		public function getResult() {
-			return $this->result;
-		}
-		
 		/**
-		 * Dump all the rows in the result into an array
+		 * All remaining rows as associative arrays.
 		 *
-		 * @access public
-		 * @return array
+		 * @return array<int,array<string,mixed>>
 		 */
-		
-		public function getResultAsArray() {
-			$returnArray = array();
-			while($row = $this->getRow()) {	
-				$returnArray[] = $row;	
-			}
-			return $returnArray;
+		public function getResultAsArray(): array {
+			return $this->statement->fetchAll(\PDO::FETCH_ASSOC);
 		}
-		
-		
-		/**
-		 * Return a row. Must be defined in child classes
-		 *
-		 * @return array
-		 * @access public
-		 */
-		
-		public function getRow() { }
 
 		/**
-		 * Return the number of rows retreived in the $result
+		 * Alias of {@see getResultAsArray()}.
 		 *
-		 * @access public
-		 * @return integer
+		 * @return array<int,array<string,mixed>>
 		 */
-		
-		public function getNumRows() { }
+		public function getRows(): array {
+			return $this->getResultAsArray();
+		}
 
 		/**
-		 * alias to getNumRows()
+		 * Number of rows affected by the statement.
 		 *
-		 * @return integer
-		 * @access public
+		 * NOTE: reliable for INSERT/UPDATE/DELETE. For SELECT, rowCount() is
+		 * driver-dependent (fine on sqlite/mysql, unreliable on pgsql); prefer
+		 * fetching rows and counting, or getRow() for existence checks.
 		 */
-		
-		public function numRows() { }
+		public function getNumRows(): int {
+			return $this->statement->rowCount();
+		}
+
+		public function numRows(): int {
+			return $this->getNumRows();
+		}
+
+		public function rowCount(): int {
+			return $this->statement->rowCount();
+		}
+
+		public function getStatement(): \PDOStatement {
+			return $this->statement;
+		}
 	}
-?>

@@ -1,4 +1,4 @@
-<?
+<?php
 	class ImageFactory {
 		public static function getImage($imagePath,$extras="",$altText="",$title="") {
 			if(!$altText) {

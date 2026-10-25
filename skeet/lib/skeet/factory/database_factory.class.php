@@ -1,62 +1,110 @@
-<?
+<?php
 	/**
-	* @version 1.0
-	* @author Matthew Schiros <schiros@invisihosting.com>
-	* @copyright Copyright (c) 2011, Matthew Schiros
-	* @license FreeBSD
-	*/
+	 * @version 2.0
+	 * @author Matthew Schiros <matthew.schiros+skeet@gmail.com>
+	 * @copyright Copyright (c) 2011, Matthew Schiros
+	 * @license FreeBSD
+	 */
+
+	declare(strict_types=1);
 
 	namespace Skeet;
-	
+
 	/**
-	 * The place to get database objects
+	 * Builds and caches database objects from config.
+	 *
+	 * Normalizes a named database config into a write (primary) endpoint plus
+	 * zero or more read replicas (DD-012), then instantiates the matching PDO
+	 * dialect. Endpoint fields accept both the legacy `database_*` keys and
+	 * plain names, with optional `write.*` / `read.*` role overrides and a
+	 * comma-separated `read.host` replica list.
+	 *
 	 * @package Skeet
 	 * @subpackage Factory
 	 */
-	
 	class DatabaseFactory {
-		/**
-		 * Caches database connections for future calls
-		 * @access public
-		 * @var \Skeet\Database\AbstractDatabase[]
-		 */
-		public static $dbList = array();		
-		
-		/**
-		 * Get a database object based on the config settings
-		 * @access public
-		 * @static
-		 * @param string $dbConfigName Config name to use when pulling info from \Skeet\Skeet::getDatabaseConfig
-		 * @return \Skeet\Database\AbstractDatabase
-		 */
 
-		public static function getDatabase($dbConfigName="default") {
-			$configArray = \Skeet\Skeet::getDatabaseConfig($dbConfigName);
-			if(!isset(self::$dbList[$dbConfigName]) || !is_object(self::$dbList[$dbConfigName])) {
-				switch($configArray["database_type"]) {
-					case "mysql":
-						$db = new \Skeet\Database\Mysql\MysqlDatabase($configArray["database_name"],$configArray["database_host"],$configArray["database_username"],$configArray["database_password"]);
-						break;
-					
-					case "mysqli":
-						$db = new \Skeet\Database\Mysql\Mysqli\MysqliDatabase($configArray["database_name"],$configArray["database_host"],$configArray["database_username"],$configArray["database_password"]);
-						break;
-					
-					case "sqlsrv":
-						$db = new \Skeet\Database\Sqlsrv\SqlsrvDatabase($configArray["database_name"],$configArray["database_host"],$configArray["database_username"],$configArray["database_password"]);
-						break;
-					
-					case "mssql":
-						$db = new \Skeet\Database\Mssql\MssqlDatabase($configArray["database_name"],$configArray["database_host"],$configArray["database_username"],$configArray["database_password"]);
-						break;
-				}
-				self::$dbList[$dbConfigName] = $db;
+		/** @var array<string,\Skeet\Database\AbstractDatabase> */
+		public static array $dbList = [];
+
+		public static function getDatabase(string $dbConfigName = "default"): \Skeet\Database\AbstractDatabase {
+			if (isset(self::$dbList[$dbConfigName])) {
+				return self::$dbList[$dbConfigName];
 			}
-			return self::$dbList[$dbConfigName];
+
+			$config = \Skeet\Skeet::getDatabaseConfig($dbConfigName) ?? [];
+			$type = (string) ($config['database_type'] ?? $config['type'] ?? 'mysql');
+			[$primary, $replicas] = self::endpoints($config);
+
+			$db = match ($type) {
+				'mysql', 'mysqli', 'mariadb'        => new \Skeet\Database\MysqlDatabase($primary, $replicas),
+				'pgsql', 'postgres', 'postgresql'   => new \Skeet\Database\PgsqlDatabase($primary, $replicas),
+				'sqlsrv', 'mssql'                   => new \Skeet\Database\SqlsrvDatabase($primary, $replicas),
+				'sqlite', 'sqlite3'                 => new \Skeet\Database\SqliteDatabase($primary, $replicas),
+				default => throw new \Skeet\Exception\UnknownDatabaseTypeException("Unknown database_type: {$type}"),
+			};
+
+			self::$dbList[$dbConfigName] = $db;
+			return $db;
 		}
-		
-		public static function addDatabase($dbName,$dbObject) {
-			self::$dbList[$dbName] = $dbObject;	
+
+		public static function addDatabase(string $dbName, \Skeet\Database\AbstractDatabase $dbObject): void {
+			self::$dbList[$dbName] = $dbObject;
+		}
+
+		/** Reset the connection cache (used by tests). */
+		public static function reset(): void {
+			self::$dbList = [];
+		}
+
+		/**
+		 * Split a flat config array into [primary, replicas[]].
+		 *
+		 * @param array<string,mixed> $config
+		 * @return array{0:array<string,mixed>,1:array<int,array<string,mixed>>}
+		 */
+		private static function endpoints(array $config): array {
+			$base = [
+				'host'     => $config['host']     ?? $config['database_host']     ?? null,
+				'port'     => $config['port']     ?? $config['database_port']     ?? null,
+				'dbname'   => $config['dbname']   ?? $config['database_name']     ?? null,
+				'user'     => $config['user']     ?? $config['database_username'] ?? $config['username'] ?? null,
+				'password' => $config['password'] ?? $config['database_password'] ?? null,
+			];
+
+			$primary = self::applyRole($base, $config, 'write');
+
+			$replicas = [];
+			$readBase = self::applyRole($base, $config, 'read');
+			$readHosts = $config['read.host'] ?? null;
+			if ($readHosts !== null && $readHosts !== '') {
+				foreach (array_map('trim', explode(',', (string) $readHosts)) as $host) {
+					if ($host === '') {
+						continue;
+					}
+					$replica = $readBase;
+					$replica['host'] = $host;
+					$replicas[] = $replica;
+				}
+			}
+
+			return [$primary, $replicas];
+		}
+
+		/**
+		 * Apply `<role>.<field>` overrides (e.g. write.host, read.user) onto a
+		 * base endpoint.
+		 *
+		 * @param array<string,mixed> $base
+		 * @param array<string,mixed> $config
+		 * @return array<string,mixed>
+		 */
+		private static function applyRole(array $base, array $config, string $role): array {
+			foreach (['host', 'port', 'dbname', 'user', 'password'] as $field) {
+				if (isset($config["{$role}.{$field}"])) {
+					$base[$field] = $config["{$role}.{$field}"];
+				}
+			}
+			return $base;
 		}
 	}
-?>

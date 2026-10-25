@@ -1,7 +1,7 @@
-<?
+<?php
 	/**
 	 * @version 1.0
-	 * @author Matthew Schiros <schiros@invisihosting.com>
+	 * @author Matthew Schiros <matthew.schiros+skeet@gmail.com>
 	 * @copyright Copyright (c) 2011, Matthew Schiros
 	 * @license FreeBSD
 	 * @package Skeet
@@ -309,38 +309,9 @@
 	*/	
 	
 	function getDatatypeFromSQL($sqlDatatype) {
-		$sqlDatatype = preg_replace("/[^a-zA-Z]/",'',$sqlDatatype);
-		$dataType = DATA_TYPE_STRING;
-		switch($sqlDatatype) {
-			case "varchar":
-				$dataType = DATA_TYPE_STRING;
-				break;
-			
-			case "text":
-			case "bigtext":
-				$dataType = DATA_TYPE_TEXT;
-				break;
-					
-			case "int":
-			case "bigint":
-				$dataType = DATA_TYPE_INTEGER;
-				break;
-				
-			case "datetime":
-			case "timestamp":
-				$dataType = DATA_TYPE_DATETIME;
-				break;
-				
-			case "float":
-			case "decimal":
-				$dataType = DATA_TYPE_FLOAT;
-				break;
-				
-			case "tinyint":
-				$dataType = DATA_TYPE_TINYINT;
-				break;
-		}
-		return $dataType;
+		// SQL-type mapping now lives on \Skeet\DataType::fromSql(); this global
+		// wrapper is retained for existing callers. See docs/findings.md F-004.
+		return \Skeet\DataType::fromSql((string) $sqlDatatype);
 	}
 
 

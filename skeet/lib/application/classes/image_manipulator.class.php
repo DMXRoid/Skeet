@@ -1,4 +1,4 @@
-<?
+<?php
   	class ImageManipulator {
 		private $sourceImage;
 		private $sourceImagePath;

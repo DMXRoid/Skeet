@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 	SessionFactory does _all_ the session work.  No direct instantiation of the 
 	Session or SessionVariable objects should _ever_ be done.
